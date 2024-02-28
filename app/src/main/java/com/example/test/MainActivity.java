@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     int[] ys = {R.id.yellow_1,R.id.yellow_2,R.id.yellow_3,R.id.yellow_4,R.id.yellow_5,R.id.yellow_6,R.id.yellow_7,R.id.yellow_8,R.id.yellow_9};
     //String[] type = {"white","red","green","orange","blue"};
     private TextView turn_of_code;
-
     private int click = -1,location = 0,white = 0,red = 0,green = 0,orange = 0,blue = 0,yellow = 0;
     int[] click_button = new int[48];
     int click_times = -1;
