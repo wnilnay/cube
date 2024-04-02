@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-//import org.kociemba.twophase.Search;
+import org.kociemba.twophase.*;
+
 public class MainActivity extends AppCompatActivity {
 
     View[] blue_views = new View[9];
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView lock;
     int[] color_put_into_block = new int[54];
     private String turn_code = "";
+    private String cubeStatus = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         lock = findViewById(R.id.lock);
         lock.setVisibility(View.INVISIBLE);
         turn_of_code = findViewById(R.id.turn_of_code);
+
     }
     private void change_color(int id){
         if(click<8)
@@ -861,6 +864,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void solve(View view) {
+        //if(isOk){
+            int[] cube_position = new int[]{51,52,53,48,49,50,45,46,47,33,34,35,30,31,32,27,28,29,24,25,26,21,22,23,18,19,20,6,7,8,3,4,5,0,1,2,15,16,17,12,13,14,9,10,11,42,43,44,39,40,41,36,37,38};
+            cubeStatus = "";
+            for(int i = 0;i<cube_position.length;i++){
+                switch (color_put_into_block[cube_position[i]]){
+                    case 0:
+                        cubeStatus += "D";
+                        break;
+                    case 1:
+                        cubeStatus += "L";
+                        break;
+                    case 2:
+                        cubeStatus += "F";
+                        break;
+                    case 3:
+                        cubeStatus += "R";
+                        break;
+                    case 4:
+                        cubeStatus += "B";
+                        break;
+                    case 5:
+                        cubeStatus += "U";
+                        break;
+                    default:
+                        break;
+                }
+            }
+            cubeStatus = "FBFBUDBFUBBUURLURBDDRRFFURBRDLLDURFDDLRBLFFDFLRLUBULLD";
+            Log.v("brad",cubeStatus);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String a = Search.solution(cubeStatus,26000,10,false);
+                    Log.v("brad",a);
+                }
+            }).start();
+
+        }
+    //}
+
+    public void test(View view) {
 
     }
 }
