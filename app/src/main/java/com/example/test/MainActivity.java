@@ -2,6 +2,7 @@ package com.example.test;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -1101,5 +1102,10 @@ public class MainActivity extends AppCompatActivity {
     public void clear(View view) {
         turn_of_code.setText("");
         turn_code = "";
+    }
+
+    public void BlueToothTest(View view) {
+        Intent intent = new Intent(this, BlueToothActivity.class);
+        startActivity(intent);
     }
 }

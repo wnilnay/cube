@@ -133,14 +133,13 @@
                 android:layout_weight="1"
                 android:text="無法選擇中心點顏色"
                 android:textColor="#FF0000"
-                android:textSize="18dp" />
+                android:textSize="18sp" />
 
 
         </LinearLayout>
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            ></LinearLayout>
+            android:layout_height="1dp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -408,10 +407,10 @@
                 android:background="@drawable/rectangle_gray"
                 />
         </LinearLayout>
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            ></LinearLayout>
+            />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -788,6 +787,16 @@
                 android:textSize="20sp"
                 />
         </LinearLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BlueToothTest"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:layout_gravity="center"
+            android:onClick="BlueToothTest"
+            />
+
     </LinearLayout>
 
 </ScrollView>
