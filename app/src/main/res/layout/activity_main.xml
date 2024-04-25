@@ -49,7 +49,7 @@
                 android:layout_height="match_parent"
                 android:text="點選以下按鈕以選擇顏色"
                 android:textColor="@color/black"
-                android:textSize="15dp"
+                android:textSize="15sp"
                 />
         </LinearLayout>
         <LinearLayout
@@ -88,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="顏色將從左下角填入至右上角"
-                android:textSize="12dp"
+                android:textSize="12sp"
                 android:textColor="@color/black"
                 />
 
@@ -532,6 +532,7 @@
                 android:layout_height="match_parent"
                 android:textSize="10sp"
                 android:textColor="@color/black"
+                android:layout_marginRight="5dp"
                 />
 
 
@@ -550,6 +551,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/rectangle_yellow"
                 android:onClick="yellow_button"
+                android:textAllCaps="false"
+                android:contentDescription="yellow"
                 />
             <Button
                 android:layout_width="0dp"
@@ -557,6 +560,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/rectangle_red"
                 android:onClick="red_button"
+                android:contentDescription="red"
                 />
             <Button
                 android:layout_width="0dp"
@@ -564,6 +568,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/rectangle_green"
                 android:onClick="green_button"
+                android:contentDescription="green"
                 />
         </LinearLayout>
         <LinearLayout
@@ -577,6 +582,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/rectangle_orange"
                 android:onClick="orange_button"
+                android:contentDescription="orange"
                 />
             <Button
                 android:layout_width="0dp"
@@ -584,6 +590,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/rectangle_blue"
                 android:onClick="blue_button"
+                android:contentDescription="blue"
                 />
             <Button
                 android:layout_width="0dp"
@@ -591,12 +598,15 @@
                 android:layout_weight="1"
                 android:background="@drawable/rectangle_white"
                 android:onClick="white_button"
+                android:contentDescription="white"
                 />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -633,6 +643,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center"
             >
 
             <Button
@@ -668,7 +679,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
 
             <Button
                 android:layout_width="wrap_content"
@@ -707,6 +720,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center"
             >
 
 
@@ -734,20 +748,46 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Array"
+                android:text="clear"
                 android:textSize="20sp"
-                android:onClick="showLog"
+                android:onClick="clear"
                 />
 
         </LinearLayout>
 
-        <Button
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="test"
-            android:textSize="20sp"
-            android:onClick="test"
-            />
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center"
+            >
+            <Button
+                android:id="@+id/button_lest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textSize="20sp"
+                android:onClick="lest"
+                />
+            <TextView
+                android:id="@+id/TextView_Solve"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="@color/black"
+                />
+            <Button
+                android:id="@+id/button_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="next"
+                android:text="2"
+                android:textSize="20sp"
+                />
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>
