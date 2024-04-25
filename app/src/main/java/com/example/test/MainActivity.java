@@ -2,12 +2,15 @@ package com.example.test;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-import org.kociemba.twophase.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,14 +34,23 @@ public class MainActivity extends AppCompatActivity {
     int[] last = {white,red,green,orange,blue,yellow};
     View[][] views = {white_views,red_views,green_views,orange_views,blue_views,yellow_views};
     private boolean isOk = false;
+    private boolean isSolve = false;
     private TextView lock;
     int[] color_put_into_block = new int[54];
     private String turn_code = "";
     private String cubeStatus = "";
+    private Button button_lest, button_next;
+    private TextView textView_Solve;
+    private int Solution_position = -1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        button_lest = findViewById(R.id.button_lest);
+        button_next = findViewById(R.id.button_next);
+        textView_Solve = findViewById(R.id.TextView_Solve);
+        button_next.setText(">");
+        button_lest.setText("<");
         for(int i = 0;i<9;i++){
             blue_views[i] = findViewById(bs[i]);
             orange_views[i] = findViewById(os[i]);
@@ -50,7 +62,32 @@ public class MainActivity extends AppCompatActivity {
         lock = findViewById(R.id.lock);
         lock.setVisibility(View.INVISIBLE);
         turn_of_code = findViewById(R.id.turn_of_code);
+        //initCube();
+    }
+    private void initCube(){
+        orange_button(null);green_button(null);white_button(null);
+        red_button(null);yellow_button(null);
+        orange_button(null);white_button(null);red_button(null);
 
+        green_button(null);white_button(null);green_button(null);
+        blue_button(null);green_button(null);
+        white_button(null);red_button(null);orange_button(null);
+
+        yellow_button(null);orange_button(null);blue_button(null);
+        orange_button(null);green_button(null);
+        white_button(null);white_button(null);orange_button(null);
+
+        yellow_button(null);orange_button(null);blue_button(null);
+        yellow_button(null);red_button(null);
+        blue_button(null);blue_button(null);yellow_button(null);
+
+        red_button(null);red_button(null);white_button(null);
+        yellow_button(null);yellow_button(null);
+        red_button(null);orange_button(null);red_button(null);
+
+        blue_button(null);green_button(null);yellow_button(null);
+        blue_button(null);white_button(null);
+        green_button(null);blue_button(null);green_button(null);
     }
     private void change_color(int id){
         if(click<8)
@@ -63,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             click = 5;
         }
 
-        Log.v("brad","location = "+location+" click = "+click);
+        //Log.v("brad","location = "+location+" click = "+click);
         switch (location){
             case 0:
                 white_views[click].setBackground(getDrawable(id));
@@ -864,7 +901,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void solve(View view) {
-        //if(isOk){
+        if(isOk){
             int[] cube_position = new int[]{51,52,53,48,49,50,45,46,47,33,34,35,30,31,32,27,28,29,24,25,26,21,22,23,18,19,20,6,7,8,3,4,5,0,1,2,15,16,17,12,13,14,9,10,11,42,43,44,39,40,41,36,37,38};
             cubeStatus = "";
             for(int i = 0;i<cube_position.length;i++){
@@ -891,20 +928,178 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
             }
-            cubeStatus = "FBFBUDBFUBBUURLURBDDRRFFURBRDLLDURFDDLRBLFFDFLRLUBULLD";
+            //cubeStatus = "FBFBUDBFUBBUURLURBDDRRFFURBRDLLDURFDDLRBLFFDFLRLUBULLD";
             Log.v("brad",cubeStatus);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    String a = Search.solution(cubeStatus,26000,10,false);
-                    Log.v("brad",a);
+            String solution = new Search().solution(cubeStatus,30,20,0,0);
+            solution = solution.replaceAll("  "," ");
+            Log.v("brad",solution);
+            isSolve = true;
+            Solution_position = -1;
+//            button_lest.setVisibility(View.VISIBLE);
+//            button_right.setVisibility(View.VISIBLE);
+//            textView_Solve.setVisibility(View.VISIBLE);
+            String[] solutions = solution.split(" ");
+            String newSolution = "";
+            for(int i = 0;i<solutions.length;i++){
+                if(i%9 == 8){
+                    newSolution += "\n";
                 }
-            }).start();
-
+                newSolution += solutions[i];
+                newSolution += " ";
+            }
+            textView_Solve.setText(newSolution);
         }
-    //}
+    }
 
-    public void test(View view) {
+    public void lest(View view) {
+        if(isSolve){
+            String solution = textView_Solve.getText().toString().replaceAll("\n","");
+            String[] solutions = solution.split(" ");
+            if(Solution_position != -1){
+                SolveCube(solutions[Solution_position],false);
+                Solution_position--;
+                SolutionText(Solution_position);
+            }
+        }
+    }
 
+    public void next(View view) {
+        if(isSolve){
+            String solution = textView_Solve.getText().toString().replaceAll("\n","");
+            String[] solutions = solution.split(" ");
+            Solution_position++;
+            if(Solution_position < solutions.length)
+                SolveCube(solutions[Solution_position],true);
+            SolutionText(Solution_position);
+        }
+    }
+    private void SolutionText(int solution_position){
+        String solution = textView_Solve.getText().toString();
+        String[] solutions = solution.split(" ");
+        if(solution_position >= solutions.length){
+            Solution_position--;
+            return;
+        }
+        SpannableString spannableString = new SpannableString(solution);
+        int char_position = 0;
+        for(int i = 0;i<solution_position+1;i++){
+            char_position += solutions[i].length();
+            char_position += 1;
+        }
+        spannableString.setSpan(new ForegroundColorSpan(Color.GREEN),0,char_position,0);
+
+        textView_Solve.setText(spannableString);
+    }
+    private void SolveCube(String turn_code,boolean isPositive){
+        //Log.v("brad",turn_code);
+        if(isPositive){
+            switch (turn_code){
+                case "R2":
+                    right_button(null);
+                case "R":
+                    right_button(null);
+                    break;
+                case "U2":
+                    up_button(null);
+                case "U":
+                    up_button(null);
+                    break;
+                case "F2":
+                    front_button(null);
+                case "F":
+                    front_button(null);
+                    break;
+                case "L2":
+                    left_button(null);
+                case "L":
+                    left_button(null);
+                    break;
+                case "D2":
+                    down_button(null);
+                case "D":
+                    down_button(null);
+                    break;
+                case "B2":
+                    back_button(null);
+                case "B":
+                    back_button(null);
+                    break;
+                case "R'":
+                    right_bar_button(null);
+                    break;
+                case "U'":
+                    up_bar_button(null);
+                    break;
+                case "F'":
+                    front_bar_button(null);
+                    break;
+                case "L'":
+                    left_bar_button(null);
+                    break;
+                case "D'":
+                    down_bar_button(null);
+                    break;
+                case "B'":
+                    back_bar_button(null);
+                    break;
+            }
+        }
+        else {
+            switch (turn_code){
+                case "R2":
+                    right_bar_button(null);
+                case "R":
+                    right_bar_button(null);
+                    break;
+                case "U2":
+                    up_bar_button(null);
+                case "U":
+                    up_bar_button(null);
+                    break;
+                case "F2":
+                    front_bar_button(null);
+                case "F":
+                    front_bar_button(null);
+                    break;
+                case "L2":
+                    left_bar_button(null);
+                case "L":
+                    left_bar_button(null);
+                    break;
+                case "D2":
+                    down_bar_button(null);
+                case "D":
+                    down_bar_button(null);
+                    break;
+                case "B2":
+                    back_bar_button(null);
+                case "B":
+                    back_bar_button(null);
+                    break;
+                case "R'":
+                    right_button(null);
+                    break;
+                case "U'":
+                    up_button(null);
+                    break;
+                case "F'":
+                    front_button(null);
+                    break;
+                case "L'":
+                    left_button(null);
+                    break;
+                case "D'":
+                    down_button(null);
+                    break;
+                case "B'":
+                    back_button(null);
+                    break;
+            }
+        }
+    }
+
+    public void clear(View view) {
+        turn_of_code.setText("");
+        turn_code = "";
     }
 }
