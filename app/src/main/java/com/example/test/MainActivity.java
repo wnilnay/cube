@@ -1,7 +1,10 @@
 package com.example.test;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -12,6 +15,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Time;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.function.LongFunction;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,10 +55,17 @@ public class MainActivity extends AppCompatActivity {
     private Button button_lest, button_next;
     private TextView textView_Solve;
     private int Solution_position = -1;
+
+    private BluetoothSocket socket;
+    private OutputStream outputStream;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        socket = BluetoothSocketManager.getSocket();
+
         button_lest = findViewById(R.id.button_lest);
         button_next = findViewById(R.id.button_next);
         textView_Solve = findViewById(R.id.TextView_Solve);
@@ -64,7 +83,55 @@ public class MainActivity extends AppCompatActivity {
         lock.setVisibility(View.INVISIBLE);
         turn_of_code = findViewById(R.id.turn_of_code);
         //initCube();
+
+        button_lest.setVisibility(View.INVISIBLE);
+        button_next.setVisibility(View.INVISIBLE);
+        Toast.makeText(this,"請確認魔術方塊放置於解魔方機上",Toast.LENGTH_LONG).show();
+
     }
+    private void sendString(String dataToSend){
+        if (socket != null && socket.isConnected()) {
+            try {
+                outputStream = socket.getOutputStream();
+
+                outputStream.write(dataToSend.getBytes("utf-8"));
+
+                Toast.makeText(this, "已傳送字串", Toast.LENGTH_SHORT).show();
+
+            } catch (IOException e) {
+                //Log.d("BActivity", "IOException: " + e.getMessage());
+                Toast.makeText(this, "傳送失敗：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "藍牙未連線", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private String getString(){
+        try {
+            if(socket.isConnected()){
+                char read;
+                String temp = "";
+                InputStream is = socket.getInputStream();
+                while (true){
+                    if(is.available() == 0){
+                        break;
+                    }
+                    read = (char)is.read();
+                    if(read == '\0') break;
+                    temp += read;
+                    //Log.d("wnilnay",(int)read+"");
+                }
+                Log.d("wnilnay",temp);
+                return temp;
+            }
+        }
+        catch (IOException | NullPointerException e) {
+            Log.d("wnilnay",e.getMessage());
+            return "Error";
+        }
+        return "";
+    }
+
     private void initCube(){
         orange_button(null);green_button(null);white_button(null);
         red_button(null);yellow_button(null);
@@ -101,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             click = 5;
         }
 
-        //Log.v("brad","location = "+location+" click = "+click);
+        //Log.d("wnilnay","location = "+location+" click = "+click);
         switch (location){
             case 0:
                 white_views[click].setBackground(getDrawable(id));
@@ -127,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private Drawable[] get_back_ground(int color_from,int color_camp1,int color_camp2,int color_end,int[] position){
         /*for (int i = 0;i<12;i++){
-            Log.v("brad",position[i]+"");
+            Log.d("wnilnay",position[i]+"");
         }*/
 
         Drawable[] drawables = new Drawable[12];
@@ -171,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
     /*旋轉方向與顏色填寫方向相反==>為順時針轉*/
     /*旋轉方向與顏色填寫方向相同==>為逆時針轉*/
     private void up(){
-        //Log.v("brad","up");
+        //Log.d("wnilnay","up");
         //region 變更顏色
         //轉動邊相對位置
         int[] position_order = {6,7,8,6,7,8,6,7,8,6,7,8};
@@ -188,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0;i<9;i++){
             views[5][up_color_position[i]].setBackground(up_colors[i]);
         }
-        //Log.v("brad","finish");
+        //Log.d("wnilnay","finish");
         int j = 0,m = 0;
         for(int i = 0;i<12;i++){
            if(m == 3){
@@ -601,7 +668,7 @@ public class MainActivity extends AppCompatActivity {
     public void redo(View view) {
         if(!isOk){
             if(location>=0&&click>=0){
-                //Log.v("brad","location = "+location+" click = "+click);
+                //Log.d("wnilnay","location = "+location+" click = "+click);
                 //Drawable a = white_views[click].getBackground();
                 switch (click_button[click_times]){
                     case 0:
@@ -896,12 +963,12 @@ public class MainActivity extends AppCompatActivity {
                 a = a + color_put_into_block[i] + "\t";
                 b = b + i + "\t";
             }
-            Log.v("brad", a);
-            Log.v("brad", b);
+            Log.d("wnilnay", a);
+            Log.d("wnilnay", b);
         }
     }
 
-    public void solve(View view) {
+    public String solve(View view) {
         if(isOk){
             int[] cube_position = new int[]{51,52,53,48,49,50,45,46,47,33,34,35,30,31,32,27,28,29,24,25,26,21,22,23,18,19,20,6,7,8,3,4,5,0,1,2,15,16,17,12,13,14,9,10,11,42,43,44,39,40,41,36,37,38};
             cubeStatus = "";
@@ -930,10 +997,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             //cubeStatus = "FBFBUDBFUBBUURLURBDDRRFFURBRDLLDURFDDLRBLFFDFLRLUBULLD";
-            Log.v("brad",cubeStatus);
-            String solution = new Search().solution(cubeStatus,30,20,0,0);
+            Log.d("wnilnay",cubeStatus);
+            String solution = new Search().solution(cubeStatus,20,1000000,10000,0);
             solution = solution.replaceAll("  "," ");
-            Log.v("brad",solution);
+            Log.d("wnilnay",solution);
             isSolve = true;
             Solution_position = -1;
 //            button_lest.setVisibility(View.VISIBLE);
@@ -949,7 +1016,10 @@ public class MainActivity extends AppCompatActivity {
                 newSolution += " ";
             }
             textView_Solve.setText(newSolution);
+
+            return solution;
         }
+        return null;
     }
 
     public void lest(View view) {
@@ -992,7 +1062,7 @@ public class MainActivity extends AppCompatActivity {
         textView_Solve.setText(spannableString);
     }
     private void SolveCube(String turn_code,boolean isPositive){
-        //Log.v("brad",turn_code);
+        //Log.d("wnilnay",turn_code);
         if(isPositive){
             switch (turn_code){
                 case "R2":
@@ -1104,8 +1174,156 @@ public class MainActivity extends AppCompatActivity {
         turn_code = "";
     }
 
-    public void BlueToothTest(View view) {
-        Intent intent = new Intent(this, BlueToothActivity.class);
-        startActivity(intent);
+    public void inputColor(View view) {
+        String colors = "YYYYYYYYYOOOOOOOOOGGGGGGGGGWWWWWWWWWRRRRRRRRRBBBBBBBBB";
+        setColor(colors);
     }
+
+    private void set_color_put_into_block(String colors){
+        char[] colorsArray = colors.toCharArray();
+        int[] orders = {33, 34, 35, 30, 31, 32, 27, 28, 29, 42, 43, 44, 39, 40, 41, 36, 37, 38, 24, 25, 26, 21, 22, 23, 18, 19, 20, 15, 16, 17, 12, 13, 14, 9, 10, 11, 51, 52, 53, 48, 49, 50, 45, 46, 47, 6, 7, 8, 3, 4, 5, 0, 1, 2};
+        char colorUp = colorsArray[4],colorRight = colorsArray[13],colorFront = colorsArray[22],colorDown = colorsArray[31],colorLeft = colorsArray[40],colorBack = colorsArray[49];
+        Log.d("wnilnay",colorUp + "");Log.d("wnilnay",colorRight + "");Log.d("wnilnay",colorFront + "");Log.d("wnilnay",colorDown + "");Log.d("wnilnay",colorLeft + "");Log.d("wnilnay",colorBack + "");
+        for(int i = 0;i<colorsArray.length;i++){
+            if(colorsArray[orders[i]] == colorUp){
+                color_put_into_block[i] = 5;
+            }
+            else if(colorsArray[orders[i]] == colorRight){
+                color_put_into_block[i] = 3;
+            }
+            else if(colorsArray[orders[i]] == colorFront){
+                color_put_into_block[i] = 2;
+            }
+            else if(colorsArray[orders[i]] == colorDown){
+                color_put_into_block[i] = 0;
+            }
+            else if(colorsArray[orders[i]] == colorLeft){
+                color_put_into_block[i] = 1;
+            }
+            else if(colorsArray[orders[i]] == colorBack){
+                color_put_into_block[i] = 4;
+            }
+        }
+        String color = "";
+        for (int i : color_put_into_block){
+            color += i + "";
+        }
+        Log.d("wnilnay",color);
+    }
+
+    private void setColor(String colors){
+        char[] colorsArray = colors.toCharArray();
+        int[] positionOrder = {6,7,8,3,4,5,0,1,2};
+        int position = 0;
+        int[] colorOrder = {5,3,2,0,1,4};
+        int colorPosition = 0;
+        for(char color : colorsArray){
+            switch (color){
+                case 'Y':
+                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_yellow));
+                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    break;
+                case 'O':
+                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_orange));
+                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    break;
+                case 'G':
+                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_green));
+                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    break;
+                case 'W':
+                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_white));
+                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    break;
+                case 'R':
+                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_red));
+                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    break;
+                case 'B':
+                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_blue));
+                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    private boolean isChangePosition(int position){
+        if(position == 9){
+            return true;
+        }
+        return false;
+    }
+
+    public void newSolve(View view) {
+        up_button(null);
+        down_button(null);
+        right_button(null);
+        down_button(null);
+        left_button(null);
+        front_bar_button(null);
+        left_button(null);
+
+        sendString(solve(null));
+    }
+
+    public void OkButton(View view) {
+        isOk = true;
+        sendString("OK");
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                String cubeColor = getString();
+                if(cubeColor.contains("cube color")){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                           String color = cubeColor.replace("cube color:","");
+                           Log.d("wnilnay",color);
+                           setColor(color);
+                           set_color_put_into_block(color);
+                           sendString(solve(null));
+
+                           Timer timer1 = new Timer();
+                           timer1.schedule(new TimerTask() {
+                               @Override
+                               public void run() {
+                                   String nextString = getString();
+                                   if(nextString.contains("next")){
+                                       runOnUiThread(new Runnable() {
+                                           @Override
+                                           public void run() {
+                                               next(null);
+                                           }
+                                       });
+                                   }
+                                   else if(nextString.contains("end")){
+                                       runOnUiThread(new Runnable() {
+                                           @Override
+                                           public void run() {
+                                               button_lest.setVisibility(View.VISIBLE);
+                                               button_next.setVisibility(View.VISIBLE);
+                                               Toast.makeText(getBaseContext(),"完成!",Toast.LENGTH_SHORT).show();
+                                           }
+                                       });
+
+                                       timer1.cancel();
+                                   }
+                               }
+                           },0,1000);
+                        }
+                    });
+                    timer.cancel();
+                }
+            }
+        },0,1000);
+    }
+
+
+
+//    public void BlueToothTest(View view) {
+//        Intent intent = new Intent(this, BlueToothActivity.class);
+//        startActivity(intent);
+//    }
 }

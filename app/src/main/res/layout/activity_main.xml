@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
+    android:keepScreenOn="true"
     android:background="@color/white">
 
     <LinearLayout
@@ -47,7 +48,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="點選以下按鈕以選擇顏色"
+                android:text="將魔術方塊置於解魔方機"
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 />
@@ -76,7 +77,7 @@
                 android:id="@+id/yellow_5"
                 android:layout_width="30sp"
                 android:layout_height="30sp"
-                android:background="@drawable/rectangle_yellow"
+                android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/yellow_6"
@@ -87,8 +88,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="顏色將從左下角填入至右上角"
-                android:textSize="12sp"
+                android:text="點選Ok按鈕"
+                android:textSize="20sp"
                 android:textColor="@color/black"
                 />
 
@@ -127,13 +128,13 @@
                 android:background="@drawable/rectangle_gray"
                 />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="無法選擇中心點顏色"
-                android:textColor="#FF0000"
-                android:textSize="18sp" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="無法選擇中心點顏色"-->
+<!--                android:textColor="#FF0000"-->
+<!--                android:textSize="18sp" />-->
 
 
         </LinearLayout>
@@ -243,7 +244,7 @@
                 android:id="@+id/red_5"
                 android:layout_width="30sp"
                 android:layout_height="30sp"
-                android:background="@drawable/rectangle_red"
+                android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/red_6"
@@ -265,7 +266,7 @@
                 android:id="@+id/green_5"
                 android:layout_width="30sp"
                 android:layout_height="30sp"
-                android:background="@drawable/rectangle_green"
+                android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/green_6"
@@ -287,7 +288,7 @@
                 android:id="@+id/orange_5"
                 android:layout_width="30sp"
                 android:layout_height="30sp"
-                android:background="@drawable/rectangle_orange"
+                android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/orange_6"
@@ -309,7 +310,7 @@
                 android:id="@+id/blue_5"
                 android:layout_width="30sp"
                 android:layout_height="30sp"
-                android:background="@drawable/rectangle_blue"
+                android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/blue_6"
@@ -443,13 +444,13 @@
                 android:layout_height="30sp"
                 android:background="@drawable/rectangle_gray"
                 />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="轉動代號以黃上綠前為標準"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text=""-->
+<!--                android:textSize="14sp"-->
+<!--                android:textColor="@color/black"-->
+<!--                />-->
 
         </LinearLayout>
         <LinearLayout
@@ -476,7 +477,7 @@
                 android:id="@+id/white_5"
                 android:layout_width="30sp"
                 android:layout_height="30sp"
-                android:background="@drawable/rectangle_white"
+                android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/white_6"
@@ -532,226 +533,258 @@
                 android:textSize="10sp"
                 android:textColor="@color/black"
                 android:layout_marginRight="5dp"
+                android:visibility="invisible"
                 />
 
 
 
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp">
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:paddingTop="10dp"-->
+<!--            android:paddingBottom="10dp">-->
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:background="@drawable/rectangle_yellow"
-                android:onClick="yellow_button"
-                android:textAllCaps="false"
-                android:contentDescription="yellow"
-                />
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:background="@drawable/rectangle_red"
-                android:onClick="red_button"
-                android:contentDescription="red"
-                />
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:background="@drawable/rectangle_green"
-                android:onClick="green_button"
-                android:contentDescription="green"
-                />
-        </LinearLayout>
+<!--            <Button-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="100dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/rectangle_yellow"-->
+<!--                android:onClick="yellow_button"-->
+<!--                android:textAllCaps="false"-->
+<!--                android:contentDescription="yellow"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="100dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/rectangle_red"-->
+<!--                android:onClick="red_button"-->
+<!--                android:contentDescription="red"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="100dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/rectangle_green"-->
+<!--                android:onClick="green_button"-->
+<!--                android:contentDescription="green"-->
+<!--                />-->
+<!--        </LinearLayout>-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            <Button-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="100dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/rectangle_orange"-->
+<!--                android:onClick="orange_button"-->
+<!--                android:contentDescription="orange"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="100dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/rectangle_blue"-->
+<!--                android:onClick="blue_button"-->
+<!--                android:contentDescription="blue"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="100dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/rectangle_white"-->
+<!--                android:onClick="white_button"-->
+<!--                android:contentDescription="white"-->
+<!--                />-->
+<!--        </LinearLayout>-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center"-->
+<!--            >-->
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="redo"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="redo"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="OK"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="ok_button"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="Up"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="up_button"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="down"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="down_button"-->
+<!--                />-->
+
+
+
+<!--        </LinearLayout>-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center"-->
+<!--            >-->
+
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="Right"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="right_button"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="Left"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="left_button"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="front"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="front_button"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="back"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="back_button"-->
+<!--                />-->
+
+<!--        </LinearLayout>-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center"-->
+<!--            >-->
+
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="Up'"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="up_bar_button"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="down'"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="down_bar_button"-->
+<!--                />-->
+
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="Right'"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="right_bar_button"-->
+<!--                />-->
+
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Solve"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="solve"-->
+<!--                />-->
+
+
+<!--        </LinearLayout>-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center"-->
+<!--            >-->
+
+
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="Left'"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="left_bar_button"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="front'"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="front_bar_button"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="back'"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="back_bar_button"-->
+<!--                />-->
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="clear"-->
+<!--                android:textSize="20sp"-->
+<!--                android:onClick="clear"-->
+<!--                />-->
+
+<!--        </LinearLayout>-->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal">
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:background="@drawable/rectangle_orange"
-                android:onClick="orange_button"
-                android:contentDescription="orange"
-                />
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:background="@drawable/rectangle_blue"
-                android:onClick="blue_button"
-                android:contentDescription="blue"
-                />
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_weight="1"
-                android:background="@drawable/rectangle_white"
-                android:onClick="white_button"
-                android:contentDescription="white"
-                />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            >
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="redo"
-                android:textSize="20sp"
-                android:onClick="redo"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="OK"
-                android:textSize="20sp"
-                android:onClick="ok_button"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Up"
-                android:textSize="20sp"
-                android:onClick="up_button"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="down"
-                android:textSize="20sp"
-                android:onClick="down_button"
-                />
-
-
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            >
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Right"
-                android:textSize="20sp"
-                android:onClick="right_button"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Left"
-                android:textSize="20sp"
-                android:onClick="left_button"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="front"
-                android:textSize="20sp"
-                android:onClick="front_button"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="back"
-                android:textSize="20sp"
-                android:onClick="back_button"
-                />
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            >
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Up'"
-                android:textSize="20sp"
-                android:onClick="up_bar_button"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="down'"
-                android:textSize="20sp"
-                android:onClick="down_bar_button"
-                />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Right'"
-                android:textSize="20sp"
-                android:onClick="right_bar_button"
-                />
-
+<!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="InputColor"-->
+<!--                android:textSize="20sp"-->
+<!--                android:textAllCaps="false"-->
+<!--                android:onClick="inputColor"-->
+<!--                />-->
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Solve"
-                android:textSize="20sp"
-                android:onClick="solve"
-                />
-
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            >
-
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Left'"
-                android:textSize="20sp"
-                android:onClick="left_bar_button"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="front'"
-                android:textSize="20sp"
-                android:onClick="front_bar_button"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="back'"
-                android:textSize="20sp"
-                android:onClick="back_bar_button"
-                />
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="clear"
-                android:textSize="20sp"
-                android:onClick="clear"
-                />
-
+                android:layout_gravity="center"
+                android:onClick="OkButton"
+                android:text="Ok"
+                android:textAllCaps="false"
+                android:textSize="20sp" />
+            <!--            <Button-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Solve"-->
+<!--                android:textSize="20sp"-->
+<!--                android:textAllCaps="false"-->
+<!--                android:onClick="newSolve"-->
+<!--                />-->
         </LinearLayout>
 
         <LinearLayout
@@ -787,15 +820,15 @@
                 android:textSize="20sp"
                 />
         </LinearLayout>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="BlueToothTest"
-            android:textAllCaps="false"
-            android:textSize="15sp"
-            android:layout_gravity="center"
-            android:onClick="BlueToothTest"
-            />
+<!--        <Button-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="BlueToothTest"-->
+<!--            android:textAllCaps="false"-->
+<!--            android:textSize="15sp"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:onClick="BlueToothTest"-->
+<!--            />-->
 
     </LinearLayout>
 
