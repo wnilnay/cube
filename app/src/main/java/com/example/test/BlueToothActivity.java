@@ -22,26 +22,30 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 
 public class BlueToothActivity extends AppCompatActivity {
 
     private BluetoothDevice device;
     private BluetoothAdapter adapter;
-    private String deviceName, deviceAddress;
+    private String deviceName,deviceAddress;
     private TextView showDevice;
     private EditText dataText;
     private BluetoothSocket socket;
     private ParcelUuid[] deviceUUid;
     private OutputStream os;
     private InputStream is;
+    private Timer timer = new Timer();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blue_tooth);
-
         showDevice = findViewById(R.id.textView);
-        dataText = findViewById(R.id.editTextTextPersonName);
+        //dataText = findViewById(R.id.editTextTextPersonName);
         //藍芽調配器
         adapter = BluetoothAdapter.getDefaultAdapter();
         // bluetooth抓到設備發送廣播
@@ -50,89 +54,166 @@ public class BlueToothActivity extends AppCompatActivity {
             registerReceiver(receiver, filter);//廣播
         }
     }
+    //廣播回傳
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             try {
                 String action = intent.getAction();
-                Log.d("taggg",""+action);
+                Log.d("brad",""+action);
                 device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 deviceName = device.getName();
                 deviceAddress = device.getAddress(); // MAC address
                 showDevice.setText("配對裝置:" + deviceName + "\n" + "位址:" + deviceAddress);
-
                 //回傳的選擇裝置進行配對
                 device.createBond();
-            } catch (SecurityException e) {
-                Log.e("CreateBondError", e.getMessage());
+
+            }catch (SecurityException securityException){
+                Log.v("brad","SecurityException");
             }
+
         }
     };
     public void pairDevice(View view) {
-        //當藍芽未開啟
-        if(!adapter.isEnabled()) {
-            try {
+        try {
+            if(!adapter.isEnabled()) {
                 Toast.makeText(view.getContext(),"先開權限後再點擊按鈕",Toast.LENGTH_SHORT).show();
                 //打開藍芽窗(問你是否打開藍芽)
                 Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,300);
                 startActivity(intent);
             }
-            catch (SecurityException securityException) {
+            else{
+                //藍芽scanner
+                //Toast.makeText(view.getContext(),"PairDevice",Toast.LENGTH_SHORT).show();
+                Intent bluetoothPicker = new Intent("android.bluetooth.devicepicker.action.LAUNCH");
+                startActivity(bluetoothPicker);
+                //打開手機藍芽頁面
+//                Intent intentSettings = new Intent();
+//                intentSettings.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
+//                startActivity(intentSettings);
 
             }
         }
-        else{
-            //藍芽scanner
-            Toast.makeText(view.getContext(),"PairDevice",Toast.LENGTH_SHORT).show();
-            /*Intent bluetoothPicker = new Intent("android.bluetooth.devicepicker.action.LAUNCH");
-            startActivity(bluetoothPicker);*/
-            //打開手機藍芽頁面
-            Intent intentSettings = new Intent();
-            intentSettings.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
-            startActivity(intentSettings);
-
+        catch (SecurityException securityException){
+            Log.v("brad","SecurityException");
         }
+        //當藍芽未開啟
     }
     //當按下傳送按鈕
     public void sendData(View view){
         try {
-            deviceUUid = device.getUuids();
-            Log.d("UUid",""+deviceUUid[0].getUuid());
-            Log.d("UUidSize",""+deviceUUid.length);
-            if(socket==null){
-                //連線方法1(不安全的連線)
-//                socket=device.createInsecureRfcommSocketToServiceRecord(deviceUUid[0].getUuid());
-                //連線方法2(安全的連線)
-                socket=device.createRfcommSocketToServiceRecord(deviceUUid[0].getUuid());
-                //迴圈進行連線
-                while(!socket.isConnected()){
-                    try {
-                        sleep(5000);
-                        socket.connect();
-                        Log.d("Connect State",""+socket.isConnected());
-                        if(socket.isConnected()){
-                            Toast.makeText(getApplicationContext(),"連線成功",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                    catch (IOException | InterruptedException | SecurityException e) {
-                        e.printStackTrace();
-                    }
-                }
-                os=socket.getOutputStream();//輸入流
-                is=socket.getInputStream();//輸出流
+            /*deviceUUid = device.getUuids();
+            Log.d("brad",""+deviceUUid[0].getUuid());
+            Log.d("brad",""+deviceUUid.length);
+            if(socket == null || !socket.isConnected()) {
+                // 連線方法(安全的連線)
+                socket = device.createRfcommSocketToServiceRecord(deviceUUid[0].getUuid());
+
+                // 開始連線
+                socket.connect();
+                Log.v("brad","run");*/
+            if(socket.isConnected()){
+                Toast.makeText(getApplicationContext(),"連線成功",Toast.LENGTH_SHORT).show();
+                os = socket.getOutputStream();//輸入流
+                is = socket.getInputStream();//輸出流
+            } else {
+                Toast.makeText(getApplicationContext(),"連線失敗",Toast.LENGTH_SHORT).show();
             }
-            os.write(dataText.getText().toString().getBytes("utf-8"));//utf-8寫入選擇裝置
+
+            // }
+
+            // 寫入字串
+            os.write(dataText.getText().toString().getBytes("utf-8"));
             Toast.makeText(getApplicationContext(),"已傳送字串",Toast.LENGTH_SHORT).show();
-            Log.d("sendText",""+dataText.getText().toString().getBytes());
         }
-        catch (SecurityException |IOException e){
-            Log.d("Socket Error",""+e);
+        catch (SecurityException securityException){
+            Log.v("brad","SecurityException");
+        }
+        catch (IOException e) {
+            Log.d("brad", "IOException: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "連線失敗：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.d("brad", "Exception: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "發生錯誤：" + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
-    public void disConnect(View view){
-        socket = null;
-        is = null;
-        os = null;
+
+    public void disConnect(View view) {
+        try {
+            if(socket != null)
+                socket.close();
+        }
+        catch (IOException e){
+
+        }
+
         Toast.makeText(getApplicationContext(),"已斷線",Toast.LENGTH_SHORT).show();
+    }
+
+    public void connectDevice(View view) {
+        try {
+            if (device == null) {
+                Toast.makeText(this, "請選擇配對裝置", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            socket = null;
+            is = null;
+            os = null;
+            deviceUUid = device.getUuids();
+            Log.d("brad", "" + deviceUUid.length);
+
+            if (socket == null || !socket.isConnected()) {
+                // 連線方法(安全的連線)
+                socket = device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"));
+
+                // 開始連線
+                socket.connect();
+                Log.v("brad", "run");
+
+                if (socket.isConnected()) {
+                    Toast.makeText(getApplicationContext(), "連線成功", Toast.LENGTH_SHORT).show();
+
+                    // 保存 BluetoothSocket
+                    BluetoothSocketManager.setSocket(socket);
+
+                    // 跳轉到 B Activity
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "連線失敗", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (SecurityException | IOException exception) {
+            Log.v("brad", exception.getMessage());
+        }
+    }
+
+    public void catchData(View view) {
+        try {
+            if(socket.isConnected()){
+                char read;
+                String temp = "";
+                while (true){
+                    read = (char)is.read();
+                    temp += read;
+                    //Log.v("brad",(int)read+"");
+                    if(is.available() == 0){
+                        break;
+                    }
+                }
+                Log.v("brad",temp);
+            }
+        }
+        catch (IOException | NullPointerException e) {
+            Log.v("brad",e.getMessage());
+        }
+    }
+
+    public void Enter(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
