@@ -2,11 +2,18 @@ package com.example.test;
 
 import static java.lang.Thread.sleep;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import android.bluetooth.BluetoothAdapter;
@@ -38,41 +45,31 @@ public class BlueToothActivity extends AppCompatActivity {
     private OutputStream os;
     private InputStream is;
     private Timer timer = new Timer();
+    private static final int REQUEST_CODE = 1;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blue_tooth);
         showDevice = findViewById(R.id.textView);
         //dataText = findViewById(R.id.editTextTextPersonName);
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.BLUETOOTH, android.Manifest.permission.BLUETOOTH_ADMIN, android.Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.BLUETOOTH_CONNECT},
+                    0);
+        }
+
         //藍芽調配器
         adapter = BluetoothAdapter.getDefaultAdapter();
-        // bluetooth抓到設備發送廣播
-        IntentFilter filter = new IntentFilter("android.bluetooth.devicepicker.action.DEVICE_SELECTED");
-        if(receiver!=null) {
-            registerReceiver(receiver, filter);//廣播
-        }
     }
-    //廣播回傳
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            try {
-                String action = intent.getAction();
-                Log.d("brad",""+action);
-                device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                deviceName = device.getName();
-                deviceAddress = device.getAddress(); // MAC address
-                showDevice.setText("配對裝置:" + deviceName + "\n" + "位址:" + deviceAddress);
-                //回傳的選擇裝置進行配對
-                device.createBond();
-
-            }catch (SecurityException securityException){
-                Log.v("brad","SecurityException");
-            }
-
-        }
-    };
     public void pairDevice(View view) {
         try {
             if(!adapter.isEnabled()) {
@@ -83,15 +80,8 @@ public class BlueToothActivity extends AppCompatActivity {
                 startActivity(intent);
             }
             else{
-                //藍芽scanner
-                //Toast.makeText(view.getContext(),"PairDevice",Toast.LENGTH_SHORT).show();
-                Intent bluetoothPicker = new Intent("android.bluetooth.devicepicker.action.LAUNCH");
-                startActivity(bluetoothPicker);
-                //打開手機藍芽頁面
-//                Intent intentSettings = new Intent();
-//                intentSettings.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
-//                startActivity(intentSettings);
-
+                Intent intent = new Intent(this,DeviceListActivity.class);
+                startActivityForResult(intent,REQUEST_CODE);
             }
         }
         catch (SecurityException securityException){
@@ -99,44 +89,26 @@ public class BlueToothActivity extends AppCompatActivity {
         }
         //當藍芽未開啟
     }
-    //當按下傳送按鈕
-    public void sendData(View view){
-        try {
-            /*deviceUUid = device.getUuids();
-            Log.d("brad",""+deviceUUid[0].getUuid());
-            Log.d("brad",""+deviceUUid.length);
-            if(socket == null || !socket.isConnected()) {
-                // 連線方法(安全的連線)
-                socket = device.createRfcommSocketToServiceRecord(deviceUUid[0].getUuid());
 
-                // 開始連線
-                socket.connect();
-                Log.v("brad","run");*/
-            if(socket.isConnected()){
-                Toast.makeText(getApplicationContext(),"連線成功",Toast.LENGTH_SHORT).show();
-                os = socket.getOutputStream();//輸入流
-                is = socket.getInputStream();//輸出流
-            } else {
-                Toast.makeText(getApplicationContext(),"連線失敗",Toast.LENGTH_SHORT).show();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
+            try {
+                device = BluetoothDeviceManager.getDevice();
+                deviceName = device.getName();
+                deviceAddress = device.getAddress(); // MAC address
+                showDevice.setText("配對裝置:" + deviceName + "\n" + "位址:" + deviceAddress);
+                //回傳的選擇裝置進行配對
+                device.createBond();
+
+            }catch (SecurityException securityException){
+                Log.v("wnilnay catch","SecurityException");
             }
-
-            // }
-
-            // 寫入字串
-            os.write(dataText.getText().toString().getBytes("utf-8"));
-            Toast.makeText(getApplicationContext(),"已傳送字串",Toast.LENGTH_SHORT).show();
-        }
-        catch (SecurityException securityException){
-            Log.v("brad","SecurityException");
-        }
-        catch (IOException e) {
-            Log.d("brad", "IOException: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), "連線失敗：" + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Log.d("brad", "Exception: " + e.getMessage());
-            Toast.makeText(getApplicationContext(), "發生錯誤：" + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
 
     public void disConnect(View view) {
         try {
@@ -187,33 +159,7 @@ public class BlueToothActivity extends AppCompatActivity {
                 }
             }
         } catch (SecurityException | IOException exception) {
-            Log.v("brad", exception.getMessage());
+            Log.e("brad", exception.toString());
         }
-    }
-
-    public void catchData(View view) {
-        try {
-            if(socket.isConnected()){
-                char read;
-                String temp = "";
-                while (true){
-                    read = (char)is.read();
-                    temp += read;
-                    //Log.v("brad",(int)read+"");
-                    if(is.available() == 0){
-                        break;
-                    }
-                }
-                Log.v("brad",temp);
-            }
-        }
-        catch (IOException | NullPointerException e) {
-            Log.v("brad",e.getMessage());
-        }
-    }
-
-    public void Enter(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
     }
 }
