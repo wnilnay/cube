@@ -56,17 +56,80 @@ public class BlueToothActivity extends AppCompatActivity {
         showDevice = findViewById(R.id.textView);
         //dataText = findViewById(R.id.editTextTextPersonName);
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+//
+//            requestPermissions(
+//                    new String[]{android.Manifest.permission.BLUETOOTH,
+//                    android.Manifest.permission.BLUETOOTH_ADMIN,
+//                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+//                    Manifest.permission.ACCESS_COARSE_LOCATION,
+//                    Manifest.permission.BLUETOOTH_CONNECT,
+//                    Manifest.permission.BLUETOOTH_SCAN},
+//                    0);
+//            Log.d("wnilnay ContextCompat0", ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT) + "");
+//        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            // Android 12 (API 31) 和以上需要的權限
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//                // 請求 Android 12 的新權限
+//                requestPermissions(
+//                        new String[]{
+//                                Manifest.permission.BLUETOOTH_CONNECT,
+//                                Manifest.permission.BLUETOOTH_SCAN,
+//                                Manifest.permission.ACCESS_FINE_LOCATION,
+//                                Manifest.permission.ACCESS_COARSE_LOCATION
+//                        },
+//                        0);
+//            }
+//        } else {
+//            // Android 12 以下版本需要的權限
+//            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//                // 請求舊版 Android 所需的權限
+//                requestPermissions(
+//                        new String[]{
+//                                android.Manifest.permission.BLUETOOTH,
+//                                android.Manifest.permission.BLUETOOTH_ADMIN,
+//                                Manifest.permission.ACCESS_FINE_LOCATION,
+//                                Manifest.permission.ACCESS_COARSE_LOCATION
+//                        },
+//                        0);
+//            }
+//        }
+        // 檢查和請求藍牙權限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // API 31 及以上
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
 
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.BLUETOOTH, android.Manifest.permission.BLUETOOTH_ADMIN, android.Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_SCAN},
-                    0);
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN},
+                        0);
+            }
+        } else { // 針對 API 30 及以下
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                        0);
+            }
         }
+
+
 
         //藍芽調配器
         adapter = BluetoothAdapter.getDefaultAdapter();
@@ -134,7 +197,7 @@ public class BlueToothActivity extends AppCompatActivity {
             is = null;
             os = null;
             deviceUUid = device.getUuids();
-            Log.d("brad", "" + deviceUUid.length);
+            //Log.d("brad", "" + deviceUUid.length);
 
             if (socket == null || !socket.isConnected()) {
                 // 連線方法(安全的連線)

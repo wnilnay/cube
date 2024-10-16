@@ -20,7 +20,7 @@
 
             <View
                 android:layout_width="90dp"
-                android:layout_height="30sp"
+                android:layout_height="30dp"
                 android:background="#FFFFFF"
                 />
             <View
@@ -29,20 +29,20 @@
                 />
             <View
                 android:id="@+id/yellow_7"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/yellow_8"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/yellow_9"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <TextView
@@ -50,7 +50,7 @@
                 android:layout_height="match_parent"
                 android:text="將魔術方塊置於解魔方機"
                 android:textColor="@color/black"
-                android:textSize="15sp"
+                android:textSize="18dp"
                 />
         </LinearLayout>
         <LinearLayout
@@ -60,7 +60,7 @@
 
             <View
                 android:layout_width="90dp"
-                android:layout_height="30sp"
+                android:layout_height="30dp"
                 android:background="#FFFFFF"
                 />
             <View
@@ -69,27 +69,27 @@
                 />
             <View
                 android:id="@+id/yellow_4"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/yellow_5"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/yellow_6"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="點選Ok按鈕"
-                android:textSize="20sp"
+                android:textSize="20dp"
                 android:textColor="@color/black"
                 />
 
@@ -102,7 +102,7 @@
 
             <View
                 android:layout_width="90dp"
-                android:layout_height="30sp"
+                android:layout_height="30dp"
                 android:background="#FFFFFF"
                 />
             <View
@@ -111,20 +111,20 @@
                 />
             <View
                 android:id="@+id/yellow_1"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/yellow_2"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/yellow_3"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
 
@@ -147,20 +147,20 @@
             android:orientation="horizontal">
             <View
                 android:id="@+id/red_7"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/red_8"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/red_9"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
@@ -169,20 +169,20 @@
                 />
             <View
                 android:id="@+id/green_7"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/green_8"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/green_9"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
@@ -191,20 +191,20 @@
                 />
             <View
                 android:id="@+id/orange_7"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/orange_8"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/orange_9"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
@@ -213,20 +213,20 @@
                 />
             <View
                 android:id="@+id/blue_7"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/blue_8"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/blue_9"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
         </LinearLayout>
@@ -238,18 +238,18 @@
             <View
                 android:id="@+id/red_4"
                 android:layout_width="30dp"
-                android:layout_height="30sp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray" />
             <View
                 android:id="@+id/red_5"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/red_6"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
@@ -258,20 +258,20 @@
                 />
             <View
                 android:id="@+id/green_4"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/green_5"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/green_6"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
@@ -280,20 +280,20 @@
                 />
             <View
                 android:id="@+id/orange_4"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/orange_5"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/orange_6"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
@@ -302,20 +302,20 @@
                 />
             <View
                 android:id="@+id/blue_4"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/blue_5"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/blue_6"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
         </LinearLayout>
@@ -325,20 +325,20 @@
             android:orientation="horizontal">
             <View
                 android:id="@+id/red_1"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
 
             <View
                 android:id="@+id/red_2"
                 android:layout_width="30dp"
-                android:layout_height="30sp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray" />
             <View
                 android:id="@+id/red_3"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
@@ -347,20 +347,20 @@
                 />
             <View
                 android:id="@+id/green_1"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/green_2"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/green_3"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
@@ -369,20 +369,20 @@
                 />
             <View
                 android:id="@+id/orange_1"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/orange_2"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/orange_3"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
@@ -391,20 +391,20 @@
                 />
             <View
                 android:id="@+id/blue_1"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/blue_2"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/blue_3"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
         </LinearLayout>
@@ -419,7 +419,7 @@
 
             <View
                 android:layout_width="90dp"
-                android:layout_height="30sp"
+                android:layout_height="30dp"
                 android:background="#FFFFFF"
                 />
             <View
@@ -428,20 +428,20 @@
                 />
             <View
                 android:id="@+id/white_7"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/white_8"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/white_9"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
 <!--            <TextView-->
@@ -460,7 +460,7 @@
 
             <View
                 android:layout_width="90dp"
-                android:layout_height="30sp"
+                android:layout_height="30dp"
                 android:background="#FFFFFF"
                 />
             <View
@@ -469,20 +469,20 @@
                 />
             <View
                 android:id="@+id/white_4"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/white_5"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/white_6"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <TextView
@@ -490,7 +490,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="方塊已鎖定"
-                android:textSize="20sp"
+                android:textSize="20dp"
                 android:textColor="@color/black"
                 />
         </LinearLayout>
@@ -501,7 +501,7 @@
 
             <View
                 android:layout_width="90dp"
-                android:layout_height="30sp"
+                android:layout_height="30dp"
                 android:background="#FFFFFF"
                 />
             <View
@@ -510,27 +510,27 @@
                 />
             <View
                 android:id="@+id/white_1"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/white_2"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
                 android:id="@+id/white_3"
-                android:layout_width="30sp"
-                android:layout_height="30sp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <TextView
                 android:id="@+id/turn_of_code"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:textSize="10sp"
+                android:textSize="10dp"
                 android:textColor="@color/black"
                 android:layout_marginRight="5dp"
                 android:visibility="invisible"
