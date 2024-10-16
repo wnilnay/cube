@@ -27,12 +27,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 public class DeviceListActivity extends AppCompatActivity {
 
     private Set<BluetoothDevice> pairedDevices = null;
+    private final Set<BluetoothDevice> newDevices = new HashSet<>();
 
     /**
      * Tag for Log
@@ -61,6 +63,75 @@ public class DeviceListActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_device_list);
+
+//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+//
+//            requestPermissions(
+//                    new String[]{android.Manifest.permission.BLUETOOTH, android.Manifest.permission.BLUETOOTH_ADMIN, android.Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_SCAN},
+//                    0);
+//            Log.d("wnilnay ContextCompat1", ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT) + "");
+//        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            // Android 12 (API 31) 和以上需要的權限
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//                // 請求 Android 12 的新權限
+//                requestPermissions(
+//                        new String[]{
+//                                Manifest.permission.BLUETOOTH_CONNECT,
+//                                Manifest.permission.BLUETOOTH_SCAN,
+//                                Manifest.permission.ACCESS_FINE_LOCATION,
+//                                Manifest.permission.ACCESS_COARSE_LOCATION
+//                        },
+//                        0);
+//            }
+//        } else {
+//            // Android 12 以下版本需要的權限
+//            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//                // 請求舊版 Android 所需的權限
+//                requestPermissions(
+//                        new String[]{
+//                                android.Manifest.permission.BLUETOOTH,
+//                                android.Manifest.permission.BLUETOOTH_ADMIN,
+//                                Manifest.permission.ACCESS_FINE_LOCATION,
+//                                Manifest.permission.ACCESS_COARSE_LOCATION
+//                        },
+//                        0);
+//            }
+//        }
+        // 檢查和請求藍牙權限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // API 31 及以上
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN},
+                        0);
+            }
+        } else { // 針對 API 30 及以下
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                        0);
+            }
+        }
+
 
         // Set result CANCELED in case the user backs out
         setResult(Activity.RESULT_CANCELED);
@@ -105,12 +176,10 @@ public class DeviceListActivity extends AppCompatActivity {
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
 //        // Get a set of currently paired devices
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.BLUETOOTH_CONNECT},
-//                    0);
-//            return;
-//        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            //Log.d("wnilnay ContextCompat2", ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT) + "");
+            requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT},0);
+        }
         pairedDevices = mBtAdapter.getBondedDevices();
 
         // If there are paired devices, add each one to the ArrayAdapter
@@ -125,16 +194,14 @@ public class DeviceListActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-//        if (mBtAdapter != null) {
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//
-//        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},0);
+        }
         mBtAdapter.cancelDiscovery();
         // Unregister broadcast listeners
         this.unregisterReceiver(mReceiver);
@@ -143,6 +210,7 @@ public class DeviceListActivity extends AppCompatActivity {
     /**
      * Start device discover with the BluetoothAdapter
      */
+    @RequiresApi(api = Build.VERSION_CODES.S)
     private void doDiscovery() {
         Log.d(TAG, "doDiscovery()");
 
@@ -154,9 +222,9 @@ public class DeviceListActivity extends AppCompatActivity {
         findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
 
         // If we're already discovering, stop it
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-//            return;
-//        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},0);
+        }
         if (mBtAdapter.isDiscovering()) {
             mBtAdapter.cancelDiscovery();
         }
@@ -165,24 +233,26 @@ public class DeviceListActivity extends AppCompatActivity {
         mBtAdapter.startDiscovery();
     }
 
-    /**
-     * The on-click listener for all devices in the ListViews
-     */
-    private AdapterView.OnItemClickListener mDeviceClickListener
-            = new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
+    private final AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
+        @RequiresApi(api = Build.VERSION_CODES.S)
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             // Cancel discovery because it's costly and we're about to connect
-//            if (ActivityCompat.checkSelfPermission(getBaseContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
+            if (ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},0);
+            }
             mBtAdapter.cancelDiscovery();
+            Object[] bluetoothDevices = null;
 
-            // Get the device MAC address, which is the last 17 chars in the View
-            String info = ((TextView) v).getText().toString();
-            String address = info.substring(info.length() - 17);
+            if(parent.getId() == R.id.paired_devices){
+                bluetoothDevices = pairedDevices.toArray();
+            }
+            else if(parent.getId() == R.id.new_devices){
+                bluetoothDevices = newDevices.toArray();
+            }
 
-            Object[] bluetoothDevices = pairedDevices.toArray();
-            BluetoothDeviceManager.setDevice((BluetoothDevice) bluetoothDevices[arg2]);
+            assert bluetoothDevices != null;
+            BluetoothDeviceManager.setDevice((BluetoothDevice) bluetoothDevices[position]);
 
             // Set result and finish this Activity
             setResult(Activity.RESULT_OK);
@@ -195,6 +265,7 @@ public class DeviceListActivity extends AppCompatActivity {
      * discovery is finished
      */
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @RequiresApi(api = Build.VERSION_CODES.S)
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -204,10 +275,11 @@ public class DeviceListActivity extends AppCompatActivity {
                 // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // If it's already paired, skip it, because it's been listed already
-                if (ActivityCompat.checkSelfPermission(getBaseContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    return;
+                if (ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT},0);
                 }
-                if (device != null && device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                if (device != null && device.getBondState() != BluetoothDevice.BOND_BONDED && device.getName() != null) {
+                    newDevices.add(device);
                     mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 }
                 // When discovery is finished, change the Activity title
