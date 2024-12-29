@@ -28,19 +28,19 @@
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/yellow_7"
+                android:id="@+id/up_1"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/yellow_8"
+                android:id="@+id/up_2"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/yellow_9"
+                android:id="@+id/up_3"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
@@ -68,19 +68,19 @@
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/yellow_4"
+                android:id="@+id/up_4"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/yellow_5"
+                android:id="@+id/up_5"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/yellow_6"
+                android:id="@+id/up_6"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
@@ -110,19 +110,19 @@
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/yellow_1"
+                android:id="@+id/up_7"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/yellow_2"
+                android:id="@+id/up_8"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/yellow_3"
+                android:id="@+id/up_9"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
@@ -146,19 +146,42 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <View
-                android:id="@+id/red_7"
+                android:id="@+id/left_1"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rectangle_gray"
+                />
+
+            <View
+                android:id="@+id/left_2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rectangle_gray" />
+            <View
+                android:id="@+id/left_3"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rectangle_gray"
+                />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                />
+            <View
+                android:id="@+id/forward_1"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/red_8"
+                android:id="@+id/forward_2"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/red_9"
+                android:id="@+id/forward_3"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
@@ -168,41 +191,19 @@
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/green_7"
+                android:id="@+id/right_1"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/green_8"
+                android:id="@+id/right_2"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/green_9"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/rectangle_gray"
-                />
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                />
-            <View
-                android:id="@+id/orange_7"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/rectangle_gray"
-                />
-            <View
-                android:id="@+id/orange_8"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/rectangle_gray"
-                />
-            <View
-                android:id="@+id/orange_9"
+                android:id="@+id/right_3"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
@@ -212,19 +213,19 @@
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/blue_7"
+                android:id="@+id/backward_1"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/blue_8"
+                android:id="@+id/backward_2"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/blue_9"
+                android:id="@+id/backward_3"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
@@ -236,40 +237,18 @@
             android:orientation="horizontal">
 
             <View
-                android:id="@+id/red_4"
+                android:id="@+id/left_4"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray" />
             <View
-                android:id="@+id/red_5"
+                android:id="@+id/left_5"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/red_6"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/rectangle_gray"
-                />
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                />
-            <View
-                android:id="@+id/green_4"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/rectangle_gray"
-                />
-            <View
-                android:id="@+id/green_5"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/rectangle_gray"
-                />
-            <View
-                android:id="@+id/green_6"
+                android:id="@+id/left_6"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
@@ -279,19 +258,19 @@
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/orange_4"
+                android:id="@+id/forward_4"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/orange_5"
+                android:id="@+id/forward_5"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/orange_6"
+                android:id="@+id/forward_6"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
@@ -301,19 +280,41 @@
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/blue_4"
+                android:id="@+id/right_4"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rectangle_gray"
+                />
+
+            <View
+                android:id="@+id/right_5"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rectangle_gray" />
+            <View
+                android:id="@+id/right_6"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/blue_5"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                />
+            <View
+                android:id="@+id/backward_4"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/blue_6"
+                android:id="@+id/backward_5"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rectangle_gray"
+                />
+            <View
+                android:id="@+id/backward_6"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
@@ -324,89 +325,93 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <View
-                android:id="@+id/red_1"
+                android:id="@+id/left_7"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rectangle_gray"
+                />
+            <View
+                android:id="@+id/left_8"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rectangle_gray"
+                />
+            <View
+                android:id="@+id/left_9"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
 
             <View
-                android:id="@+id/red_2"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/rectangle_gray" />
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                />
             <View
-                android:id="@+id/red_3"
+                android:id="@+id/forward_7"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
+            <View
+                android:id="@+id/forward_8"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rectangle_gray"
+                />
+            <View
+                android:id="@+id/forward_9"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rectangle_gray"
+                />
+
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/green_1"
+                android:id="@+id/right_7"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/green_2"
+                android:id="@+id/right_8"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/green_3"
+                android:id="@+id/right_9"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
+
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/orange_1"
+                android:id="@+id/backward_7"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/orange_2"
+                android:id="@+id/backward_8"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/orange_3"
+                android:id="@+id/backward_9"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                />
-            <View
-                android:id="@+id/blue_1"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/rectangle_gray"
-                />
-            <View
-                android:id="@+id/blue_2"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/rectangle_gray"
-                />
-            <View
-                android:id="@+id/blue_3"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/rectangle_gray"
-                />
+
         </LinearLayout>
         <View
             android:layout_width="match_parent"
@@ -427,19 +432,19 @@
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/white_7"
+                android:id="@+id/down_1"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/white_8"
+                android:id="@+id/down_2"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/white_9"
+                android:id="@+id/down_3"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
@@ -468,19 +473,19 @@
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/white_4"
+                android:id="@+id/down_4"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/white_5"
+                android:id="@+id/down_5"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
             <View
-                android:id="@+id/white_6"
+                android:id="@+id/down_6"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
@@ -509,23 +514,24 @@
                 android:layout_height="match_parent"
                 />
             <View
-                android:id="@+id/white_1"
+                android:id="@+id/down_7"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
+
             <View
-                android:id="@+id/white_2"
+                android:id="@+id/down_8"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@drawable/rectangle_gray"
-                />
+                android:background="@drawable/rectangle_gray" />
             <View
-                android:id="@+id/white_3"
+                android:id="@+id/down_9"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/rectangle_gray"
                 />
+
             <TextView
                 android:id="@+id/turn_of_code"
                 android:layout_width="wrap_content"
@@ -551,7 +557,7 @@
 <!--                android:layout_height="100dp"-->
 <!--                android:layout_weight="1"-->
 <!--                android:background="@drawable/rectangle_yellow"-->
-<!--                android:onClick="yellow_button"-->
+<!--                android:onClick="up_color_button"-->
 <!--                android:textAllCaps="false"-->
 <!--                android:contentDescription="yellow"-->
 <!--                />-->
@@ -560,7 +566,7 @@
 <!--                android:layout_height="100dp"-->
 <!--                android:layout_weight="1"-->
 <!--                android:background="@drawable/rectangle_red"-->
-<!--                android:onClick="red_button"-->
+<!--                android:onClick="left_color_button"-->
 <!--                android:contentDescription="red"-->
 <!--                />-->
 <!--            <Button-->
@@ -568,7 +574,7 @@
 <!--                android:layout_height="100dp"-->
 <!--                android:layout_weight="1"-->
 <!--                android:background="@drawable/rectangle_green"-->
-<!--                android:onClick="green_button"-->
+<!--                android:onClick="forward_color_button"-->
 <!--                android:contentDescription="green"-->
 <!--                />-->
 <!--        </LinearLayout>-->
@@ -582,7 +588,7 @@
 <!--                android:layout_height="100dp"-->
 <!--                android:layout_weight="1"-->
 <!--                android:background="@drawable/rectangle_orange"-->
-<!--                android:onClick="orange_button"-->
+<!--                android:onClick="right_color_button"-->
 <!--                android:contentDescription="orange"-->
 <!--                />-->
 <!--            <Button-->
@@ -590,7 +596,7 @@
 <!--                android:layout_height="100dp"-->
 <!--                android:layout_weight="1"-->
 <!--                android:background="@drawable/rectangle_blue"-->
-<!--                android:onClick="blue_button"-->
+<!--                android:onClick="backward_color_button"-->
 <!--                android:contentDescription="blue"-->
 <!--                />-->
 <!--            <Button-->
@@ -598,7 +604,7 @@
 <!--                android:layout_height="100dp"-->
 <!--                android:layout_weight="1"-->
 <!--                android:background="@drawable/rectangle_white"-->
-<!--                android:onClick="white_button"-->
+<!--                android:onClick="down_color_button"-->
 <!--                android:contentDescription="white"-->
 <!--                />-->
 <!--        </LinearLayout>-->

@@ -1,11 +1,9 @@
 package com.example.test;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Dialog;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -20,32 +18,32 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Time;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.function.LongFunction;
 
 public class MainActivity extends AppCompatActivity {
 
-    View[] blue_views = new View[9];
-    View[] orange_views = new View[9];
-    View[] white_views = new View[9];
-    View[] green_views = new View[9];
-    View[] red_views = new View[9];
-    View[] yellow_views = new View[9];
-    int[] bs = {R.id.blue_1,R.id.blue_2,R.id.blue_3,R.id.blue_4,R.id.blue_5,R.id.blue_6,R.id.blue_7,R.id.blue_8,R.id.blue_9};
-    int[] os = {R.id.orange_1,R.id.orange_2,R.id.orange_3,R.id.orange_4,R.id.orange_5,R.id.orange_6,R.id.orange_7,R.id.orange_8,R.id.orange_9};
-    int[] ws = {R.id.white_1,R.id.white_2,R.id.white_3,R.id.white_4,R.id.white_5,R.id.white_6,R.id.white_7,R.id.white_8,R.id.white_9};
-    int[] gs = {R.id.green_1,R.id.green_2,R.id.green_3,R.id.green_4,R.id.green_5,R.id.green_6,R.id.green_7,R.id.green_8,R.id.green_9};
-    int[] rs = {R.id.red_1,R.id.red_2,R.id.red_3,R.id.red_4,R.id.red_5,R.id.red_6,R.id.red_7,R.id.red_8,R.id.red_9};
-    int[] ys = {R.id.yellow_1,R.id.yellow_2,R.id.yellow_3,R.id.yellow_4,R.id.yellow_5,R.id.yellow_6,R.id.yellow_7,R.id.yellow_8,R.id.yellow_9};
+    View[] backward_views = new View[9];
+    View[] right_views = new View[9];
+    View[] down_views = new View[9];
+    View[] forward_views = new View[9];
+    View[] left_views = new View[9];
+    View[] up_views = new View[9];
+    int[] bs = {R.id.backward_1,R.id.backward_2,R.id.backward_3,R.id.backward_4,R.id.backward_5,R.id.backward_6,R.id.backward_7,R.id.backward_8,R.id.backward_9};
+    int[] rs = {R.id.right_1,R.id.right_2,R.id.right_3,R.id.right_4,R.id.right_5,R.id.right_6,R.id.right_7,R.id.right_8,R.id.right_9};
+    int[] ds = {R.id.down_1,R.id.down_2,R.id.down_3,R.id.down_4,R.id.down_5,R.id.down_6,R.id.down_7,R.id.down_8,R.id.down_9};
+    int[] fs = {R.id.forward_1,R.id.forward_2,R.id.forward_3,R.id.forward_4,R.id.forward_5,R.id.forward_6,R.id.forward_7,R.id.forward_8,R.id.forward_9};
+    int[] ls = {R.id.left_1,R.id.left_2,R.id.left_3,R.id.left_4,R.id.left_5,R.id.left_6,R.id.left_7,R.id.left_8,R.id.left_9};
+    int[] us = {R.id.up_1,R.id.up_2,R.id.up_3,R.id.up_4,R.id.up_5,R.id.up_6,R.id.up_7,R.id.up_8,R.id.up_9};
     //String[] type = {"white","red","green","orange","blue"};
     private TextView turn_of_code;
     private int click = -1,location = 0,white = 0,red = 0,green = 0,orange = 0,blue = 0,yellow = 0;
     int[] click_button = new int[48];
     int click_times = -1;
     int[] last = {white,red,green,orange,blue,yellow};
-    View[][] views = {white_views,red_views,green_views,orange_views,blue_views,yellow_views};
+    View[][] views = {down_views,left_views,forward_views,right_views,backward_views,up_views};
+    View[][] viewsForNew = {up_views,right_views,forward_views,down_views,left_views,backward_views};
     private boolean isOk = false;
     private boolean isSolve = false;
     private TextView lock;
@@ -58,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private BluetoothSocket socket;
     private OutputStream outputStream;
+    private ColorDirectionManager colorDirectionManager = new ColorDirectionManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +71,12 @@ public class MainActivity extends AppCompatActivity {
         button_next.setText(">");
         button_lest.setText("<");
         for(int i = 0;i<9;i++){
-            blue_views[i] = findViewById(bs[i]);
-            orange_views[i] = findViewById(os[i]);
-            white_views[i] = findViewById(ws[i]);
-            green_views[i] = findViewById(gs[i]);
-            red_views[i] = findViewById(rs[i]);
-            yellow_views[i] = findViewById(ys[i]);
+            backward_views[i] = findViewById(bs[i]);
+            right_views[i] = findViewById(rs[i]);
+            down_views[i] = findViewById(ds[i]);
+            forward_views[i] = findViewById(fs[i]);
+            left_views[i] = findViewById(ls[i]);
+            up_views[i] = findViewById(us[i]);
         }
         lock = findViewById(R.id.lock);
         lock.setVisibility(View.INVISIBLE);
@@ -133,29 +132,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initCube(){
-        orange_button(null);green_button(null);white_button(null);
-        red_button(null);yellow_button(null);
-        orange_button(null);white_button(null);red_button(null);
+        right_color_button(null);
+        forward_color_button(null);down_color_button(null);
+        left_color_button(null);up_color_button(null);
+        right_color_button(null);down_color_button(null);left_color_button(null);
 
-        green_button(null);white_button(null);green_button(null);
-        blue_button(null);green_button(null);
-        white_button(null);red_button(null);orange_button(null);
+        forward_color_button(null);down_color_button(null);
+        forward_color_button(null);
+        backward_color_button(null);
+        forward_color_button(null);
+        down_color_button(null);left_color_button(null);right_color_button(null);
 
-        yellow_button(null);orange_button(null);blue_button(null);
-        orange_button(null);green_button(null);
-        white_button(null);white_button(null);orange_button(null);
+        up_color_button(null);right_color_button(null);
+        backward_color_button(null);
+        right_color_button(null);
+        forward_color_button(null);
+        down_color_button(null);down_color_button(null);right_color_button(null);
 
-        yellow_button(null);orange_button(null);blue_button(null);
-        yellow_button(null);red_button(null);
-        blue_button(null);blue_button(null);yellow_button(null);
+        up_color_button(null);right_color_button(null);
+        backward_color_button(null);
+        up_color_button(null);left_color_button(null);
+        backward_color_button(null);
+        backward_color_button(null);up_color_button(null);
 
-        red_button(null);red_button(null);white_button(null);
-        yellow_button(null);yellow_button(null);
-        red_button(null);orange_button(null);red_button(null);
+        left_color_button(null);left_color_button(null);down_color_button(null);
+        up_color_button(null);up_color_button(null);
+        left_color_button(null);right_color_button(null);left_color_button(null);
 
-        blue_button(null);green_button(null);yellow_button(null);
-        blue_button(null);white_button(null);
-        green_button(null);blue_button(null);green_button(null);
+        backward_color_button(null);
+        forward_color_button(null);up_color_button(null);
+        backward_color_button(null);down_color_button(null);
+        forward_color_button(null);
+        backward_color_button(null);
+        forward_color_button(null);
     }
     private void change_color(int id){
         if(click<8)
@@ -171,22 +180,22 @@ public class MainActivity extends AppCompatActivity {
         //Log.d("wnilnay","location = "+location+" click = "+click);
         switch (location){
             case 0:
-                white_views[click].setBackground(getDrawable(id));
+                down_views[click].setBackground(getDrawable(id));
                 break;
             case 1:
-                red_views[click].setBackground(getDrawable(id));
+                left_views[click].setBackground(getDrawable(id));
                 break;
             case 2:
-                green_views[click].setBackground(getDrawable(id));
+                forward_views[click].setBackground(getDrawable(id));
                 break;
             case 3:
-                orange_views[click].setBackground(getDrawable(id));
+                right_views[click].setBackground(getDrawable(id));
                 break;
             case 4:
-                blue_views[click].setBackground(getDrawable(id));
+                backward_views[click].setBackground(getDrawable(id));
                 break;
             case 5:
-                yellow_views[click].setBackground(getDrawable(id));
+                up_views[click].setBackground(getDrawable(id));
                 break;
             default:
                 break;
@@ -669,7 +678,7 @@ public class MainActivity extends AppCompatActivity {
         if(!isOk){
             if(location>=0&&click>=0){
                 //Log.d("wnilnay","location = "+location+" click = "+click);
-                //Drawable a = white_views[click].getBackground();
+                //Drawable a = down_views[click].getBackground();
                 switch (click_button[click_times]){
                     case 0:
                         white--;
@@ -706,22 +715,22 @@ public class MainActivity extends AppCompatActivity {
                 }
                 switch (location){
                     case 0:
-                        white_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
+                        down_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
                         break;
                     case 1:
-                        red_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
+                        left_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
                         break;
                     case 2:
-                        green_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
+                        forward_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
                         break;
                     case 3:
-                        orange_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
+                        right_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
                         break;
                     case 4:
-                        blue_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
+                        backward_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
                         break;
                     case 5:
-                        yellow_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
+                        up_views[click].setBackground(getDrawable(R.drawable.rectangle_gray));
                         break;
                     default:
                         break;
@@ -738,7 +747,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public void yellow_button(View view) {
+    public void up_color_button(View view) {
         if(!isOk){
             if(yellow<8){
                 change_color(R.drawable.rectangle_yellow);
@@ -749,7 +758,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void white_button(View view) {
+    public void down_color_button(View view) {
         if(!isOk){
             if(white<8){
                 change_color(R.drawable.rectangle_white);
@@ -760,7 +769,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void blue_button(View view) {
+    public void backward_color_button(View view) {
         if(!isOk){
             if(blue<8){
                 change_color(R.drawable.rectangle_blue);
@@ -771,7 +780,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void orange_button(View view) {
+    public void right_color_button(View view) {
         if(!isOk){
             if(orange<8){
                 change_color(R.drawable.rectangle_orange);
@@ -782,7 +791,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void green_button(View view) {
+    public void forward_color_button(View view) {
         if(!isOk){
             if(green<8){
                 change_color(R.drawable.rectangle_green);
@@ -793,7 +802,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void red_button(View view) {
+    public void left_color_button(View view) {
         if(!isOk){
             if(red<8){
                 change_color(R.drawable.rectangle_red);
@@ -1212,40 +1221,122 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setColor(String colors){
-        char[] colorsArray = colors.toCharArray();
-        int[] positionOrder = {6,7,8,3,4,5,0,1,2};
-        int position = 0;
-        int[] colorOrder = {5,3,2,0,1,4};
-        int colorPosition = 0;
-        for(char color : colorsArray){
-            switch (color){
+        initDirection(colors);
+        String cubeStatusDirection = exchangeColorString(colors);
+        updateCubeStatus(cubeStatusDirection);
+    }
+    private void initDirection(String colors){
+        char[] colorsCharArray = colors.toCharArray();
+        int[] colorDirectionPosition = {4,13,22,21,40,49};
+
+        for (int i : colorDirectionPosition){
+            switch (colorsCharArray[i]){
                 case 'Y':
-                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_yellow));
-                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    colorDirectionManager.setYellowDirection
+                            (Direction.getEnumFromOrdinal(Arrays.binarySearch(colorDirectionPosition,i)));
                     break;
                 case 'O':
-                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_orange));
-                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    colorDirectionManager.setOrangeDirection
+                            (Direction.getEnumFromOrdinal(Arrays.binarySearch(colorDirectionPosition,i)));
                     break;
                 case 'G':
-                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_green));
-                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    colorDirectionManager.setGreenDirection
+                            (Direction.getEnumFromOrdinal(Arrays.binarySearch(colorDirectionPosition,i)));
                     break;
                 case 'W':
-                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_white));
-                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    colorDirectionManager.setWhiteDirection
+                            (Direction.getEnumFromOrdinal(Arrays.binarySearch(colorDirectionPosition,i)));
                     break;
                 case 'R':
-                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_red));
-                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    colorDirectionManager.setRedDirection
+                            (Direction.getEnumFromOrdinal(Arrays.binarySearch(colorDirectionPosition,i)));
                     break;
                 case 'B':
-                    views[colorOrder[colorPosition]][positionOrder[position++]].setBackground(getDrawable(R.drawable.rectangle_blue));
-                    if(isChangePosition(position)) {position = 0;colorPosition++;}
+                    colorDirectionManager.setBlueDirection
+                            (Direction.getEnumFromOrdinal(Arrays.binarySearch(colorDirectionPosition,i)));
                     break;
                 default:
                     break;
             }
+        }
+    }
+    private String exchangeColorString(String colors){
+        char[] colorsCharArray = colors.toCharArray();
+        char[] directionCharArray = new char[54];
+        char[] directionPosition = {'U','R','F','D','L','B'};
+        for (int i = 0;i<colorsCharArray.length;i++){
+            switch (colorsCharArray[i]){
+                case 'Y':
+                    directionCharArray[i] = directionPosition
+                            [colorDirectionManager.getYellowDirection().ordinal()];
+                    break;
+                case 'O':
+                    directionCharArray[i] = directionPosition
+                            [colorDirectionManager.getOrangeDirection().ordinal()];
+                    break;
+                case 'G':
+                    directionCharArray[i] = directionPosition
+                            [colorDirectionManager.getGreenDirection().ordinal()];
+                    break;
+                case 'W':
+                    directionCharArray[i] = directionPosition
+                            [colorDirectionManager.getWhiteDirection().ordinal()];
+                    break;
+                case 'R':
+                    directionPosition[i] = directionPosition
+                            [colorDirectionManager.getRedDirection().ordinal()];
+                    break;
+                case 'B':
+                    directionPosition[i] = directionPosition
+                            [colorDirectionManager.getBlueDirection().ordinal()];
+                    break;
+                default:
+                    break;
+            }
+        }
+        return new String(directionCharArray);
+    }
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void updateCubeStatus(String newStatus){
+        char[] newStatuses = newStatus.toCharArray();
+        int position = 0;
+        int[] drawableIDs = new int[6];
+        drawableIDs[colorDirectionManager.getYellowDirection().ordinal()] = R.drawable.rectangle_yellow;
+        drawableIDs[colorDirectionManager.getBlueDirection().ordinal()] = R.drawable.rectangle_blue;
+        drawableIDs[colorDirectionManager.getRedDirection().ordinal()] = R.drawable.rectangle_red;
+        drawableIDs[colorDirectionManager.getWhiteDirection().ordinal()] = R.drawable.rectangle_white;
+        drawableIDs[colorDirectionManager.getOrangeDirection().ordinal()] = R.drawable.rectangle_orange;
+        drawableIDs[colorDirectionManager.getGreenDirection().ordinal()] = R.drawable.rectangle_green;
+        for (char status : newStatuses){
+            switch (status){
+                case 'U':
+                    viewsForNew[position / 9][position - ((position / 9) * 9)]
+                            .setBackground(getDrawable(drawableIDs[Direction.UP.ordinal()]));
+                    break;
+                case 'R':
+                    viewsForNew[position / 9][position - ((position / 9) * 9)]
+                            .setBackground(getDrawable(drawableIDs[Direction.RIGHT.ordinal()]));
+                    break;
+                case 'F':
+                    viewsForNew[position / 9][position - ((position / 9) * 9)]
+                            .setBackground(getDrawable(drawableIDs[Direction.FORWARD.ordinal()]));
+                    break;
+                case 'D':
+                    viewsForNew[position / 9][position - ((position / 9) * 9)]
+                            .setBackground(getDrawable(drawableIDs[Direction.DOWN.ordinal()]));
+                    break;
+                case 'L':
+                    viewsForNew[position / 9][position - ((position / 9) * 9)]
+                            .setBackground(getDrawable(drawableIDs[Direction.LEFT.ordinal()]));
+                    break;
+                case 'B':
+                    viewsForNew[position / 9][position - ((position / 9) * 9)]
+                            .setBackground(getDrawable(drawableIDs[Direction.BACKWARD.ordinal()]));
+                    break;
+                default:
+                    break;
+            }
+            position++;
         }
     }
     private boolean isChangePosition(int position){
@@ -1311,14 +1402,16 @@ public class MainActivity extends AppCompatActivity {
                                        timer1.cancel();
                                    }
                                }
-                           },0,1000);
+                           },0,100);
                         }
                     });
                     timer.cancel();
                 }
             }
-        },0,1000);
+        },0,100);
     }
+
+
 
 
 
