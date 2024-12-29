@@ -49,10 +49,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView lock;
     int[] color_put_into_block = new int[54];
     private String turn_code = "";
-    private String cubeStatus = "";
     private Button button_lest, button_next;
     private TextView textView_Solve;
     private int Solution_position = -1;
+    private String cubeStatus = "";
 
     private BluetoothSocket socket;
     private OutputStream outputStream;
@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
         button_lest.setVisibility(View.INVISIBLE);
         button_next.setVisibility(View.INVISIBLE);
         Toast.makeText(this,"請確認魔術方塊放置於解魔方機上",Toast.LENGTH_LONG).show();
-
     }
     private void sendString(String dataToSend){
         if (socket != null && socket.isConnected()) {
@@ -246,431 +245,23 @@ public class MainActivity extends AppCompatActivity {
 
     /*旋轉方向與顏色填寫方向相反==>為順時針轉*/
     /*旋轉方向與顏色填寫方向相同==>為逆時針轉*/
-    private void up(){
-        //Log.d("wnilnay","up");
-        //region 變更顏色
-        //轉動邊相對位置
-        int[] position_order = {6,7,8,6,7,8,6,7,8,6,7,8};
-        //轉動邊顏色變更的順序
-        int[] k = {3,4,5,6,7,8,9,10,11,0,1,2};
-        int l = 0;
-        //轉動魔方歷經顏色變更的順序
-        int[] color_order = {1,2,3,4};
-        //轉動面
-        int[] up_color_position = {6,3,0,7,4,1,8,5,2};
-
-        Drawable[] ups = get_back_ground(1,2,3,4,position_order);
-        Drawable[] up_colors = get_color(5);
-        for(int i = 0;i<9;i++){
-            views[5][up_color_position[i]].setBackground(up_colors[i]);
-        }
-        //Log.d("wnilnay","finish");
-        int j = 0,m = 0;
-        for(int i = 0;i<12;i++){
-           if(m == 3){
-               j++;
-               m = 0;
-           }
-           m++;
-           views[color_order[j]][position_order[i]].setBackground(ups[k[l]]);
-           l++;
-        }
-        //endregion
-
-        //region 更改陣列
-
-        //region 更改四邊陣列
-        //絕對座標
-        int[] absolute_coordinates_left = {24,15,42,33};
-        int[] absolute_coordinates_middle = {25,16,43,34};
-        int[] absolute_coordinates_right = {26,17,44,35};
-        int[] left = new int[4];
-        int[] middle = new int[4];
-        int[] right = new int[4];
-        for(int i = 0;i<4;i++){
-            left[i] = color_put_into_block[absolute_coordinates_left[i]];
-            middle[i] = color_put_into_block[absolute_coordinates_middle[i]];
-            right[i] = color_put_into_block[absolute_coordinates_right[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_left[i1 +1]] = left[i1];
-                    color_put_into_block[absolute_coordinates_middle[i1 +1]] = middle[i1];
-                    color_put_into_block[absolute_coordinates_right[i1 +1]] = right[i1];
-                }
-                color_put_into_block[absolute_coordinates_left[0]] = left[3];
-                color_put_into_block[absolute_coordinates_middle[0]] = middle[3];
-                color_put_into_block[absolute_coordinates_right[0]] = right[3];
-            }
-        }
-        //endregion
-
-        //region 更改轉動面陣列
-        int[] absolute_coordinates_corner = {47,45,51,53};
-        int[] absolute_coordinates_side = {46,48,52,50};
-        int[] corner = new int[4];
-        int[] side = new int[4];
-        for(int i = 0;i<4;i++){
-            corner[i] = color_put_into_block[absolute_coordinates_corner[i]];
-            side[i] = color_put_into_block[absolute_coordinates_side[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_corner[i1 +1]] = corner[i1];
-                    color_put_into_block[absolute_coordinates_side[i1 +1]] = side[i1];
-                }
-                color_put_into_block[absolute_coordinates_corner[0]] = corner[3];
-                color_put_into_block[absolute_coordinates_side[0]] = side[3];
-            }
-        }
-        //endregion
-
-        //endregion
+    private String up(String lastStatus){
+        return CubeStatusManager.up(lastStatus);
     }
-    private void right(){
-        int[] k = {3,4,5,6,7,8,9,10,11,0,1,2};
-        int[] color_order = {2,0,4,5};
-        int[] position_order = {2,5,8,2,5,8,6,3,0,2,5,8};
-        int l = 0;
-        int[] right_color_position = {6,3,0,7,4,1,8,5,2};
-        Drawable[] rights = get_back_ground(2,0,4,5,position_order);
-        Drawable[] right_colors = get_color(3);
-        for(int i = 0;i<9;i++){
-            views[3][right_color_position[i]].setBackground(right_colors[i]);
-        }
-        int j = 0,m = 0;
-        for(int i = 0;i<12;i++){
-            if(m == 3){
-                j++;
-                m = 0;
-            }
-            m++;
-            views[color_order[j]][position_order[i]].setBackground(rights[k[l]]);
-            l++;
-        }
-        //region 更改陣列
-
-        //region 更改四邊陣列
-        //絕對座標
-        int[] absolute_coordinates_top = {26,53,36,8};
-        int[] absolute_coordinates_middle = {23,50,39,5};
-        int[] absolute_coordinates_bottom = {20,47,42,2};
-        int[] top = new int[4];
-        int[] middle = new int[4];
-        int[] bottom = new int[4];
-        for(int i = 0;i<4;i++){
-            top[i] = color_put_into_block[absolute_coordinates_top[i]];
-            middle[i] = color_put_into_block[absolute_coordinates_middle[i]];
-            bottom[i] = color_put_into_block[absolute_coordinates_bottom[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_top[i1 +1]] = top[i1];
-                    color_put_into_block[absolute_coordinates_middle[i1 +1]] = middle[i1];
-                    color_put_into_block[absolute_coordinates_bottom[i1 +1]] = bottom[i1];
-                }
-                color_put_into_block[absolute_coordinates_top[0]] = top[3];
-                color_put_into_block[absolute_coordinates_middle[0]] = middle[3];
-                color_put_into_block[absolute_coordinates_bottom[0]] = bottom[3];
-            }
-        }
-        //endregion
-
-        //region 更改轉動面陣列
-        int[] absolute_coordinates_corner = {29,27,33,35};
-        int[] absolute_coordinates_side = {28,30,34,32};
-        int[] corner = new int[4];
-        int[] side = new int[4];
-        for(int i = 0;i<4;i++){
-            corner[i] = color_put_into_block[absolute_coordinates_corner[i]];
-            side[i] = color_put_into_block[absolute_coordinates_side[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_corner[i1 +1]] = corner[i1];
-                    color_put_into_block[absolute_coordinates_side[i1 +1]] = side[i1];
-                }
-                color_put_into_block[absolute_coordinates_corner[0]] = corner[3];
-                color_put_into_block[absolute_coordinates_side[0]] = side[3];
-            }
-        }
-        //endregion
-
-        //endregion
+    private String right(String lastStatus){
+        return CubeStatusManager.right(lastStatus);
     }
-    private void down(){
-        int[] k = {3,4,5,6,7,8,9,10,11,0,1,2};
-        int[] color_order = {2,1,4,3};
-        int[] position_order = {0,1,2,0,1,2,0,1,2,0,1,2};
-        int l = 0;
-        int[] down_color_position = {6,3,0,7,4,1,8,5,2};
-        Drawable[] downs = get_back_ground(2,1,4,3,position_order);
-        Drawable[] down_colors = get_color(0);
-        for(int i = 0;i<9;i++){
-            views[0][down_color_position[i]].setBackground(down_colors[i]);
-        }
-        int j = 0,m = 0;
-        for(int i = 0;i<12;i++){
-            if(m == 3){
-                j++;
-                m = 0;
-            }
-            m++;
-            views[color_order[j]][position_order[i]].setBackground(downs[k[l]]);
-            l++;
-        }
-
-        //region 更改陣列
-
-        //region 更改四邊陣列
-        //絕對座標
-        int[] absolute_coordinates_left = {18,27,36,9};
-        int[] absolute_coordinates_middle = {19,28,37,10};
-        int[] absolute_coordinates_right = {20,29,38,11};
-        int[] left = new int[4];
-        int[] middle = new int[4];
-        int[] right = new int[4];
-        for(int i = 0;i<4;i++){
-            left[i] = color_put_into_block[absolute_coordinates_left[i]];
-            middle[i] = color_put_into_block[absolute_coordinates_middle[i]];
-            right[i] = color_put_into_block[absolute_coordinates_right[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_left[i1 +1]] = left[i1];
-                    color_put_into_block[absolute_coordinates_middle[i1 +1]] = middle[i1];
-                    color_put_into_block[absolute_coordinates_right[i1 +1]] = right[i1];
-                }
-                color_put_into_block[absolute_coordinates_left[0]] = left[3];
-                color_put_into_block[absolute_coordinates_middle[0]] = middle[3];
-                color_put_into_block[absolute_coordinates_right[0]] = right[3];
-            }
-        }
-        //endregion
-
-        //region 更改轉動面陣列
-        int[] absolute_coordinates_corner = {2,0,6,8};
-        int[] absolute_coordinates_side = {1,3,7,5};
-        int[] corner = new int[4];
-        int[] side = new int[4];
-        for(int i = 0;i<4;i++){
-            corner[i] = color_put_into_block[absolute_coordinates_corner[i]];
-            side[i] = color_put_into_block[absolute_coordinates_side[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_corner[i1 +1]] = corner[i1];
-                    color_put_into_block[absolute_coordinates_side[i1 +1]] = side[i1];
-                }
-                color_put_into_block[absolute_coordinates_corner[0]] = corner[3];
-                color_put_into_block[absolute_coordinates_side[0]] = side[3];
-            }
-        }
-        //endregion
-
-        //endregion
+    private String down(String lastStatus){
+        return CubeStatusManager.down(lastStatus);
     }
-    private void left(){
-        int[] k = {3,4,5,6,7,8,9,10,11,0,1,2};
-        int[] color_order = {2,5,4,0};
-        int[] position_order = {0,3,6,0,3,6,8,5,2,0,3,6};
-        int l = 0;
-        int[] left_color_position = {6,3,0,7,4,1,8,5,2};
-        Drawable[] lefts = get_back_ground(2,5,4,0,position_order);
-        Drawable[] left_colors = get_color(1);
-        for(int i = 0;i<9;i++){
-            views[1][left_color_position[i]].setBackground(left_colors[i]);
-        }
-        int j = 0,m = 0;
-        for(int i = 0;i<12;i++){
-            if(m == 3){
-                j++;
-                m = 0;
-            }
-            m++;
-            views[color_order[j]][position_order[i]].setBackground(lefts[k[l]]);
-            l++;
-        }
-        //region 更改陣列
-
-        //region 更改四邊陣列
-        //絕對座標
-        int[] absolute_coordinates_top = {24,6,38,51};
-        int[] absolute_coordinates_middle = {21,3,41,48};
-        int[] absolute_coordinates_bottom = {18,0,44,45};
-        int[] top = new int[4];
-        int[] middle = new int[4];
-        int[] bottom = new int[4];
-        for(int i = 0;i<4;i++){
-            top[i] = color_put_into_block[absolute_coordinates_top[i]];
-            middle[i] = color_put_into_block[absolute_coordinates_middle[i]];
-            bottom[i] = color_put_into_block[absolute_coordinates_bottom[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_top[i1 +1]] = top[i1];
-                    color_put_into_block[absolute_coordinates_middle[i1 +1]] = middle[i1];
-                    color_put_into_block[absolute_coordinates_bottom[i1 +1]] = bottom[i1];
-                }
-                color_put_into_block[absolute_coordinates_top[0]] = top[3];
-                color_put_into_block[absolute_coordinates_middle[0]] = middle[3];
-                color_put_into_block[absolute_coordinates_bottom[0]] = bottom[3];
-            }
-        }
-        //endregion
-
-        //region 更改轉動面陣列
-        int[] absolute_coordinates_corner = {11,9,15,17};
-        int[] absolute_coordinates_side = {10,12,16,14};
-        int[] corner = new int[4];
-        int[] side = new int[4];
-        for(int i = 0;i<4;i++){
-            corner[i] = color_put_into_block[absolute_coordinates_corner[i]];
-            side[i] = color_put_into_block[absolute_coordinates_side[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_corner[i1 +1]] = corner[i1];
-                    color_put_into_block[absolute_coordinates_side[i1 +1]] = side[i1];
-                }
-                color_put_into_block[absolute_coordinates_corner[0]] = corner[3];
-                color_put_into_block[absolute_coordinates_side[0]] = side[3];
-            }
-        }
-        //endregion
-
-        //endregion
+    private String left(String lastStatus){
+        return CubeStatusManager.left(lastStatus);
     }
-    private void front(){
-        int[] k = {3,4,5,6,7,8,9,10,11,0,1,2};
-        int[] color_order = {5,1,0,3};
-        int[] position_order = {0,1,2,2,5,8,8,7,6,6,3,0};
-        int[] front_color_position = {6,3,0,7,4,1,8,5,2};
-        int l = 0;
-        Drawable[] fronts = get_back_ground(5,1,0,3,position_order);
-        Drawable[] front_colors = get_color(2);
-        int j = 0,m = 0;
-        for(int i = 0;i<12;i++){
-            if(m == 3){
-                j++;
-                m = 0;
-            }
-            m++;
-            views[color_order[j]][position_order[i]].setBackground(fronts[k[l]]);
-            l++;
-        }
-        for(int i = 0;i<9;i++){
-            views[2][front_color_position[i]].setBackground(front_colors[i]);
-        }
-        //region 更改陣列
-
-        //region 更改四邊陣列
-        //絕對座標
-        int[] absolute_coordinates_left = {45,33,8,11};
-        int[] absolute_coordinates_middle = {46,30,7,14};
-        int[] absolute_coordinates_right = {47,27,6,17};
-        int[] left = new int[4];
-        int[] middle = new int[4];
-        int[] right = new int[4];
-        for(int i = 0;i<4;i++){
-            left[i] = color_put_into_block[absolute_coordinates_left[i]];
-            middle[i] = color_put_into_block[absolute_coordinates_middle[i]];
-            right[i] = color_put_into_block[absolute_coordinates_right[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_left[i1 +1]] = left[i1];
-                    color_put_into_block[absolute_coordinates_middle[i1 +1]] = middle[i1];
-                    color_put_into_block[absolute_coordinates_right[i1 +1]] = right[i1];
-                }
-                color_put_into_block[absolute_coordinates_left[0]] = left[3];
-                color_put_into_block[absolute_coordinates_middle[0]] = middle[3];
-                color_put_into_block[absolute_coordinates_right[0]] = right[3];
-            }
-        }
-        //endregion
-
-        //region 更改轉動面陣列
-        int[] absolute_coordinates_corner = {20,18,24,26};
-        int[] absolute_coordinates_side = {19,21,25,23};
-        int[] corner = new int[4];
-        int[] side = new int[4];
-        for(int i = 0;i<4;i++){
-            corner[i] = color_put_into_block[absolute_coordinates_corner[i]];
-            side[i] = color_put_into_block[absolute_coordinates_side[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_corner[i1 +1]] = corner[i1];
-                    color_put_into_block[absolute_coordinates_side[i1 +1]] = side[i1];
-                }
-                color_put_into_block[absolute_coordinates_corner[0]] = corner[3];
-                color_put_into_block[absolute_coordinates_side[0]] = side[3];
-            }
-        }
-        //endregion
-
-        //endregion
+    private String front(String lastStatus){
+        return CubeStatusManager.front(lastStatus);
     }
-    private void back(){
-        int[] k = {3,4,5,6,7,8,9,10,11,0,1,2};
-        int[] color_order = {5,3,0,1};
-        int[] position_order = {6,7,8,8,5,2,2,1,0,0,3,6};
-        int l = 0;
-        int[] back_color_position = {6,3,0,7,4,1,8,5,2};
-        Drawable[] backs = get_back_ground(5,3,0,1,position_order);
-        Drawable[] back_colors = get_color(4);
-        for(int i = 0;i<9;i++){
-            views[4][back_color_position[i]].setBackground(back_colors[i]);
-        }
-        int j = 0,m = 0;
-        for(int i = 0;i<12;i++){
-            if(m == 3){
-                j++;
-                m = 0;
-            }
-            m++;
-            views[color_order[j]][position_order[i]].setBackground(backs[k[l]]);
-            l++;
-        }
-
-        //region 更改陣列
-
-        //region 更改四邊陣列
-        //絕對座標
-        int[] absolute_coordinates_left = {51,9,2,35};
-        int[] absolute_coordinates_middle = {52,12,1,32};
-        int[] absolute_coordinates_right = {53,15,0,29};
-        int[] left = new int[4];
-        int[] middle = new int[4];
-        int[] right = new int[4];
-        for(int i = 0;i<4;i++){
-            left[i] = color_put_into_block[absolute_coordinates_left[i]];
-            middle[i] = color_put_into_block[absolute_coordinates_middle[i]];
-            right[i] = color_put_into_block[absolute_coordinates_right[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_left[i1 +1]] = left[i1];
-                    color_put_into_block[absolute_coordinates_middle[i1 +1]] = middle[i1];
-                    color_put_into_block[absolute_coordinates_right[i1 +1]] = right[i1];
-                }
-                color_put_into_block[absolute_coordinates_left[0]] = left[3];
-                color_put_into_block[absolute_coordinates_middle[0]] = middle[3];
-                color_put_into_block[absolute_coordinates_right[0]] = right[3];
-            }
-        }
-        //endregion
-
-        //region 更改轉動面陣列
-        int[] absolute_coordinates_corner = {38,36,42,44};
-        int[] absolute_coordinates_side = {37,39,43,41};
-        int[] corner = new int[4];
-        int[] side = new int[4];
-        for(int i = 0;i<4;i++){
-            corner[i] = color_put_into_block[absolute_coordinates_corner[i]];
-            side[i] = color_put_into_block[absolute_coordinates_side[i]];
-            if(i == 3){
-                for(int i1 = 0; i1 <3; i1++){
-                    color_put_into_block[absolute_coordinates_corner[i1 +1]] = corner[i1];
-                    color_put_into_block[absolute_coordinates_side[i1 +1]] = side[i1];
-                }
-                color_put_into_block[absolute_coordinates_corner[0]] = corner[3];
-                color_put_into_block[absolute_coordinates_side[0]] = side[3];
-            }
-        }
-        //endregion
-
-        //endregion
+    private String back(String lastStatus){
+        return CubeStatusManager.back(lastStatus);
     }
 
 
@@ -816,7 +407,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void up_button(View view) {
         if(isOk){
-            up();
+            cubeStatus = CubeStatusManager.up(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="U";
             turn_of_code.setText(turn_code);
         }
@@ -824,7 +416,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void right_button(View view) {
         if(isOk){
-            right();
+            cubeStatus = CubeStatusManager.right(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="R";
             turn_of_code.setText(turn_code);
         }
@@ -832,7 +425,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void down_button(View view) {
         if(isOk){
-            down();
+            cubeStatus = CubeStatusManager.down(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="D";
             turn_of_code.setText(turn_code);
         }
@@ -840,7 +434,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void left_button(View view) {
         if(isOk){
-            left();
+            cubeStatus = CubeStatusManager.left(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="L";
             turn_of_code.setText(turn_code);
         }
@@ -848,7 +443,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void front_button(View view) {
         if(isOk){
-            front();
+            cubeStatus = CubeStatusManager.front(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="F";
             turn_of_code.setText(turn_code);
         }
@@ -856,7 +452,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void back_button(View view) {
         if(isOk){
-            back();
+            cubeStatus = CubeStatusManager.back(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="B";
             turn_of_code.setText(turn_code);
         }
@@ -864,9 +461,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void up_bar_button(View view) {
         if(isOk){
-            up();
-            up();
-            up();
+            cubeStatus = CubeStatusManager.up_bar(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="u";
             turn_of_code.setText(turn_code);
         }
@@ -874,9 +470,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void down_bar_button(View view) {
         if(isOk){
-            down();
-            down();
-            down();
+            cubeStatus = CubeStatusManager.down_bar(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="d";
             turn_of_code.setText(turn_code);
         }
@@ -884,9 +479,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void right_bar_button(View view) {
         if(isOk){
-            right();
-            right();
-            right();
+            cubeStatus = CubeStatusManager.right_bar(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="r";
             turn_of_code.setText(turn_code);
         }
@@ -894,9 +488,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void left_bar_button(View view) {
         if(isOk){
-            left();
-            left();
-            left();
+            cubeStatus = CubeStatusManager.left_bar(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="l";
             turn_of_code.setText(turn_code);
         }
@@ -904,9 +497,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void front_bar_button(View view) {
         if(isOk){
-            front();
-            front();
-            front();
+            cubeStatus = CubeStatusManager.front_bar(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="f";
             turn_of_code.setText(turn_code);
         }
@@ -914,9 +506,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void back_bar_button(View view) {
         if(isOk){
-            back();
-            back();
-            back();
+            cubeStatus = CubeStatusManager.back_bar(cubeStatus);
+            updateCubeStatus(cubeStatus);
             turn_code+="b";
             turn_of_code.setText(turn_code);
         }
@@ -980,7 +571,7 @@ public class MainActivity extends AppCompatActivity {
     public String solve(View view) {
         if(isOk){
             int[] cube_position = new int[]{51,52,53,48,49,50,45,46,47,33,34,35,30,31,32,27,28,29,24,25,26,21,22,23,18,19,20,6,7,8,3,4,5,0,1,2,15,16,17,12,13,14,9,10,11,42,43,44,39,40,41,36,37,38};
-            cubeStatus = "";
+            String cubeStatus = "";
             for(int i = 0;i<cube_position.length;i++){
                 switch (color_put_into_block[cube_position[i]]){
                     case 0:
@@ -1006,7 +597,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             //cubeStatus = "FBFBUDBFUBBUURLURBDDRRFFURBRDLLDURFDDLRBLFFDFLRLUBULLD";
-            Log.d("wnilnay",cubeStatus);
+            Log.d("wnilnay", cubeStatus);
             String solution = new Search().solution(cubeStatus,20,1000000,10000,0);
             solution = solution.replaceAll("  "," ");
             Log.d("wnilnay",solution);
@@ -1222,12 +813,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void setColor(String colors){
         initDirection(colors);
-        String cubeStatusDirection = exchangeColorString(colors);
-        updateCubeStatus(cubeStatusDirection);
+        cubeStatus = exchangeColorString(colors);
+        updateCubeStatus(cubeStatus);
     }
     private void initDirection(String colors){
         char[] colorsCharArray = colors.toCharArray();
-        int[] colorDirectionPosition = {4,13,22,21,40,49};
+        int[] colorDirectionPosition = {4,13,22,31,40,49};
 
         for (int i : colorDirectionPosition){
             switch (colorsCharArray[i]){
@@ -1283,11 +874,11 @@ public class MainActivity extends AppCompatActivity {
                             [colorDirectionManager.getWhiteDirection().ordinal()];
                     break;
                 case 'R':
-                    directionPosition[i] = directionPosition
+                    directionCharArray[i] = directionPosition
                             [colorDirectionManager.getRedDirection().ordinal()];
                     break;
                 case 'B':
-                    directionPosition[i] = directionPosition
+                    directionCharArray[i] = directionPosition
                             [colorDirectionManager.getBlueDirection().ordinal()];
                     break;
                 default:
