@@ -1,0 +1,114 @@
+{
+  "specification": "Title + \"\\n\" + Data + \"\\0\"",
+  "Java": {
+    "send": [
+      {
+        "Title": "OK",
+        "Data": ""
+      },
+      {
+        "Title": "SolveStep",
+        "Data": "solve()"
+      },
+      {
+        "Title": "SetMotorMode",
+        "Data": ""
+      },
+      {
+        "Title": "SetPositionMode",
+        "Data": ""
+      },
+      {
+        "Title": "SetColorMode",
+        "Data": ""
+      },
+      {
+        "Title": "MotorSetting",
+        "Data": {
+          "MotorTop": "value",
+          "MotorBottom": "value",
+          "MotorLeft": "value",
+          "MotorRight": "value"
+        }
+      },
+      {
+        "Title": "CoordinateSetting",
+        "Data": {
+          "xCoordinate_of_UpperLeft": "value",
+          "yCoordinate_of_UpperLeft": "value",
+          "xCoordinate_of_LowerRight": "value",
+          "yCoordinate_of_LowerRight": "value"
+        }
+      },
+      {
+        "Title": "ColorSetting",
+        "Data": {
+          "White": [
+            "H",
+            "S",
+            "V",
+            "H",
+            "S",
+            "V"
+          ],
+          "Yellow": [
+            "H",
+            "S",
+            "V",
+            "H",
+            "S",
+            "V"
+          ],
+          "Green": [
+            "H",
+            "S",
+            "V",
+            "H",
+            "S",
+            "V"
+          ],
+          "Blue": [
+            "H",
+            "S",
+            "V",
+            "H",
+            "S",
+            "V"
+          ],
+          "Red": [
+            "H",
+            "S",
+            "V",
+            "H",
+            "S",
+            "V"
+          ],
+          "Orange": [
+            "H",
+            "S",
+            "V",
+            "H",
+            "S",
+            "V"
+          ]
+        }
+      }
+    ]
+  },
+  "Python": {
+    "send": [
+      {
+        "Title": "Color",
+        "Data": "Color String"
+      },
+      {
+        "Title": "next",
+        "Data": ""
+      },
+      {
+        "Title": "end",
+        "Data": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,136 @@
+package com.example.test;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+
+public class ResizableOverlayView extends View {
+    private Paint maskPaint;
+    private RectF rect;
+    private float handleRadius = 20f;
+    private int draggingHandle = -1; // 0: top-left, 1: bottom-right
+    private float lastX, lastY;
+
+    public ResizableOverlayView(Context context) {
+        super(context);
+        init();
+    }
+
+    public ResizableOverlayView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    private void init() {
+        maskPaint = new Paint();
+        //maskPaint.setColor(Color.parseColor("#88000000")); // 半透明黑
+        maskPaint.setAlpha(0);
+        rect = new RectF(100, 100, 500, 500); // 預設遮罩區域
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        canvas.drawRect(rect, maskPaint);
+
+        // 左上角控制點
+        canvas.drawCircle(rect.left, rect.top, handleRadius, getHandlePaint());
+        // 右下角控制點
+        canvas.drawCircle(rect.right, rect.bottom, handleRadius, getHandlePaint());
+
+        Paint borderPaint = new Paint();
+        borderPaint.setColor(Color.BLACK); // 外框與輔助線
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(4);
+
+        Paint linePaint = new Paint();
+        linePaint.setColor(Color.BLACK);
+        linePaint.setStyle(Paint.Style.STROKE);
+        linePaint.setStrokeWidth(2);
+        linePaint.setAlpha(150);  // 半透明輔助線
+
+        Paint overlayPaint = new Paint();
+        overlayPaint.setColor(Color.BLACK);
+        overlayPaint.setAlpha(150);
+
+        // 遮罩四個區域
+        canvas.drawRect(0, 0, getWidth(), rect.top, overlayPaint);           // 上
+        canvas.drawRect(0, rect.bottom, getWidth(), getHeight(), overlayPaint);  // 下
+        canvas.drawRect(0, rect.top, rect.left, rect.bottom, overlayPaint);      // 左
+        canvas.drawRect(rect.right, rect.top, getWidth(), rect.bottom, overlayPaint); // 右
+
+        canvas.drawRect(rect, borderPaint);
+
+        float thirdWidth = rect.width() / 3f;
+        float thirdHeight = rect.height() / 3f;
+
+        // 垂直分割線
+        canvas.drawLine(rect.left + thirdWidth, rect.top, rect.left + thirdWidth, rect.bottom, linePaint);
+        canvas.drawLine(rect.left + 2 * thirdWidth, rect.top, rect.left + 2 * thirdWidth, rect.bottom, linePaint);
+
+        // 水平分割線
+        canvas.drawLine(rect.left, rect.top + thirdHeight, rect.right, rect.top + thirdHeight, linePaint);
+        canvas.drawLine(rect.left, rect.top + 2 * thirdHeight, rect.right, rect.top + 2 * thirdHeight, linePaint);
+    }
+
+    private Paint getHandlePaint() {
+        Paint p = new Paint();
+        p.setColor(Color.GRAY);
+        p.setAlpha(200);
+        p.setStyle(Paint.Style.FILL);
+        return p;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (isInHandle(x, y, rect.left, rect.top)) {
+                    draggingHandle = 0;
+                } else if (isInHandle(x, y, rect.right, rect.bottom)) {
+                    draggingHandle = 1;
+                }
+                lastX = x;
+                lastY = y;
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                if (draggingHandle == 0) { // 拖左上角
+                    if (x < rect.right - handleRadius * 2 && y < rect.bottom - handleRadius * 2) {
+                        rect.left = x;
+                        rect.top = y;
+                    }
+                } else if (draggingHandle == 1) { // 拖右下角
+                    if (x > rect.left + handleRadius * 2 && y > rect.top + handleRadius * 2) {
+                        rect.right = x;
+                        rect.bottom = y;
+                    }
+                }
+                invalidate();
+                break;
+
+            case MotionEvent.ACTION_UP:
+                draggingHandle = -1;
+                break;
+        }
+
+        return true;
+    }
+
+    private boolean isInHandle(float x, float y, float hx, float hy) {
+        return Math.hypot(x - hx, y - hy) <= handleRadius * 1.5;
+    }
+
+    public RectF getMaskRect() {
+        return rect;
+    }
+}
+

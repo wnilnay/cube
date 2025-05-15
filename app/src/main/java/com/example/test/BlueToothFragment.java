@@ -266,12 +266,7 @@ public class BlueToothFragment extends Fragment {
                                 public void run() {
                                     Toast.makeText(getContext(), "連線成功", Toast.LENGTH_SHORT).show();
 
-                                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                                    fragmentManager
-                                            .beginTransaction()
-                                            .replace(R.id.DisplayLinearLayout, new MainFragment())
-                                            .addToBackStack(null)
-                                            .commit();
+                                    ((MainActivity)getActivity()).change_to_mainFragment();
                                 }
                             });
                             // 跳轉到 B Activity
