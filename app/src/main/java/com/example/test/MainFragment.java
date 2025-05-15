@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 
 import android.text.SpannableString;
@@ -110,6 +111,39 @@ public class MainFragment extends Fragment {
                 next();
             }
         });
+
+//        requireActivity().getOnBackPressedDispatcher().addCallback(
+//                getViewLifecycleOwner(),
+//                new OnBackPressedCallback(true) {
+//                    @Override
+//                    public void handleOnBackPressed() {
+//                        if(((MainActivity)requireActivity()).getCurrentBottomFragment() ==
+//                                ((MainActivity)requireActivity()).getMainFragment() &&
+//                                ((MainActivity) requireActivity()).getCurrentSubFragment() ==
+//                        ((MainActivity)requireActivity()).getMainFragment()){
+//                            Log.v("wnilnay OnBackPress","YES");
+//
+//                            ((MainActivity)requireActivity()).hideAllFragment();
+//                            requireActivity().getSupportFragmentManager().beginTransaction()
+//                                    .show(((MainActivity)requireActivity()).getBlueToothFragment())
+//                                    .commit();
+//                            ((MainActivity)requireActivity())
+//                                    .updateCurrentSub((((MainActivity) requireActivity())
+//                                            .getBlueToothFragment()));
+//
+//                            try {
+//                                BluetoothSocketManager.getSocket().close();
+//                            } catch (IOException e) {
+//                                throw new RuntimeException(e);
+//                            }
+//                        }
+//                        else {
+//                            setEnabled(false);
+//                            requireActivity().onBackPressed();
+//                        }
+//                    }
+//                });
+
 
         return view;
     }
@@ -649,6 +683,7 @@ public class MainFragment extends Fragment {
             }
         },0,100);
     }
+
 
 
 
