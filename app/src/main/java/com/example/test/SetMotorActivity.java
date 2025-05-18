@@ -1,5 +1,7 @@
 package com.example.test;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -9,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class SetMotorActivity extends AppCompatActivity {
     private SeekBar seekBar_top, seekBar_down, seekBar_left, seekBar_right;
@@ -45,12 +50,24 @@ public class SetMotorActivity extends AppCompatActivity {
 
     }
 
+
+
     private void SetListener(SeekBar seekBar, TextView textView){
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 textView.setText(""+getResources().getResourceEntryName(textView.getId())+" : "+progress);
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("MotorTop",seekBar_top.getProgress());
+                    jsonObject.put("MotorBottom",seekBar_down.getProgress());
+                    jsonObject.put("MotorLeft",seekBar_left.getProgress());
+                    jsonObject.put("MotorRight",seekBar_right.getProgress());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
 
+                //BluetoothSocketManager.sendString("MotorSetting",jsonObject.toString());
             }
 
             @Override

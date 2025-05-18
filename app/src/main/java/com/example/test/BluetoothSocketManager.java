@@ -24,7 +24,7 @@ public class BluetoothSocketManager {
     public static void setSocket(BluetoothSocket socket) {
         bluetoothSocket = socket;
     }
-    private static String sendString(String sendTitle, String dataToSend) {
+    public static String sendString(String sendTitle, String dataToSend) {
         String result = "";
         if (bluetoothSocket != null && bluetoothSocket.isConnected()) {
             try {
@@ -47,7 +47,8 @@ public class BluetoothSocketManager {
         }
         return result;
     }
-    private static String getString(){
+
+    public static String getString(){
         try {
             if(bluetoothSocket.isConnected()){
                 char read;

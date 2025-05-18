@@ -1,13 +1,19 @@
 package com.example.test;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 public class ResizableOverlayView extends View {
     private Paint maskPaint;
@@ -26,11 +32,17 @@ public class ResizableOverlayView extends View {
         init();
     }
 
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        rect.set(20, 20, ((View)getParent()).getWidth() / 2f, ((View)getParent()).getHeight() / 2f);
+    }
+
     private void init() {
         maskPaint = new Paint();
         //maskPaint.setColor(Color.parseColor("#88000000")); // 半透明黑
         maskPaint.setAlpha(0);
-        rect = new RectF(100, 100, 500, 500); // 預設遮罩區域
+        rect = new RectF(0, 0, 0, 0); // 預設遮罩區域
     }
 
     @Override
@@ -131,6 +143,28 @@ public class ResizableOverlayView extends View {
 
     public RectF getMaskRect() {
         return rect;
+    }
+
+    public static RectF mapRectFromViewToBitmap(RectF maskRectInView, ImageView imageView, Bitmap bitmap) {
+        Drawable drawable = imageView.getDrawable();
+        if (drawable == null) return null;
+
+        // 1. 取得 Bitmap 在 ImageView 中實際顯示的範圍
+        Matrix matrix = imageView.getImageMatrix();
+        RectF displayedBitmapRect = new RectF(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        matrix.mapRect(displayedBitmapRect); // 映射到 View 空間中
+
+        // 2. 計算縮放比
+        float scaleX = (float) bitmap.getWidth() / displayedBitmapRect.width();
+        float scaleY = (float) bitmap.getHeight() / displayedBitmapRect.height();
+
+        // 3. 轉換遮罩座標到 Bitmap 上
+        float left   = (maskRectInView.left   - displayedBitmapRect.left) * scaleX;
+        float top    = (maskRectInView.top    - displayedBitmapRect.top) * scaleY;
+        float right  = (maskRectInView.right  - displayedBitmapRect.left) * scaleX;
+        float bottom = (maskRectInView.bottom - displayedBitmapRect.top) * scaleY;
+
+        return new RectF(left, top, right, bottom);
     }
 }
 

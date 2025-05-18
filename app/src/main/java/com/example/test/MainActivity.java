@@ -52,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
         viewPager.getAdapter().notifyDataSetChanged();
         viewPager.setCurrentItem(1,true);
     }
+    public ViewPager getViewPager(){
+        return viewPager;
+    }
+
 
     private class MyPagerAdapter extends FragmentStatePagerAdapter {
         public MyPagerAdapter(@NonNull FragmentManager fm) {
