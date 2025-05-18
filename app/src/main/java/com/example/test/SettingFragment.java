@@ -1,5 +1,7 @@
 package com.example.test;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -26,18 +28,59 @@ public class SettingFragment extends Fragment {
             motorButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getContext(), SetMotorActivity.class);
-                    startActivity(intent);
+                    if(isConnected()){
+                        showCheckAlertDialog();
+                    }
+                    else{
+                        Intent intent = new Intent(getContext(), SetMotorActivity.class);
+                        startActivity(intent);
+                    }
                 }
             });
             coordinateButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getContext(), SetCoordinateActivity.class);
-                    startActivity(intent);
+                    if(isConnected()){
+                        showCheckAlertDialog();
+                    }
+                    else {
+                        Intent intent = new Intent(getContext(), SetCoordinateActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
+            colorButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(isConnected()){
+                        showCheckAlertDialog();
+                    }
+                    else {
+                        Intent intent = new Intent(getContext(), SetColorActivity.class);
+                        startActivity(intent);
+                    }
                 }
             });
         }
         return view;
+    }
+
+    private Boolean isConnected(){
+        return BluetoothSocketManager.getSocket() != null;
+    }
+    private void showCheckAlertDialog(){
+        new AlertDialog.Builder(getContext())
+                .setTitle("是否返回連線？")
+                .setMessage("您尚未連接藍芽，是否返回連接？")
+                .setNegativeButton("取消", null)
+                .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        mainActivity.getViewPager().setCurrentItem(1,true);
+                    }
+                })
+                .create()
+                .show();
     }
 }

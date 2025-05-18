@@ -147,48 +147,35 @@ public class MainFragment extends Fragment {
 
         return view;
     }
-    private void sendString(String dataToSend){
-        if (socket != null && socket.isConnected()) {
-            try {
-                outputStream = socket.getOutputStream();
-
-                outputStream.write(dataToSend.getBytes("utf-8"));
-
-                Toast.makeText(getContext(), "已傳送字串", Toast.LENGTH_SHORT).show();
-
-            } catch (IOException e) {
-                //Log.d("BActivity", "IOException: " + e.getMessage());
-                Toast.makeText(getContext(), "傳送失敗：" + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(getContext(), "藍牙未連線", Toast.LENGTH_SHORT).show();
-        }
+    private void sendString(String sendTitle, String dataToSend){
+        String result = BluetoothSocketManager.sendString(sendTitle, dataToSend);
+        Toast.makeText(getContext(), result, Toast.LENGTH_SHORT).show();
     }
-    private String getString(){
-        try {
-            if(socket.isConnected()){
-                char read;
-                String temp = "";
-                InputStream is = socket.getInputStream();
-                while (true){
-                    if(is.available() == 0){
-                        break;
-                    }
-                    read = (char)is.read();
-                    if(read == '\0') break;
-                    temp += read;
-                    //Log.d("wnilnay",(int)read+"");
-                }
-                Log.d("wnilnay",temp);
-                return temp;
-            }
-        }
-        catch (IOException | NullPointerException e) {
-            Log.d("wnilnay",e.getMessage());
-            return "Error";
-        }
-        return "";
-    }
+//    private String getString(){
+//        try {
+//            if(socket.isConnected()){
+//                char read;
+//                String temp = "";
+//                InputStream is = socket.getInputStream();
+//                while (true){
+//                    if(is.available() == 0){
+//                        break;
+//                    }
+//                    read = (char)is.read();
+//                    if(read == '\0') break;
+//                    temp += read;
+//                    //Log.d("wnilnay",(int)read+"");
+//                }
+//                Log.d("wnilnay",temp);
+//                return temp;
+//            }
+//        }
+//        catch (IOException | NullPointerException e) {
+//            Log.d("wnilnay",e.getMessage());
+//            return "Error";
+//        }
+//        return "";
+//    }
 
     public void up_button() {
         if(isOk){
@@ -632,13 +619,13 @@ public class MainFragment extends Fragment {
     public void OkButton() {
         isOk = true;
         //inputColor();
-        sendString("OK");
+        sendString("OK","");
         button_ok.setVisibility(View.INVISIBLE);
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                String cubeColor = getString();
+                String cubeColor = BluetoothSocketManager.getString();
                 if(cubeColor.contains("cube color")){
                     requireActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -646,13 +633,13 @@ public class MainFragment extends Fragment {
                             String color = cubeColor.replace("cube color:","");
                             Log.d("wnilnay",color);
                             setColor(color);
-                            sendString(solve());
+                            sendString("SolveStep",solve());
 
                             Timer timer1 = new Timer();
                             timer1.schedule(new TimerTask() {
                                 @Override
                                 public void run() {
-                                    String nextString = getString();
+                                    String nextString = BluetoothSocketManager.getString();
                                     if(nextString.contains("next")){
                                         requireActivity().runOnUiThread(new Runnable() {
                                             @Override

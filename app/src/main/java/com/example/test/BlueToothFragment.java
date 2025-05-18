@@ -235,7 +235,8 @@ public class BlueToothFragment extends Fragment {
                 public void run() {
                     if (socket == null || !socket.isConnected()) {
                         try {
-                            socket = device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"));
+                            //socket = device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"));
+                            socket = device.createRfcommSocketToServiceRecord(UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee"));
 
                             // 設置連接超時
                             final CountDownLatch connectLatch = new CountDownLatch(1);
