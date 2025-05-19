@@ -95,6 +95,40 @@
             />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/upper_hsv_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="上限：H:、S:、V:"
+        android:textSize="20sp"
+        android:textColor="#9FA8DA"
+        android:layout_gravity="center"
+        />
+<!--    <View-->
+<!--        android:id="@+id/upper_hsv_view"-->
+<!--        android:layout_width="50dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:background="@color/black"-->
+<!--        android:layout_gravity="center"-->
+<!--        />-->
+<!--    <View-->
+<!--        android:id="@+id/lower_hsv_view"-->
+<!--        android:layout_width="50dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        android:background="@color/black"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:layout_marginHorizontal="20dp"-->
+<!--        />-->
+    <TextView
+        android:id="@+id/lower_hsv_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="下限：H:、S:、V:"
+        android:textSize="20sp"
+        android:textColor="#9FA8DA"
+        android:layout_gravity="center"
+        />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -114,6 +148,7 @@
             />
 
     </FrameLayout>
+
 
 
 

@@ -3,21 +3,23 @@ package com.example.test;
 import static android.app.Activity.RESULT_OK;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.PointF;
+import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.LongDef;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,8 +28,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -38,6 +46,11 @@ public class SetSingleColorFragment extends Fragment {
     private Button fromAlbumsbButton, fromCamaraButton, backToDefaultButton, saveButton;
     private final int REQUEST_GALLERY = 1;
     private final int REQUEST_CAMERA = 2;
+    private File saveDir;
+    private String color = "";
+    private TextView upperHSVtextview, lowerHSVtextview;
+    private float[] hsv_upper_255;
+    private float[] hsv_lower_255;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -51,37 +64,69 @@ public class SetSingleColorFragment extends Fragment {
             fromCamaraButton = view.findViewById(R.id.fromCamara_button);
             backToDefaultButton = view.findViewById(R.id.back_to_default_button);
             saveButton = view.findViewById(R.id.save_button);
+            upperHSVtextview = view.findViewById(R.id.upper_hsv_textview);
+            lowerHSVtextview = view.findViewById(R.id.lower_hsv_textview);
 
-            String color = getArguments().getString("color");
-            Bitmap myBitmap = StorageUtil.loadBitmap(getContext(), "color_" + color);
+            saveDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+            color = getArguments().getString("color");
+            Bitmap myBitmap = StorageUtil.loadBitmap(getContext(), "bitmap_" + color);
 
             if(myBitmap == null){
-                switch (color){
-                    case "white":
-                        //imageView.setImageResource(R.drawable.cube_default_white);
-                        myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_white);
-                        break;
-                    case "yellow":
-                        myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_yellow);
-                        break;
-                    case "green":
-                        myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_green);
-                        break;
-                    case "blue":
-                        myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_blue);
-                        break;
-                    case "red":
-                        myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_red);
-                        break;
-                    case "orange":
-                        myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_orange);
-                        break;
-                    default:
-                        break;
-                }
-                myBitmap = BitmapUtil.resizeAndCompressBitmap(myBitmap);
+                setBackToDefaultBitmap();
+                setBackToDefaultRectF();
+                setBackToDefaultHSV();
             }
-            imageView.setImageBitmap(myBitmap);
+            else {
+                imageView.setImageBitmap(myBitmap);
+
+                overlayView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        String jsonString = StorageUtil.getString(getContext(), "rectF_" + color);
+                        try {
+                            JSONObject jsonObject = new JSONObject(jsonString);
+                            RectF rect = overlayView.getMaskRect();
+                            rect.left = (float) jsonObject.getDouble("left");
+                            rect.top = (float) jsonObject.getDouble("top");
+                            rect.right = (float) jsonObject.getDouble("right");
+                            rect.bottom = (float) jsonObject.getDouble("bottom");
+                            overlayView.invalidate();
+                        }
+                        catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+
+                upperHSVtextview.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String jsonString = StorageUtil.getString(getContext(), "HSV_" + color + "_upper");
+                            JSONArray jsonArray = new JSONArray(jsonString);
+                            float[] hsv_upper = new float[jsonArray.length()];
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                hsv_upper[i] = (float) jsonArray.getDouble(i);
+                            }
+
+                            jsonString = StorageUtil.getString(getContext(), "HSV_" + color + "_lower");
+                            jsonArray = new JSONArray(jsonString);
+                            float[] hsv_lower = new float[jsonArray.length()];
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                hsv_lower[i] = (float) jsonArray.getDouble(i);
+                            }
+
+                            updateColorText(hsv_upper, hsv_lower);
+
+                            // 使用 newColors 陣列
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+            }
 
             overlayView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -132,6 +177,7 @@ public class SetSingleColorFragment extends Fragment {
                     saveAndQuit();
                 }
             });
+
         }
         return view;
     }
@@ -157,8 +203,15 @@ public class SetSingleColorFragment extends Fragment {
         Bitmap bitmap = null;
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_CAMERA && data != null) {
-                bitmap = (Bitmap) data.getExtras().get("data");  // 拍照回來的是縮圖
+//            if (requestCode == REQUEST_CAMERA && data != null) {
+//                bitmap = (Bitmap) data.getExtras().get("data");  // 拍照回來的是縮圖
+//            }
+            if(requestCode == REQUEST_CAMERA){
+                bitmap = BitmapFactory.decodeFile(
+                        new File(saveDir, "cube.jpg").getAbsolutePath()
+                );
+                bitmap = BitmapUtil.resizeAndCompressBitmap(bitmap,1200,1200,50);
+                //Log.d("wnilnay", "have bitmap");
             }
             else if (requestCode == REQUEST_GALLERY && data != null) {
                 Uri imageUri = data.getData();
@@ -201,6 +254,9 @@ public class SetSingleColorFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+            else {
+                Log.e("wnilnay error", data.toString());
+            }
 
 
             if (bitmap != null) {
@@ -216,14 +272,225 @@ public class SetSingleColorFragment extends Fragment {
     }
 
     private void fromCamara() {
+        Uri uri = FileProvider.getUriForFile(getContext(),
+                getActivity().getPackageName() + ".fileprovider",
+                new File(saveDir, "cube.jpg"));
         Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePicture.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(takePicture, REQUEST_CAMERA);
     }
     private void setBackToDefault(){
+        //StorageUtil.deleteBitmap(getContext(), "color_" + color);
+        new AlertDialog.Builder(getContext())
+                .setTitle("返回預設值")
+                .setMessage("是否返回預設值")
+                .setPositiveButton("是", (dialog, which) -> {
+                    setBackToDefaultBitmap();
+                    setBackToDefaultRectF();
+                    setBackToDefaultHSV();
+                })
+                .setNeutralButton("否", null)
+                .create().show();
+    }
 
+    private void setBackToDefaultBitmap(){
+        Bitmap myBitmap = null;
+        switch (color){
+            case "white":
+                myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_white);
+                break;
+            case "yellow":
+                myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_yellow);
+                break;
+            case "green":
+                myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_green);
+                break;
+            case "blue":
+                myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_blue);
+                break;
+            case "red":
+                myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_red);
+                break;
+            case "orange":
+                myBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cube_default_orange);
+                break;
+            default:
+                break;
+        }
+        myBitmap = BitmapUtil.resizeAndCompressBitmap(myBitmap);
+        imageView.setImageBitmap(myBitmap);
+    }
+    private void setBackToDefaultRectF(){
+        overlayView.post(new Runnable() {
+            @Override
+            public void run() {
+                RectF rectF = overlayView.getMaskRect();
+                switch (color){
+                    case "white":
+                        rectF.set(76.56812f, 264.86377f, 652.5f, 836.0f);
+                        break;
+                    case "yellow":
+                        rectF.set(74.5f, 282.0f, 629.0f, 838.0f);
+                        break;
+                    case "green":
+                        rectF.set(57.527626f, 217.0f, 661.0f, 813.0f);
+                        break;
+                    case "blue":
+                        rectF.set(67.5192f, 274.0f, 667.0f, 871.0f);
+                        break;
+                    case "red":
+                        rectF.set(78.0f, 243.0f, 696.0f, 850.79553f);
+                        break;
+                    case "orange":
+                        rectF.set(72.5f, 241.0f, 690.0f, 862.0f);
+                        break;
+                    default:
+                        break;
+                }
+                overlayView.invalidate();
+            }
+        });
+    }
+    private void setBackToDefaultHSV(){
+        float hue_upper = 0, hue_lower = 0;     // 色相 H: 0 ~ 360
+        int s255_upper = 0, s255_lower = 0;       // 飽和度 S: 0 ~ 255
+        int v255_upper = 0, v255_lower = 0;       // 明度 V: 0 ~ 255
+
+        switch (color){
+            case "white":
+                hue_lower = 0;s255_lower = 0;v255_lower = 100;
+                hue_upper = 360;s255_upper = 25;v255_upper = 255;
+                break;
+            case "yellow":
+                hue_lower = 30;s255_lower = 100;v255_lower = 100;
+                hue_upper = 35;s255_upper = 255;v255_upper = 255;
+                break;
+            case "green":
+                hue_lower = 60;s255_lower = 100;v255_lower = 100;
+                hue_upper = 70;s255_upper = 255;v255_upper = 255;
+                break;
+            case "blue":
+                hue_lower = 105;s255_lower = 100;v255_lower = 100;
+                hue_upper = 115;s255_upper = 255;v255_upper = 255;
+                break;
+            case "red":
+                hue_lower = 0;s255_lower = 100;v255_lower = 100;
+                hue_upper = 5;s255_upper = 255;v255_upper = 255;
+                break;
+            case "orange":
+                hue_lower = 7;s255_lower = 100;v255_lower = 100;
+                hue_upper = 14;s255_upper = 255;v255_upper = 255;
+                break;
+            default:
+                break;
+        }
+        // 將 S、V 轉為 0~1 的浮點數
+        float saturation_upper = s255_upper / 255f, saturation_lower = s255_lower / 255f;
+        float value_upper = v255_upper / 255f, value_lower = v255_lower / 255f;
+        float[] hsv_upper = new float[]{hue_upper, saturation_upper, value_upper};
+        float[] hsv_lower = new float[]{hue_lower, saturation_lower, value_lower};
+        hsv_upper_255 = new float[]{hue_upper, s255_upper, v255_upper};
+        hsv_lower_255 = new float[]{hue_lower, s255_lower, v255_lower};
+        int rgbColor_upper = Color.HSVToColor(hsv_upper);
+        int rgbColor_lower = Color.HSVToColor(hsv_lower);
+        upperHSVtextview.setBackgroundColor(rgbColor_upper);
+        lowerHSVtextview.setBackgroundColor(rgbColor_lower);
+
+        updateColorText(hsv_upper_255, hsv_lower_255);
+
+//        int color = Color.HSVToColor(hsv_upper);
+//
+//        // 取得 ARGB 分量
+//        int alpha = Color.alpha(color);
+//        int red = Color.red(color);
+//        int green = Color.green(color);
+//        int blue = Color.blue(color);
+//
+//        // 轉成十六進位顏色字串
+//        String hex = String.format("#%02X%02X%02X%02X", alpha, red, green, blue);
+//        Log.d("wnilnay_ColorInfo", "Hex_upper: " + hex); // 例如：#FFFF4081
+//
+//        color = Color.HSVToColor(hsv_lower);
+//
+//        // 取得 ARGB 分量
+//        alpha = Color.alpha(color);
+//        red = Color.red(color);
+//        green = Color.green(color);
+//        blue = Color.blue(color);
+//
+//        // 轉成十六進位顏色字串
+//        hex = String.format("#%02X%02X%02X%02X", alpha, red, green, blue);
+//        Log.d("wnilnay_ColorInfo", "Hex_lower: " + hex); // 例如：#FFFF4081
+    }
+    private void updateColorText(float[] hsv_upper, float[] hsv_lower){
+        upperHSVtextview.setText("上限：H: " + hsv_upper[0] + ", S: " + hsv_upper[1] + ", V: " + hsv_upper[2]);
+        lowerHSVtextview.setText("下限：H: " + hsv_lower[0] + ", S: " + hsv_lower[1] + ", V: " + hsv_lower[2]);
     }
     private void saveAndQuit(){
+        new AlertDialog.Builder(getContext())
+                .setTitle("儲存並退出")
+                .setMessage("是否儲存並退出")
+                .setPositiveButton("是", (dialog, which) -> {
+                    StorageUtil.saveBitmap(getContext(), "bitmap_" + color,
+                            ((BitmapDrawable)imageView.getDrawable()).getBitmap());
 
+                    RectF rect = overlayView.getMaskRect();
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("left",rect.left);
+                        jsonObject.put("top",rect.top);
+                        jsonObject.put("right",rect.right);
+                        jsonObject.put("bottom",rect.bottom);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    StorageUtil.saveString(getContext(), "rectF_" + color, jsonObject.toString());
+
+                    JSONArray jsonArray = new JSONArray();
+                    for (float hsv : hsv_upper_255) {
+                        try {
+                            jsonArray.put(hsv);
+                        }
+                        catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    StorageUtil.saveString(getContext(), "HSV_" + color + "_upper", jsonArray.toString());
+
+                    jsonArray = new JSONArray();
+                    for (float hsv : hsv_lower_255) {
+                        try {
+                            jsonArray.put(hsv);
+                        }
+                        catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    StorageUtil.saveString(getContext(), "HSV_" + color + "_lower", jsonArray.toString());
+
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    fragmentManager.popBackStack();
+                })
+                .setNegativeButton("取消",null)
+                .setNeutralButton("不儲存直接退出",(dialog, which) -> {
+                    FragmentManager fragmentManager = getParentFragmentManager();
+                    fragmentManager.popBackStack();
+                })
+                .create().show();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                saveAndQuit();
+            }
+        };
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
 }

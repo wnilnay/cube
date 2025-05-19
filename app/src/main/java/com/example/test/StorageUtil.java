@@ -11,9 +11,21 @@ import java.io.IOException;
 
 public class StorageUtil {
     private static final String PREF_NAME = "Config";
-    private static final String[] COLOR_KEYS = {
-            "color_white", "color_yellow", "color_green",
-            "color_red", "color_blue", "color_orange"
+    private static final String[] Bitmap_KEYS = {
+            "bitmap_white", "bitmap_yellow", "bitmap_green",
+            "bitmap_red", "bitmap_blue", "bitmap_orange"
+    };
+    private static final String[] RectF_KEYS = {
+            "rectF_white", "rectF_yellow", "rectF_green",
+            "rectF_red", "rectF_blue", "rectF_orange"
+    };
+    private static final String[] HSV_KEYS_UPPER = {
+            "HSV_white_upper", "HSV_yellow_upper", "HSV_green_upper",
+            "HSV_red_upper", "HSV_blue_upper", "HSV_orange_upper"
+    };
+    private static final String[] HSV_KEYS_LOWER = {
+            "HSV_white_lower", "HSV_yellow_lower", "HSV_green_lower",
+            "HSV_red_lower", "HSV_blue_lower", "HSV_orange_lower"
     };
 
     public static void saveString(Context context, String key, String value) {
@@ -26,45 +38,50 @@ public class StorageUtil {
         return prefs.getString(key, null);
     }
 
-    public static void saveBitmap(Context context, String colorKey, Bitmap bitmap) {
-        if (isInvalidColorKey(colorKey)) return;
+    public static void deleteString(Context context, String key) {
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        prefs.edit().remove(key).apply();
+    }
 
-        String filename = colorKey + ".jpg";
+    public static void saveBitmap(Context context, String bitmapKey, Bitmap bitmap) {
+        if (isInvalidBitmapKey(bitmapKey)) return;
+
+        String filename = bitmapKey + ".jpg";
         File file = new File(context.getFilesDir(), filename);
 
         try (FileOutputStream out = new FileOutputStream(file)) {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
             out.flush();
-            saveString(context, colorKey, file.getAbsolutePath());
+            saveString(context, bitmapKey, file.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static Bitmap loadBitmap(Context context, String colorKey) {
-        if (isInvalidColorKey(colorKey)) return null;
+    public static Bitmap loadBitmap(Context context, String bitmapKey) {
+        if (isInvalidBitmapKey(bitmapKey)) return null;
 
-        String path = getString(context, colorKey);
+        String path = getString(context, bitmapKey);
         if (path != null) {
             return BitmapFactory.decodeFile(path);
         }
         return null;
     }
-    public static void deleteBitmap(Context context, String colorKey) {
-        String path = getString(context, colorKey);
+    public static void deleteBitmap(Context context, String bitmapKey) {
+        String path = getString(context, bitmapKey);
         if (path != null) {
             File file = new File(path);
             if (file.exists()) {
                 boolean deleted = file.delete();
                 if (deleted) {
-                    saveString(context, colorKey, null);
+                    deleteString(context, bitmapKey);
                 }
             }
         }
     }
 
-    private static boolean isInvalidColorKey(String key) {
-        for (String validKey : COLOR_KEYS) {
+    private static boolean isInvalidBitmapKey(String key) {
+        for (String validKey : Bitmap_KEYS) {
             if (validKey.equals(key)) return false;
         }
         return true;
