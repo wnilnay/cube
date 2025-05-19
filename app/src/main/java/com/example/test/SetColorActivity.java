@@ -32,7 +32,6 @@ public class SetColorActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Bundle bundle = new Bundle();
-        ImageView imageView;
         if(view.getId() == R.id.white_frameLayout){
             bundle.putString("color", "white");
         }

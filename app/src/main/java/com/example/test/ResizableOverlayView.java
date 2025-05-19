@@ -35,7 +35,7 @@ public class ResizableOverlayView extends View {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        rect.set(20, 20, ((View)getParent()).getWidth() / 2f, ((View)getParent()).getHeight() / 2f);
+        rect.set(50, 50, ((View)getParent()).getWidth() / 2f, ((View)getParent()).getHeight() / 2f);
     }
 
     private void init() {
