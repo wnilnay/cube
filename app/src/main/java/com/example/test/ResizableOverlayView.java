@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ public class ResizableOverlayView extends View {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         rect.set(50, 50, ((View)getParent()).getWidth() / 2f, ((View)getParent()).getHeight() / 2f);
+        //Log.d("wnilnay", "onLayout:");
     }
 
     private void init() {

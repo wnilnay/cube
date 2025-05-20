@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -26,9 +28,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 
 public class SetSingleColorFragment extends Fragment {
     private View view;
@@ -49,8 +54,10 @@ public class SetSingleColorFragment extends Fragment {
     private File saveDir;
     private String color = "";
     private TextView upperHSVtextview, lowerHSVtextview;
+    private boolean isWhite = false, isRect = true, isAnalyzeDone = true;
     private float[] hsv_upper_255;
     private float[] hsv_lower_255;
+    private float[] overlayRect_forCamara_coordinate;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -71,6 +78,8 @@ public class SetSingleColorFragment extends Fragment {
 
             color = getArguments().getString("color");
             Bitmap myBitmap = StorageUtil.loadBitmap(getContext(), "bitmap_" + color);
+            isWhite = color.equals("white");
+            //Log.d("wnilnay color", color.equals("white") + "");
 
             if(myBitmap == null){
                 setBackToDefaultBitmap();
@@ -117,7 +126,9 @@ public class SetSingleColorFragment extends Fragment {
                                 hsv_lower[i] = (float) jsonArray.getDouble(i);
                             }
 
-                            updateColorText(hsv_upper, hsv_lower);
+                            hsv_upper_255 = hsv_upper;
+                            hsv_lower_255 = hsv_lower;
+                            updateColorTextView(hsv_upper, hsv_lower);
 
                             // 使用 newColors 陣列
                         } catch (Exception e) {
@@ -139,15 +150,31 @@ public class SetSingleColorFragment extends Fragment {
                         rect.top = 0;
                     }
                     overlayView.invalidate();
-                    Log.d("wnilnay rect", "left:" + rect.left + ", top:" + rect.top + ", right:" + rect.right + ", bottom:" + rect.bottom);
+                    //Log.d("wnilnay rect", "left:" + rect.left + ", top:" + rect.top + ", right:" + rect.right + ", bottom:" + rect.bottom);
                     if(imageView.getDrawable() != null && motionEvent.getAction() == MotionEvent.ACTION_UP){
                         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                analyzeBitmap(bitmap,ResizableOverlayView.mapRectFromViewToBitmap(rect, imageView, bitmap));
+                                if(isWhite){
+                                    float[] s = analyzeBitmap(bitmap,ResizableOverlayView
+                                            .mapRectFromViewToBitmap(rect, imageView, bitmap), isWhite);
+                                    hsv_lower_255 = new float[]{0, Math.round(s[0] * 255), 100};
+                                    hsv_upper_255 = new float[]{360, Math.round(s[1] * 255), 255};
+                                    updateColorTextView(hsv_upper_255, hsv_lower_255);
+                                }
+                                else {
+                                    float[] h = analyzeBitmap(bitmap, ResizableOverlayView
+                                            .mapRectFromViewToBitmap(rect, imageView, bitmap), isWhite);
+                                    hsv_lower_255 = new float[]{h[0], 100, 100};
+                                    hsv_upper_255 = new float[]{h[1], 255, 255};
+                                    updateColorTextView(hsv_upper_255, hsv_lower_255);
+                                }
+
+
                             }
                         }).start();
+                        isRect = true;
                     }
 
                     return false;
@@ -182,7 +209,8 @@ public class SetSingleColorFragment extends Fragment {
         return view;
     }
 
-    private void analyzeBitmap(Bitmap bitmap, RectF rect){
+    private float[] analyzeBitmap(Bitmap bitmap, RectF rect, boolean isWhite){
+        isAnalyzeDone = false;
         HsvAnalyzer.HsvStats stats = new HsvAnalyzer.HsvStats();
         if(rect == null){
             stats = HsvAnalyzer.analyze(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight());
@@ -195,14 +223,43 @@ public class SetSingleColorFragment extends Fragment {
         Log.d("wnilnay HSV", "最大 H: " + stats.maxH + ", S: " + stats.maxS + ", V: " + stats.maxV);
         Log.d("wnilnay HSV", "最小 H: " + stats.minH + ", S: " + stats.minS + ", V: " + stats.minV);
         Log.d("wnilnay HSV", "眾數 H: " + stats.modeH + ", S: " + stats.modeS + ", V: " + stats.modeV);
+
+        if(!isWhite) {
+            float hueRange = stats.maxH - stats.minH;
+            float averageHue = (stats.avgH + stats.modeH) / 2;
+            isAnalyzeDone = true;
+            return new float[]{(averageHue - hueRange) < 0 ? 0 : averageHue - hueRange,
+                    averageHue + hueRange};
+        }
+        else {
+            float sRange = stats.maxS - stats.minS;
+            float averageS = (stats.avgS + stats.modeS) / 2;
+            isAnalyzeDone = true;
+            return new float[]{(averageS - sRange) < 0 ? 0 : averageS - sRange,
+                    averageS + sRange};
+        }
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        overlayView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                overlayView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if(overlayRect_forCamara_coordinate == null) return;
+                overlayView.getMaskRect().set(overlayRect_forCamara_coordinate[0],
+                        overlayRect_forCamara_coordinate[1],
+                        overlayRect_forCamara_coordinate[2],
+                        overlayRect_forCamara_coordinate[3]);
+                overlayView.invalidate();
+            }
+        });
         Bitmap bitmap = null;
 
         if (resultCode == RESULT_OK) {
+
+            Log.d("wnilnay","onActivityResult_RESULT_OK");
 //            if (requestCode == REQUEST_CAMERA && data != null) {
 //                bitmap = (Bitmap) data.getExtras().get("data");  // 拍照回來的是縮圖
 //            }
@@ -261,7 +318,9 @@ public class SetSingleColorFragment extends Fragment {
 
             if (bitmap != null) {
                 imageView.setImageBitmap(bitmap);
-                analyzeBitmap(bitmap, null);
+                upperHSVtextview.setText("請選取遮罩範圍");
+                lowerHSVtextview.setText("請選取遮罩範圍");
+                isRect = false;
             }
         }
     }
@@ -275,6 +334,10 @@ public class SetSingleColorFragment extends Fragment {
         Uri uri = FileProvider.getUriForFile(getContext(),
                 getActivity().getPackageName() + ".fileprovider",
                 new File(saveDir, "cube.jpg"));
+        RectF overlayRect_forCamara = overlayView.getMaskRect();
+        overlayRect_forCamara_coordinate = new float[]{overlayRect_forCamara.left, overlayRect_forCamara.top,
+                overlayRect_forCamara.right, overlayRect_forCamara.bottom};
+        //Log.d("wnilnay", "overlayRect_forCamara: " + overlayRect_forCamara.toString());
         Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePicture.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(takePicture, REQUEST_CAMERA);
@@ -353,8 +416,8 @@ public class SetSingleColorFragment extends Fragment {
     }
     private void setBackToDefaultHSV(){
         float hue_upper = 0, hue_lower = 0;     // 色相 H: 0 ~ 360
-        int s255_upper = 0, s255_lower = 0;       // 飽和度 S: 0 ~ 255
-        int v255_upper = 0, v255_lower = 0;       // 明度 V: 0 ~ 255
+        float s255_upper = 0, s255_lower = 0;       // 飽和度 S: 0 ~ 255
+        float v255_upper = 0, v255_lower = 0;       // 明度 V: 0 ~ 255
 
         switch (color){
             case "white":
@@ -384,49 +447,47 @@ public class SetSingleColorFragment extends Fragment {
             default:
                 break;
         }
-        // 將 S、V 轉為 0~1 的浮點數
-        float saturation_upper = s255_upper / 255f, saturation_lower = s255_lower / 255f;
-        float value_upper = v255_upper / 255f, value_lower = v255_lower / 255f;
-        float[] hsv_upper = new float[]{hue_upper, saturation_upper, value_upper};
-        float[] hsv_lower = new float[]{hue_lower, saturation_lower, value_lower};
         hsv_upper_255 = new float[]{hue_upper, s255_upper, v255_upper};
         hsv_lower_255 = new float[]{hue_lower, s255_lower, v255_lower};
-        int rgbColor_upper = Color.HSVToColor(hsv_upper);
-        int rgbColor_lower = Color.HSVToColor(hsv_lower);
-        upperHSVtextview.setBackgroundColor(rgbColor_upper);
-        lowerHSVtextview.setBackgroundColor(rgbColor_lower);
 
-        updateColorText(hsv_upper_255, hsv_lower_255);
-
-//        int color = Color.HSVToColor(hsv_upper);
-//
-//        // 取得 ARGB 分量
-//        int alpha = Color.alpha(color);
-//        int red = Color.red(color);
-//        int green = Color.green(color);
-//        int blue = Color.blue(color);
-//
-//        // 轉成十六進位顏色字串
-//        String hex = String.format("#%02X%02X%02X%02X", alpha, red, green, blue);
-//        Log.d("wnilnay_ColorInfo", "Hex_upper: " + hex); // 例如：#FFFF4081
-//
-//        color = Color.HSVToColor(hsv_lower);
-//
-//        // 取得 ARGB 分量
-//        alpha = Color.alpha(color);
-//        red = Color.red(color);
-//        green = Color.green(color);
-//        blue = Color.blue(color);
-//
-//        // 轉成十六進位顏色字串
-//        hex = String.format("#%02X%02X%02X%02X", alpha, red, green, blue);
-//        Log.d("wnilnay_ColorInfo", "Hex_lower: " + hex); // 例如：#FFFF4081
+        updateColorTextView(hsv_upper_255, hsv_lower_255);
     }
-    private void updateColorText(float[] hsv_upper, float[] hsv_lower){
-        upperHSVtextview.setText("上限：H: " + hsv_upper[0] + ", S: " + hsv_upper[1] + ", V: " + hsv_upper[2]);
-        lowerHSVtextview.setText("下限：H: " + hsv_lower[0] + ", S: " + hsv_lower[1] + ", V: " + hsv_lower[2]);
+    private void updateColorTextView(float[] hsv_upper_255, float[] hsv_lower_255){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DecimalFormat df = new DecimalFormat("0.00");
+                upperHSVtextview.setText("上限：H: " + df.format(hsv_upper_255[0]) + ", S: " +
+                        df.format(hsv_upper_255[1]) + ", V: " + df.format(hsv_upper_255[2]));
+                lowerHSVtextview.setText("下限：H: " + df.format(hsv_lower_255[0]) + ", S: " +
+                        df.format(hsv_lower_255[1]) + ", V: " + df.format(hsv_lower_255[2]));
+
+                float[] hsv_upper = new float[3];
+                float[] hsv_lower = new float[3];
+                hsv_upper[0] = hsv_upper_255[0];
+                hsv_upper[1] = hsv_upper_255[1] / 255f;
+                hsv_upper[2] = hsv_upper_255[2] / 255f;
+
+                hsv_lower[0] = hsv_lower_255[0];
+                hsv_lower[1] = hsv_lower_255[1] / 255f;
+                hsv_lower[2] = hsv_lower_255[2] / 255f;
+
+                int rgbColor_upper = Color.HSVToColor(hsv_upper);
+                int rgbColor_lower = Color.HSVToColor(hsv_lower);
+                upperHSVtextview.setBackgroundColor(rgbColor_upper);
+                lowerHSVtextview.setBackgroundColor(rgbColor_lower);
+            }
+        });
     }
     private void saveAndQuit(){
+        if(!isRect){
+            Toast.makeText(getContext(), "請選取遮罩範圍", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(!isAnalyzeDone){
+            Toast.makeText(getContext(), "請稍後再試", Toast.LENGTH_SHORT).show();
+            return;
+        }
         new AlertDialog.Builder(getContext())
                 .setTitle("儲存並退出")
                 .setMessage("是否儲存並退出")
@@ -468,6 +529,8 @@ public class SetSingleColorFragment extends Fragment {
                     }
                     StorageUtil.saveString(getContext(), "HSV_" + color + "_lower", jsonArray.toString());
 
+                    Toast.makeText(getContext(), "儲存成功", Toast.LENGTH_SHORT).show();
+                    ((SetColorActivity)requireActivity()).updateBitmap(color);
                     FragmentManager fragmentManager = getParentFragmentManager();
                     fragmentManager.popBackStack();
                 })
@@ -492,5 +555,4 @@ public class SetSingleColorFragment extends Fragment {
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
-
 }
