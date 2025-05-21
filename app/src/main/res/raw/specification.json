@@ -43,57 +43,57 @@
       {
         "Title": "ColorSetting",
         "Data": {
-          "W_Lower": [
+          "white_Lower": [
             "H",
             "S",
             "V"
           ],
-          "W_Upper": [
+          "white_Upper": [
             "H",
             "S",
             "V"],
-          "Y_Lower": [
+          "yellow_Lower": [
             "H",
             "S",
             "V"
           ],
-          "Y_Upper": [
+          "yellow_Upper": [
             "H",
             "S",
             "V"],
-          "G_Lower": [
+          "green_Lower": [
             "H",
             "S",
             "V"
           ],
-          "G_Upper": [
+          "green_Upper": [
             "H",
             "S",
             "V"],
-          "B_Lower": [
+          "blue_Lower": [
             "H",
             "S",
             "V"
           ],
-          "B_Upper": [
+          "blue_Upper": [
             "H",
             "S",
             "V"],
-          "R_Lower": [
+          "red_Lower": [
             "H",
             "S",
             "V"
           ],
-          "R_Upper": [
+          "red_Upper": [
             "H",
             "S",
             "V"],
-          "O_Lower": [
+          "orange_Lower": [
             "H",
             "S",
             "V"
           ],
-          "O_Upper": [
+          "orange_Upper": [
             "H",
             "S",
             "V"]

@@ -4,7 +4,6 @@ import static android.app.Activity.RESULT_OK;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,7 +14,6 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -507,29 +505,39 @@ public class SetSingleColorFragment extends Fragment {
                     }
                     StorageUtil.saveString(getContext(), "rectF_" + color, jsonObject.toString());
 
-                    JSONArray jsonArray = new JSONArray();
+                    JSONArray jsonArray_Upper = new JSONArray();
                     for (float hsv : hsv_upper_255) {
                         try {
-                            jsonArray.put(hsv);
+                            jsonArray_Upper.put(hsv);
                         }
                         catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    StorageUtil.saveString(getContext(), "HSV_" + color + "_upper", jsonArray.toString());
+                    StorageUtil.saveString(getContext(), "HSV_" + color + "_upper", jsonArray_Upper.toString());
 
-                    jsonArray = new JSONArray();
+                    JSONArray jsonArray_Lower = new JSONArray();
                     for (float hsv : hsv_lower_255) {
                         try {
-                            jsonArray.put(hsv);
+                            jsonArray_Lower.put(hsv);
                         }
                         catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    StorageUtil.saveString(getContext(), "HSV_" + color + "_lower", jsonArray.toString());
+                    StorageUtil.saveString(getContext(), "HSV_" + color + "_lower", jsonArray_Lower.toString());
 
                     Toast.makeText(getContext(), "儲存成功", Toast.LENGTH_SHORT).show();
+
+                    jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put(color + "_Lower", jsonArray_Lower);
+                        jsonObject.put(color + "_Upper", jsonArray_Upper);
+//                        BluetoothSocketManager.sendString("ColorSetting",jsonObject.toString());
+                        Log.d("wnilnay",jsonObject.toString());
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
                     ((SetColorActivity)requireActivity()).updateBitmap(color);
                     FragmentManager fragmentManager = getParentFragmentManager();
                     fragmentManager.popBackStack();

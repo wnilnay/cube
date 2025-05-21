@@ -625,12 +625,12 @@ public class MainFragment extends Fragment {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                String cubeColor = BluetoothSocketManager.getString();
-                if(cubeColor.contains("cube color")){
+                String[] cubeColor = BluetoothSocketManager.getString();
+                if(cubeColor[0].contains("Color")){
                     requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            String color = cubeColor.replace("cube color:","");
+                            String color = cubeColor[1];
                             Log.d("wnilnay",color);
                             setColor(color);
                             sendString("SolveStep",solve());
@@ -639,8 +639,9 @@ public class MainFragment extends Fragment {
                             timer1.schedule(new TimerTask() {
                                 @Override
                                 public void run() {
-                                    String nextString = BluetoothSocketManager.getString();
-                                    if(nextString.contains("next")){
+                                    String[] nextString = BluetoothSocketManager.getString();
+                                    if(nextString == null) return;
+                                    if(nextString[0].contains("next")){
                                         requireActivity().runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -648,7 +649,7 @@ public class MainFragment extends Fragment {
                                             }
                                         });
                                     }
-                                    else if(nextString.contains("end")){
+                                    else if(nextString[0].contains("end")){
                                         requireActivity().runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
