@@ -48,7 +48,7 @@ public class BluetoothSocketManager {
         return result;
     }
 
-    public static String getString(){
+    public static String[] getString(){
         try {
             if(bluetoothSocket.isConnected()){
                 char read;
@@ -64,13 +64,13 @@ public class BluetoothSocketManager {
                     //Log.d("wnilnay",(int)read+"");
                 }
                 Log.d("wnilnay",temp);
-                return temp;
+                return temp.split("\n");
             }
         }
         catch (IOException | NullPointerException e) {
             Log.d("wnilnay",e.getMessage());
-            return "Error";
+            return new String[]{"Error",""};
         }
-        return "";
+        return null;
     }
 }

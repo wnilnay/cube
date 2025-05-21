@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_setColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main_setColor"
     android:orientation="vertical"
     tools:context=".SetColorActivity">
 
@@ -15,8 +15,8 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         app:navigationIcon="@drawable/ic_arrow_back"
-        app:titleTextColor="@android:color/white"
-        android:onClick="backPage"/>
+        android:onClick="backPage"
+        app:titleTextColor="@android:color/white"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +25,7 @@
         android:layout_weight="1"
         android:layout_marginVertical="5dp"
         >
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/white_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -47,9 +47,9 @@
                 android:text="White"
                 android:textColor="#673AB7"
                 />
-        </FrameLayout>
+        </RelativeLayout>
 
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/yellow_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -71,7 +71,7 @@
                 android:text="Yellow"
                 android:textColor="#673AB7"
                 />
-        </FrameLayout>
+        </RelativeLayout>
 
 
     </LinearLayout>
@@ -83,7 +83,7 @@
         android:layout_weight="1"
         android:layout_marginVertical="5dp"
         >
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/green_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -105,9 +105,9 @@
                 android:text="Green"
                 android:textColor="#673AB7"
                 />
-        </FrameLayout>
+        </RelativeLayout>
 
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/blue_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -129,7 +129,7 @@
                 android:text="Blue"
                 android:textColor="#673AB7"
                 />
-        </FrameLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -140,7 +140,7 @@
         android:layout_weight="1"
         android:layout_marginVertical="5dp"
         >
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/red_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -162,9 +162,9 @@
                 android:text="Red"
                 android:textColor="#673AB7"
                 />
-        </FrameLayout>
+        </RelativeLayout>
 
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/orange_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -186,7 +186,7 @@
                 android:text="Orange"
                 android:textColor="#673AB7"
                 />
-        </FrameLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

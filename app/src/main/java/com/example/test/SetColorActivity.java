@@ -26,11 +26,11 @@ public class SetColorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_set_color);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_setColor), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_setColor), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
         cube_white_imageView = findViewById(R.id.cube_white_imageView);
         cube_yellow_imageView = findViewById(R.id.cube_yellow_imageView);
         cube_green_imageView = findViewById(R.id.cube_green_imageView);
