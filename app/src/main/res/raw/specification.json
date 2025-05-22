@@ -105,15 +105,7 @@
     "send": [
       {
         "Title": "Color",
-        "Data":
-        {
-          "Up": ["Color*9"],
-          "Right": ["Color*9"],
-          "Front": ["Color*9"],
-          "Back": ["Color*9"],
-          "Left": ["Color*9"],
-          "Down": ["Color*9"]
-        }
+        "Data": "Color String"
       },
       {
         "Title": "next",
