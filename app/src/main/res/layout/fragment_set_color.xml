@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main_setColor"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".SetColorActivity">
+    tools:context=".SetColorFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -15,8 +13,9 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         app:navigationIcon="@drawable/ic_arrow_back"
-        android:onClick="backPage"
-        app:titleTextColor="@android:color/white"/>
+        android:layout_marginTop="20dp"
+        app:titleTextColor="@android:color/white"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,13 +24,12 @@
         android:layout_weight="1"
         android:layout_marginVertical="5dp"
         >
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/white_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_marginHorizontal="5dp"
-            android:onClick="SetColor"
             >
             <ImageView
                 android:id="@+id/cube_white_imageView"
@@ -47,15 +45,14 @@
                 android:text="White"
                 android:textColor="#673AB7"
                 />
-        </RelativeLayout>
+        </FrameLayout>
 
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/yellow_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_marginHorizontal="5dp"
-            android:onClick="SetColor"
             >
             <ImageView
                 android:id="@+id/cube_yellow_imageView"
@@ -71,7 +68,7 @@
                 android:text="Yellow"
                 android:textColor="#673AB7"
                 />
-        </RelativeLayout>
+        </FrameLayout>
 
 
     </LinearLayout>
@@ -83,13 +80,12 @@
         android:layout_weight="1"
         android:layout_marginVertical="5dp"
         >
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/green_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_marginHorizontal="5dp"
-            android:onClick="SetColor"
             >
             <ImageView
                 android:id="@+id/cube_green_imageView"
@@ -105,15 +101,14 @@
                 android:text="Green"
                 android:textColor="#673AB7"
                 />
-        </RelativeLayout>
+        </FrameLayout>
 
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/blue_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_marginHorizontal="5dp"
-            android:onClick="SetColor"
             >
             <ImageView
                 android:id="@+id/cube_blue_imageView"
@@ -129,7 +124,7 @@
                 android:text="Blue"
                 android:textColor="#673AB7"
                 />
-        </RelativeLayout>
+        </FrameLayout>
 
     </LinearLayout>
 
@@ -140,13 +135,12 @@
         android:layout_weight="1"
         android:layout_marginVertical="5dp"
         >
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/red_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_marginHorizontal="5dp"
-            android:onClick="SetColor"
             >
             <ImageView
                 android:id="@+id/cube_red_imageView"
@@ -162,15 +156,14 @@
                 android:text="Red"
                 android:textColor="#673AB7"
                 />
-        </RelativeLayout>
+        </FrameLayout>
 
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/orange_frameLayout"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:layout_marginHorizontal="5dp"
-            android:onClick="SetColor"
             >
             <ImageView
                 android:id="@+id/cube_orange_imageView"
@@ -186,7 +179,7 @@
                 android:text="Orange"
                 android:textColor="#673AB7"
                 />
-        </RelativeLayout>
+        </FrameLayout>
 
     </LinearLayout>
 

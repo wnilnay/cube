@@ -52,6 +52,7 @@ public class BlueToothFragment extends Fragment {
     private InputStream is;
     private Timer timer = new Timer();
     private static final int REQUEST_CODE = 1;
+    private boolean isComplete = true;
 
     @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
@@ -217,6 +218,10 @@ public class BlueToothFragment extends Fragment {
 
     public void connectDevice() {
         try {
+            if(!isComplete){
+                Toast.makeText(getContext(), "藍牙正在連線中，請稍後再試", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if (device == null) {
                 Toast.makeText(getContext(), "請選擇配對裝置", Toast.LENGTH_SHORT).show();
                 return;
@@ -235,29 +240,33 @@ public class BlueToothFragment extends Fragment {
                 public void run() {
                     if (socket == null || !socket.isConnected()) {
                         try {
+                            isComplete = false;
                             socket = device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"));
                             //socket = device.createRfcommSocketToServiceRecord(UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee"));
 
                             // 設置連接超時
-//                    final CountDownLatch connectLatch = new CountDownLatch(1);
-//                    final AtomicBoolean connectionSuccess = new AtomicBoolean(false);
-//                    final AtomicReference<Exception> connectionException = new AtomicReference<>();
-//                    final int CONNECTION_TIMEOUT = 10000;
+                            final CountDownLatch connectLatch = new CountDownLatch(1);
+                            final AtomicBoolean connectionSuccess = new AtomicBoolean(false);
+                            final AtomicReference<Exception> connectionException = new AtomicReference<>();
+                            final int CONNECTION_TIMEOUT = 10000;
 
                             try {
                                 socket.connect();
-                                //connectionSuccess.set(true);
+                                connectionSuccess.set(true);
                             } catch (Exception e) {
-                                //connectionException.set(e);
+                                connectionException.set(e);
                                 Log.e("wnilnay",e.getMessage());
 
                             } finally {
-                                //connectLatch.countDown();
+                                connectLatch.countDown();
                             }
-                            //boolean isComplete = connectLatch.await(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
+                            isComplete = connectLatch.await(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
                         }
                         catch (IOException e) {
                             Log.e("wnilnay",e.getMessage());
+                            throw new RuntimeException(e);
+                        }
+                        catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
 
@@ -273,11 +282,6 @@ public class BlueToothFragment extends Fragment {
                                     ((MainActivity)getActivity()).change_to_mainFragment();
                                 }
                             });
-                            // 跳轉到 B Activity
-//                    Intent intent = new Intent(this, MainActivity.class);
-//                    startActivity(intent);
-
-                            //finish();
                         } else {
                             requireActivity().runOnUiThread(new Runnable() {
                                 @Override

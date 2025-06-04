@@ -30,6 +30,19 @@ public class SetMotorActivity extends AppCompatActivity {
             return insets;
         });
         init();
+
+        String motorSettingString = StorageUtil.getString(this, "MotorSetting");
+        if(motorSettingString != null){
+            try {
+                JSONObject jsonObject = new JSONObject(motorSettingString);
+                seekBar_top.setProgress(jsonObject.getInt("MotorTop"));
+                seekBar_down.setProgress(jsonObject.getInt("MotorBottom"));
+                seekBar_left.setProgress(jsonObject.getInt("MotorLeft"));
+                seekBar_right.setProgress(jsonObject.getInt("MotorRight"));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
     private void init()
     {
@@ -82,4 +95,18 @@ public class SetMotorActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStop() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("MotorTop",seekBar_top.getProgress());
+            jsonObject.put("MotorBottom",seekBar_down.getProgress());
+            jsonObject.put("MotorLeft",seekBar_left.getProgress());
+            jsonObject.put("MotorRight",seekBar_right.getProgress());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        StorageUtil.saveString(this, "MotorSetting", jsonObject.toString());
+        super.onStop();
+    }
 }

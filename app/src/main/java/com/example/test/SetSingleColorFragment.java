@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -74,7 +75,9 @@ public class SetSingleColorFragment extends Fragment {
 
             saveDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
-            color = getArguments().getString("color");
+            Bundle arg = getArguments();
+            assert arg != null;
+            color = arg.getString("color");
             Bitmap myBitmap = StorageUtil.loadBitmap(getContext(), "bitmap_" + color);
             isWhite = color.equals("white");
             //Log.d("wnilnay color", color.equals("white") + "");
@@ -168,7 +171,6 @@ public class SetSingleColorFragment extends Fragment {
                                     hsv_upper_255 = new float[]{h[1], 255, 255};
                                     updateColorTextView(hsv_upper_255, hsv_lower_255);
                                 }
-
 
                             }
                         }).start();
@@ -538,9 +540,9 @@ public class SetSingleColorFragment extends Fragment {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-                    ((SetColorActivity)requireActivity()).updateBitmap(color);
                     FragmentManager fragmentManager = getParentFragmentManager();
-                    fragmentManager.popBackStack();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.main_setColor, new SetColorFragment()).commit();
                 })
                 .setNegativeButton("取消",null)
                 .setNeutralButton("不儲存直接退出",(dialog, which) -> {

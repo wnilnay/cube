@@ -626,12 +626,12 @@ public class MainFragment extends Fragment {
             @Override
             public void run() {
                 String[] cubeColor = BluetoothSocketManager.getString();
-                if(cubeColor[0].contains("Color")){
+                if(cubeColor != null && cubeColor[0].contains("Color")){
                     requireActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             String color = cubeColor[1];
-                            Log.d("wnilnay",color);
+                            Log.d("wnilnay color",color);
                             setColor(color);
                             sendString("SolveStep",solve());
 
