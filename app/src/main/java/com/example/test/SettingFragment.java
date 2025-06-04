@@ -56,7 +56,7 @@ public class SettingFragment extends Fragment {
                         showCheckAlertDialog();
                     }
                     else {
-                        Intent intent = new Intent(getContext(), SetColorActivity.class);
+                        Intent intent = new Intent(getContext(), SetColorContainerActivity.class);
                         startActivity(intent);
                     }
                 }

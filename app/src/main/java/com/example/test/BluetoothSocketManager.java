@@ -36,6 +36,8 @@ public class BluetoothSocketManager {
                 //Toast.makeText(getContext(), "已傳送字串", Toast.LENGTH_SHORT).show();
                 result = "已傳送";
 
+                Log.d("wnilnay sendString", sendString);
+
             } catch (IOException e) {
                 //Log.d("BActivity", "IOException: " + e.getMessage());
                 //Toast.makeText(getContext(), "傳送失敗：" + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -63,7 +65,6 @@ public class BluetoothSocketManager {
                     temp += read;
                     //Log.d("wnilnay",(int)read+"");
                 }
-                Log.d("wnilnay",temp);
                 return temp.split("\n");
             }
         }

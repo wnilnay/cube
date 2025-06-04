@@ -44,4 +44,14 @@ public class ColorDirectionManager {
     public Direction getBlueDirection(){
         return blueDirection;
     }
+
+    public char getColorFromDirection(Direction direction){
+        if(direction == yellowDirection) return 'Y';
+        else if(direction == orangeDirection) return 'O';
+        else if(direction == greenDirection) return 'G';
+        else if(direction == whiteDirection) return 'W';
+        else if(direction == redDirection) return 'R';
+        else if(direction == blueDirection) return 'B';
+        else return '\0';
+    }
 }
