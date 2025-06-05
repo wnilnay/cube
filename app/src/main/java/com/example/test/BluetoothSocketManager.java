@@ -1,10 +1,7 @@
 package com.example.test;
 
-import static java.security.AccessController.getContext;
-
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,15 +46,14 @@ public class BluetoothSocketManager {
         }
         return result;
     }
-
-    public static String[] getString(){
+    public static String[] getDataString(){
         try {
             if(bluetoothSocket.isConnected()){
                 char read;
                 String temp = "";
                 InputStream is = bluetoothSocket.getInputStream();
                 while (true){
-                    if(is.available() == 0){
+                    if(is.available() == 0) {
                         break;
                     }
                     read = (char)is.read();

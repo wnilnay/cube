@@ -54,8 +54,14 @@ public class ManualFragment extends Fragment {
         }
         return view;
     }
-
     private void colorButtonClick(View view){
+        white_color_button.setAlpha(1);
+        yellow_color_button.setAlpha(1);
+        green_color_button.setAlpha(1);
+        blue_color_button.setAlpha(1);
+        red_color_button.setAlpha(1);
+        orange_color_button.setAlpha(1);
+        view.setAlpha(0.5f);
         if(view.getId() == R.id.white_color_button){
             opCode = 'W';
         }
@@ -451,20 +457,27 @@ public class ManualFragment extends Fragment {
 
     private void solveButtonClick(View view) {
         if(!isOk) return;
-        String solution = new Search().solution(cubeStatus_direction,20,1000000,10000,0);
-        solution = solution.replaceAll("  "," ");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String solution = new Search().solution(cubeStatus_direction,20,1000000,10000,0);
+                solution = solution.replaceAll("  "," ");
 
-        String[] solutions = solution.split(" ");
-        String newSolution = "";
-        for(int i = 0;i<solutions.length;i++){
-            if(i%9 == 8){
-                newSolution += "\n";
+                String[] solutions = solution.split(" ");
+                String newSolution = "";
+                for(int i = 0;i<solutions.length;i++){
+                    if(i%9 == 8){
+                        newSolution += "\n";
+                    }
+                    newSolution += solutions[i];
+                    newSolution += " ";
+                }
+                String finalNewSolution = newSolution;
+                requireActivity().runOnUiThread(() -> textView_solution.setText(finalNewSolution));
+                Solution_position = -1;
             }
-            newSolution += solutions[i];
-            newSolution += " ";
-        }
-        textView_solution.setText(newSolution);
-        Solution_position = -1;
+        }).start();
+
     }
 
     private void okButtonClick(View view){

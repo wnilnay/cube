@@ -149,6 +149,7 @@ public class SetColorFragment extends Fragment {
     }
 
     public void backPage(View view) {
+        BluetoothSocketManager.sendString("EndColorMode", "");
         requireActivity().finish();
     }
 }

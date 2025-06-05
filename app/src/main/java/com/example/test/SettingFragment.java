@@ -28,10 +28,11 @@ public class SettingFragment extends Fragment {
             motorButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(isConnected()){
+                    if(!isConnected()){
                         showCheckAlertDialog();
                     }
                     else{
+                        BluetoothSocketManager.sendString("SetMotorMode","");
                         Intent intent = new Intent(getContext(), SetMotorActivity.class);
                         startActivity(intent);
                     }
@@ -40,10 +41,11 @@ public class SettingFragment extends Fragment {
             coordinateButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(isConnected()){
+                    if(!isConnected()){
                         showCheckAlertDialog();
                     }
                     else {
+                        BluetoothSocketManager.sendString("SetPositionMode","");
                         Intent intent = new Intent(getContext(), SetCoordinateActivity.class);
                         startActivity(intent);
                     }
@@ -52,10 +54,11 @@ public class SettingFragment extends Fragment {
             colorButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(isConnected()){
+                    if(!isConnected()){
                         showCheckAlertDialog();
                     }
                     else {
+                        BluetoothSocketManager.sendString("SetColorMode","");
                         Intent intent = new Intent(getContext(), SetColorContainerActivity.class);
                         startActivity(intent);
                     }

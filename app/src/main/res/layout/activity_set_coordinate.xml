@@ -17,13 +17,15 @@
         android:layout_gravity="center"
         android:adjustViewBounds="true"
         android:src="@drawable/cube_image"
+
         />
 
     <!-- 遮罩 -->
     <com.example.test.ResizableOverlayView
         android:id="@+id/overlayView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        />
 
 
 </FrameLayout>

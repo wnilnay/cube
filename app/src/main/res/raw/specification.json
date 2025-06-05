@@ -15,11 +15,19 @@
         "Data": ""
       },
       {
+        "Title": "EndMotorMode",
+        "Data": ""
+      },
+      {
         "Title": "SetPositionMode",
         "Data": ""
       },
       {
         "Title": "SetColorMode",
+        "Data": ""
+      },
+      {
+        "Title": "EndColorMode",
         "Data": ""
       },
       {
@@ -60,7 +68,8 @@
           "yellow_Upper": [
             "H",
             "S",
-            "V"],
+            "V"
+          ],
           "green_Lower": [
             "H",
             "S",
@@ -69,7 +78,8 @@
           "green_Upper": [
             "H",
             "S",
-            "V"],
+            "V"
+          ],
           "blue_Lower": [
             "H",
             "S",
@@ -78,7 +88,8 @@
           "blue_Upper": [
             "H",
             "S",
-            "V"],
+            "V"
+          ],
           "red_Lower": [
             "H",
             "S",
@@ -87,7 +98,8 @@
           "red_Upper": [
             "H",
             "S",
-            "V"],
+            "V"
+          ],
           "orange_Lower": [
             "H",
             "S",
@@ -96,7 +108,8 @@
           "orange_Upper": [
             "H",
             "S",
-            "V"]
+            "V"
+          ]
         }
       }
     ]
