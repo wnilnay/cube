@@ -168,5 +168,52 @@ public class ResizableOverlayView extends View {
 
         return new RectF(left, top, right, bottom);
     }
+
+    public static RectF mapRectFromBitmapToView(RectF rectInBitmap, ImageView imageView, int imageWidth, int imageHeight) {
+        int viewWidth = imageView.getWidth();
+        int viewHeight = imageView.getHeight();
+        if (viewWidth == 0 || viewHeight == 0) return null;
+
+        // 1. 計算縮放比
+        float scale = Math.min((float) viewWidth / imageWidth, (float) viewHeight / imageHeight);
+
+        // 2. 計算圖片在 View 中的實際顯示區域（置中）
+        float displayWidth = imageWidth * scale;
+        float displayHeight = imageHeight * scale;
+        float dx = (viewWidth - displayWidth) / 2f;
+        float dy = (viewHeight - displayHeight) / 2f;
+
+        // 3. 將 Bitmap 座標轉成 View 座標
+        float left = rectInBitmap.left * scale + dx;
+        float top = rectInBitmap.top * scale + dy;
+        float right = rectInBitmap.right * scale + dx;
+        float bottom = rectInBitmap.bottom * scale + dy;
+
+        return new RectF(left, top, right, bottom);
+    }
+
+    public static RectF mapRectFromBitmapToView(RectF rectInBitmap, ImageView imageView, Bitmap bitmap) {
+        Drawable drawable = imageView.getDrawable();
+        if (drawable == null) return null;
+
+        // 1. 取得 Bitmap 在 ImageView 中實際顯示的範圍
+        Matrix matrix = imageView.getImageMatrix();
+        RectF displayedBitmapRect = new RectF(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        matrix.mapRect(displayedBitmapRect); // 映射到 View 空間中
+
+        // 2. 計算縮放比（反過來用）
+        float scaleX = displayedBitmapRect.width() / bitmap.getWidth();
+        float scaleY = displayedBitmapRect.height() / bitmap.getHeight();
+
+        // 3. 將 Bitmap 上的座標轉換到 View 上
+        float left   = rectInBitmap.left   * scaleX + displayedBitmapRect.left;
+        float top    = rectInBitmap.top    * scaleY + displayedBitmapRect.top;
+        float right  = rectInBitmap.right  * scaleX + displayedBitmapRect.left;
+        float bottom = rectInBitmap.bottom * scaleY + displayedBitmapRect.top;
+
+        return new RectF(left, top, right, bottom);
+    }
+
+
 }
 

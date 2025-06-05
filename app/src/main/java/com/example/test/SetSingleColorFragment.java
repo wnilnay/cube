@@ -535,7 +535,7 @@ public class SetSingleColorFragment extends Fragment {
                     try {
                         jsonObject.put(color + "_Lower", jsonArray_Lower);
                         jsonObject.put(color + "_Upper", jsonArray_Upper);
-//                        BluetoothSocketManager.sendString("ColorSetting",jsonObject.toString());
+                        BluetoothSocketManager.sendString("ColorSetting",jsonObject.toString());
                         Log.d("wnilnay",jsonObject.toString());
                     } catch (JSONException e) {
                         throw new RuntimeException(e);

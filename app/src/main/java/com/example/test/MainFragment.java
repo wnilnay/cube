@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 
 import android.text.SpannableString;
@@ -18,8 +17,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Timer;
@@ -625,7 +622,7 @@ public class MainFragment extends Fragment {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                String[] cubeColor = BluetoothSocketManager.getString();
+                String[] cubeColor = BluetoothSocketManager.getDataString();
                 if(cubeColor != null && cubeColor[0].contains("Color")){
                     requireActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -639,7 +636,7 @@ public class MainFragment extends Fragment {
                             timer1.schedule(new TimerTask() {
                                 @Override
                                 public void run() {
-                                    String[] nextString = BluetoothSocketManager.getString();
+                                    String[] nextString = BluetoothSocketManager.getDataString();
                                     if(nextString == null) return;
                                     if(nextString[0].contains("next")){
                                         requireActivity().runOnUiThread(new Runnable() {

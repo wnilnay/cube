@@ -30,19 +30,6 @@ public class SetMotorActivity extends AppCompatActivity {
             return insets;
         });
         init();
-
-        String motorSettingString = StorageUtil.getString(this, "MotorSetting");
-        if(motorSettingString != null){
-            try {
-                JSONObject jsonObject = new JSONObject(motorSettingString);
-                seekBar_top.setProgress(jsonObject.getInt("MotorTop"));
-                seekBar_down.setProgress(jsonObject.getInt("MotorBottom"));
-                seekBar_left.setProgress(jsonObject.getInt("MotorLeft"));
-                seekBar_right.setProgress(jsonObject.getInt("MotorRight"));
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
     private void init()
     {
@@ -80,7 +67,7 @@ public class SetMotorActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
 
-                //BluetoothSocketManager.sendString("MotorSetting",jsonObject.toString());
+                BluetoothSocketManager.sendString("MotorSetting",jsonObject.toString());
             }
 
             @Override
@@ -106,7 +93,8 @@ public class SetMotorActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        StorageUtil.saveString(this, "MotorSetting", jsonObject.toString());
+        BluetoothSocketManager.sendString("EndMotorMode", "");
+        //StorageUtil.saveString(this, "MotorSetting", jsonObject.toString());
         super.onStop();
     }
 }
