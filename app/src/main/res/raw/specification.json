@@ -19,6 +19,10 @@
         "Data": ""
       },
       {
+        "Title": "TestMotorMode",
+        "Data": ""
+      },
+      {
         "Title": "SetPositionMode",
         "Data": ""
       },
@@ -126,6 +130,10 @@
       },
       {
         "Title": "end",
+        "Data": ""
+      },
+      {
+        "Title": "EndTestMotorMode",
         "Data": ""
       }
     ]

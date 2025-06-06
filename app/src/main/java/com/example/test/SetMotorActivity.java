@@ -18,6 +18,7 @@ import org.json.JSONObject;
 public class SetMotorActivity extends AppCompatActivity {
     private SeekBar seekBar_top, seekBar_down, seekBar_left, seekBar_right;
     private TextView tvw_top, tvw_down, tvw_left, tvw_right;
+    private long lastUpdateTimeMillis = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +67,11 @@ public class SetMotorActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-
-                BluetoothSocketManager.sendString("MotorSetting",jsonObject.toString());
+                long currentTimeMillis = System.currentTimeMillis();
+                if(currentTimeMillis - lastUpdateTimeMillis > 100){
+                    lastUpdateTimeMillis = currentTimeMillis;
+                    BluetoothSocketManager.sendString("MotorSetting",jsonObject.toString());
+                }
             }
 
             @Override
@@ -77,13 +81,22 @@ public class SetMotorActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("MotorTop",seekBar_top.getProgress());
+                    jsonObject.put("MotorBottom",seekBar_down.getProgress());
+                    jsonObject.put("MotorLeft",seekBar_left.getProgress());
+                    jsonObject.put("MotorRight",seekBar_right.getProgress());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                BluetoothSocketManager.sendString("MotorSetting",jsonObject.toString());
             }
         });
     }
 
     @Override
-    protected void onStop() {
+    protected void onDestroy() {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("MotorTop",seekBar_top.getProgress());
@@ -95,6 +108,6 @@ public class SetMotorActivity extends AppCompatActivity {
         }
         BluetoothSocketManager.sendString("EndMotorMode", "");
         //StorageUtil.saveString(this, "MotorSetting", jsonObject.toString());
-        super.onStop();
+        super.onDestroy();
     }
 }

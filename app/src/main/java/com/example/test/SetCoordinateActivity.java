@@ -33,7 +33,7 @@ public class SetCoordinateActivity extends AppCompatActivity {
     private ImageView imageView;
     private ResizableOverlayView overlayView;
     private Bitmap bitmap;
-    private boolean isFirst = true;
+    private boolean isFirst = true, isEnd = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -68,7 +68,7 @@ public class SetCoordinateActivity extends AppCompatActivity {
             InputStream rawIn = socket.getInputStream();
             BufferedInputStream in = new BufferedInputStream(rawIn, 2048);
 
-            while (true) {
+            while (!isEnd) {
                 // 讀取圖片長度
                 byte[] lengthBytes = new byte[4];
                 int lengthRead = in.read(lengthBytes);
@@ -118,9 +118,9 @@ public class SetCoordinateActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
     }
-
     @Override
-    protected void onStop() {
+    protected void onDestroy() {
+        isEnd = true;
         RectF rectF = overlayView.getMaskRect();
         RectF newRectF = ResizableOverlayView.mapRectFromViewToBitmap(rectF, imageView, bitmap);
         try {
@@ -134,6 +134,6 @@ public class SetCoordinateActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-        super.onStop();
+        super.onDestroy();
     }
 }
