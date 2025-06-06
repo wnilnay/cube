@@ -61,6 +61,10 @@ public class BluetoothSocketManager {
                     temp += read;
                     //Log.d("wnilnay",(int)read+"");
                 }
+                if (temp.isEmpty()){
+                    return null;
+                }
+                Log.d("wnilnay getDataString",temp);
                 return temp.split("\n");
             }
         }

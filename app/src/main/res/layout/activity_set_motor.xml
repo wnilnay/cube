@@ -104,14 +104,14 @@
             android:id="@+id/tvw_top_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="tvw_top_progress:0"
+            android:text="tvw_top_progress:180"
             android:textSize="20sp"
             />
         <TextView
             android:id="@+id/tvw_down_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="tvw_down_progress:0"
+            android:text="tvw_down_progress:180"
             android:layout_below="@id/tvw_top_progress"
             android:textSize="20sp"
             />
@@ -119,7 +119,7 @@
             android:id="@+id/tvw_left_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="tvw_left_progress:0"
+            android:text="tvw_left_progress:180"
             android:layout_below="@id/tvw_down_progress"
             android:textSize="20sp"
             />
@@ -127,7 +127,7 @@
             android:id="@+id/tvw_right_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="tvw_right_progress:0"
+            android:text="tvw_right_progress:180"
             android:layout_below="@id/tvw_left_progress"
             android:textSize="20sp"
             />
