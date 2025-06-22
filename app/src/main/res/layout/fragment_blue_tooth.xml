@@ -5,124 +5,151 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/fragment_background"
+    android:padding="24dp"
     tools:context=".BlueToothFragment">
 
-    <!--    <Button-->
-    <!--        android:id="@+id/button1"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginBottom="48dp"-->
-    <!--        android:onClick="Enter"-->
-    <!--        android:text="進入"-->
-    <!--        android:textSize="28dp"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.498"-->
-    <!--        app:layout_constraintStart_toStartOf="parent" />-->
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="請先與解魔方機做配對與連接"
-        android:textSize="25sp"
-        android:textColor="#000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+    <!-- 蓝牙图标 -->
+    <ImageView
+        android:id="@+id/bluetooth_icon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_bluetooth"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.239" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="藍牙名稱：Cube Solver"
-        android:textSize="25sp"
-        android:textColor="#000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button_pair"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="240dp"
-        android:text="配對"
-        android:textSize="28dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintVertical_bias="0.15"
+        app:layout_constraintBottom_toTopOf="@id/info_card"
+        app:tint="#6C5CE7" />
 
-    <Button
-        android:id="@+id/button_connect"
+    <!-- 信息卡片 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/info_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        android:backgroundTint="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.35">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="請先與解魔方機做配對與連接"
+                android:textSize="18sp"
+                android:textColor="#2D3436"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"/>
+
+            <View
+                android:layout_width="60dp"
+                android:layout_height="2dp"
+                android:background="@drawable/divider_gradient"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="藍牙名稱：Cube Solver"
+                android:textSize="16sp"
+                android:textColor="#636e72"
+                android:gravity="center"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 配对按钮 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/pair_button_card"
+        android:layout_width="200dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="40dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="8dp"
+        android:backgroundTint="@color/transparent"
+        app:layout_constraintTop_toBottomOf="@id/info_card"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/button_pair"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="配對"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:background="@drawable/gradient_button"
+            android:stateListAnimator="@null"
+            android:elevation="0dp"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 连接按钮 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/connect_button_card"
+        android:layout_width="200dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="8dp"
+        android:backgroundTint="@color/transparent"
+        app:layout_constraintTop_toBottomOf="@id/pair_button_card"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/button_connect"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="連接"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:background="@drawable/gradient_button_secondary"
+            android:stateListAnimator="@null"
+            android:elevation="0dp"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 状态指示器 -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="150dp"
-        android:text="連接"
-        android:textSize="28dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/connect_button_card"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.7">
 
-    <!--    <EditText-->
-    <!--        android:id="@+id/editTextTextPersonName"-->
-    <!--        android:layout_width="400dp"-->
-    <!--        android:layout_height="50dp"-->
-    <!--        android:layout_marginHorizontal="10dp"-->
-    <!--        android:layout_marginBottom="52dp"-->
-    <!--        android:ems="10"-->
-    <!--        android:hint="輸入傳送資料"-->
-    <!--        android:inputType="textPersonName"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.0"-->
-    <!--        app:layout_constraintStart_toStartOf="parent" />-->
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/status_dot"
+            android:backgroundTint="#ddd"
+            android:layout_marginEnd="8dp"/>
 
-    <!--    <Button-->
-    <!--        android:id="@+id/btn_catch"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:text="接收"-->
-    <!--        android:textSize="24dp"-->
-    <!--        android:onClick="catchData"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.511"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        app:layout_constraintVertical_bias="1.0" />-->
-
-    <!--    <Button-->
-    <!--        android:id="@+id/btn_send"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:onClick="sendData"-->
-    <!--        android:text="傳送"-->
-    <!--        android:textSize="24dp"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.869"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        app:layout_constraintVertical_bias="1.0" />-->
-
-    <!--    <Button-->
-    <!--        android:id="@+id/btn_disconnect"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:onClick="disConnect"-->
-    <!--        android:text="斷線"-->
-    <!--        android:textSize="24dp"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.126"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        app:layout_constraintVertical_bias="1.0" />-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="等待連接"
+            android:textSize="14sp"
+            android:textColor="#636e72"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

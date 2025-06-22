@@ -1,137 +1,381 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="15dp"
+    android:orientation="vertical"
+    android:background="@drawable/gradient_background"
     tools:context=".SetMotorActivity">
 
-    <RelativeLayout
-        android:id="@+id/Control_Layout"
-        android:layout_width="wrap_content"
+    <!-- 标题栏 -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        android:layout_margin="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        android:backgroundTint="@color/white">
 
-        <TextView
-            android:id="@+id/label_top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="頂層:"
-            android:textSize="20sp"
-            />
-        <SeekBar
-            android:id="@+id/seekBar_Top"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:max="180"
-            android:progress="180"
-            android:layout_toRightOf="@id/label_top"
-            android:layout_alignTop="@id/label_top"
-            android:layout_alignBottom="@id/label_top"
-            />
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/label_down"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="底層:"
-            android:layout_below="@id/label_top"
-            android:textSize="20sp"
-            />
-        <SeekBar
-            android:id="@+id/seekBar_Down"
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_motor"
+                android:layout_marginEnd="12dp"
+                app:tint="#6C5CE7" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="馬達設定"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#2D3436"/>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_tune"
+                app:tint="#6C5CE7" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 控制面板 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/control_card"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="12dp"
+        android:backgroundTint="@color/white">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="180"
-            android:progress="180"
-            android:layout_below="@id/seekBar_Top"
-            android:layout_toRightOf="@id/label_down"
-            android:layout_alignTop="@id/label_down"
-            android:layout_alignBottom="@id/label_down"
-            />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="24dp">
 
-        <TextView
-            android:id="@+id/label_left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="左:"
-            android:layout_below="@id/label_down"
-            android:textSize="20sp"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="調整各軸馬達參數"
+                android:textSize="16sp"
+                android:textColor="#636e72"
+                android:layout_marginBottom="24dp"/>
 
-        <SeekBar
-            android:id="@+id/seekBar_Left"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="180"
-            android:progress="180"
-            android:layout_toRightOf="@id/label_left"
-            android:layout_below="@id/seekBar_Down"
-            android:layout_alignTop="@id/label_left"
-            android:layout_alignBottom="@id/label_left"
-            />
-        <TextView
-            android:id="@+id/label_right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="右:"
-            android:layout_below="@id/label_left"
-            android:textSize="20sp"
-            />
+            <!-- 顶层马达 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:backgroundTint="#f8f9fa">
 
-        <SeekBar
-            android:id="@+id/seekBar_Right"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="180"
-            android:progress="180"
-            android:layout_below="@id/seekBar_Left"
-            android:layout_toRightOf="@id/label_right"
-            android:layout_alignTop="@id/label_right"
-            android:layout_alignBottom="@id/label_right"
-            />
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_upward"
+                            android:layout_marginEnd="8dp"
+                            app:tint="#6C5CE7" />
+
+                        <TextView
+                            android:id="@+id/label_top"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="頂層"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#2D3436"/>
+
+                        <TextView
+                            android:id="@+id/tvw_top_progress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="180°"
+                            android:textSize="16sp"
+                            android:textColor="#6C5CE7"
+                            android:textStyle="bold"
+                            android:background="@drawable/value_background"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="4dp"/>
+                    </LinearLayout>
+
+                    <SeekBar
+                        android:id="@+id/seekBar_Top"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="180"
+                        android:progress="180"
+                        android:progressTint="#6C5CE7"
+                        android:thumbTint="#6C5CE7"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 底层马达 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:backgroundTint="#f8f9fa">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_downward"
+                            android:layout_marginEnd="8dp"
+                            app:tint="#00B894" />
+
+                        <TextView
+                            android:id="@+id/label_down"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="底層"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#2D3436"/>
+
+                        <TextView
+                            android:id="@+id/tvw_down_progress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="180°"
+                            android:textSize="16sp"
+                            android:textColor="#00B894"
+                            android:textStyle="bold"
+                            android:background="@drawable/value_background"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="4dp"/>
+                    </LinearLayout>
+
+                    <SeekBar
+                        android:id="@+id/seekBar_Down"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="180"
+                        android:progress="180"
+                        android:progressTint="#00B894"
+                        android:thumbTint="#00B894"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 左侧马达 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:backgroundTint="#f8f9fa">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_back"
+                            android:layout_marginEnd="8dp"
+                            app:tint="#E17055" />
+
+                        <TextView
+                            android:id="@+id/label_left"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="左"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#2D3436"/>
+
+                        <TextView
+                            android:id="@+id/tvw_left_progress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="180°"
+                            android:textSize="16sp"
+                            android:textColor="#E17055"
+                            android:textStyle="bold"
+                            android:background="@drawable/value_background"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="4dp"/>
+                    </LinearLayout>
+
+                    <SeekBar
+                        android:id="@+id/seekBar_Left"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="180"
+                        android:progress="180"
+                        android:progressTint="#E17055"
+                        android:thumbTint="#E17055"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 右侧马达 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:backgroundTint="#f8f9fa">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_forward"
+                            android:layout_marginEnd="8dp"
+                            app:tint="#FDCB6E" />
+
+                        <TextView
+                            android:id="@+id/label_right"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="右"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="#2D3436"/>
+
+                        <TextView
+                            android:id="@+id/tvw_right_progress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="180°"
+                            android:textSize="16sp"
+                            android:textColor="#FDCB6E"
+                            android:textStyle="bold"
+                            android:background="@drawable/value_background"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="4dp"/>
+                    </LinearLayout>
+
+                    <SeekBar
+                        android:id="@+id/seekBar_Right"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:max="180"
+                        android:progress="180"
+                        android:progressTint="#FDCB6E"
+                        android:thumbTint="#FDCB6E"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 操作按钮 -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/Control_Layout"
-        android:layout_marginTop="25dp"
-        >
-        <TextView
-            android:id="@+id/tvw_top_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="tvw_top_progress:180"
-            android:textSize="20sp"
-            />
-        <TextView
-            android:id="@+id/tvw_down_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="tvw_down_progress:180"
-            android:layout_below="@id/tvw_top_progress"
-            android:textSize="20sp"
-            />
-        <TextView
-            android:id="@+id/tvw_left_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="tvw_left_progress:180"
-            android:layout_below="@id/tvw_down_progress"
-            android:textSize="20sp"
-            />
-        <TextView
-            android:id="@+id/tvw_right_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="tvw_right_progress:180"
-            android:layout_below="@id/tvw_left_progress"
-            android:textSize="20sp"
-            />
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        android:backgroundTint="@color/white">
 
-    </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
-</RelativeLayout>
+            <Button
+                android:id="@+id/reset_button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="重置"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:background="@drawable/gradient_button_secondary"
+                android:stateListAnimator="@null"
+                android:elevation="0dp"/>
+
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="保存設定"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:background="@drawable/gradient_button"
+                android:stateListAnimator="@null"
+                android:elevation="0dp"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
