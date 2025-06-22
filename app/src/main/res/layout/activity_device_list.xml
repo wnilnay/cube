@@ -14,72 +14,207 @@
      limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-    >
-    <LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/gradient_background"
+    android:padding="16dp">
+
+    <!-- 标题栏 -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        android:backgroundTint="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_bluetooth_searching"
+                android:layout_marginEnd="12dp"
+                app:tint="#6C5CE7" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="設備搜尋"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#2D3436"/>
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:background="@drawable/status_dot"
+                android:backgroundTint="#00B894"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 主要内容区域 -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="9"
-        android:orientation="vertical"
-        >
-        <TextView
-            android:id="@+id/title_paired_devices"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="12dp"
+        android:backgroundTint="@color/white">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#666"
-            android:paddingLeft="5dp"
-            android:text="Paired Devices"
-            android:textColor="#fff"
-            android:visibility="gone"
-            />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
 
-        <ListView
-            android:id="@+id/paired_devices"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:stackFromBottom="false"
-            />
+            <!-- 已配对设备区域 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
 
-        <TextView
-            android:id="@+id/title_new_devices"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#666"
-            android:paddingLeft="5dp"
-            android:text="Other Available Devices"
-            android:textColor="#fff"
-            android:visibility="gone"
-            />
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_link"
+                    android:layout_marginEnd="8dp"
+                    app:tint="#00B894" />
 
-        <ListView
-            android:id="@+id/new_devices"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:stackFromBottom="false"
-            />
+                <TextView
+                    android:id="@+id/title_paired_devices"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="已配對設備"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#2D3436"
+                    android:visibility="gone"/>
 
+                <View
+                    android:layout_width="30dp"
+                    android:layout_height="2dp"
+                    android:background="@drawable/divider_gradient"/>
 
-    </LinearLayout>
-    <LinearLayout
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:backgroundTint="#f8f9fa">
+
+                <ListView
+                    android:id="@+id/paired_devices"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:stackFromBottom="false"
+                    android:divider="@null"
+                    android:padding="8dp"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- 可用设备区域 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_radar"
+                    android:layout_marginEnd="8dp"
+                    app:tint="#6C5CE7" />
+
+                <TextView
+                    android:id="@+id/title_new_devices"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="可用設備"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#2D3436" />
+
+                <View
+                    android:layout_width="30dp"
+                    android:layout_height="2dp"
+                    android:background="@drawable/divider_gradient"/>
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                android:backgroundTint="#f8f9fa">
+
+                <ListView
+                    android:id="@+id/new_devices"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:stackFromBottom="false"
+                    android:divider="@null"
+                    android:padding="8dp"/>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 扫描按钮 -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        >
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        android:backgroundTint="@color/transparent">
 
-        <Button
-            android:id="@+id/button_scan"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Scan for devices"
-            android:layout_marginBottom="20dp"
-            />
+            android:orientation="horizontal"
+            android:padding="4dp">
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/button_scan"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="掃描設備"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:background="@drawable/gradient_button"
+                android:drawableStart="@drawable/ic_search"
+                android:drawableTint="@color/white"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:stateListAnimator="@null"
+                android:elevation="0dp"/>
 
-
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

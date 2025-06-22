@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ic_test.xml - 测试图标 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#6C5CE7"
+        android:pathData="M7,2L17,2C18.1,2 19,2.9 19,4L19,6L21,6L21,8L19,8L19,10L21,10L21,12L19,12L19,14L21,14L21,16L19,16L19,18L21,18L21,20L19,20L19,20C19,21.1 18.1,22 17,22L7,22C5.9,22 5,21.1 5,20L5,18L3,18L3,16L5,16L5,14L3,14L3,12L5,12L5,10L3,10L3,8L5,8L5,6L3,6L3,4L5,4L5,4C5,2.9 5.9,2 7,2Z"/>
+    <path
+        android:fillColor="#A29BFE"
+        android:pathData="M9,6L15,6L15,8L9,8L9,6ZM9,10L15,10L15,12L9,12L9,10ZM9,14L13,14L13,16L9,16L9,14Z"/>
+    <path
+        android:fillColor="#00B894"
+        android:pathData="M16,14L18,16L16,18L14,16L16,14Z"/>
+</vector> 

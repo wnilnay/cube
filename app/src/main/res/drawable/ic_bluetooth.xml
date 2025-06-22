@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ic_bluetooth.xml - 蓝牙图标 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#6C5CE7"
+        android:pathData="M12,2L15.09,5.09L13,7.17L13,10.83L15.09,8.74L12,5.66L12,2ZM13,12.83L13,16.5L15.09,18.59L12,21.68L12,18L13,12.83ZM6.91,11L12,16.09L12,19.91L8.5,16.41L6.91,14.83L6.91,11ZM17.09,11L17.09,14.83L15.5,16.41L12,12.91L12,9.09L15.5,5.59L17.09,7.17L17.09,11Z"/>
+    <path
+        android:fillColor="#A29BFE"
+        android:pathData="M12,2L12,5.66L15.09,8.74L13,10.83L13,7.17L15.09,5.09L12,2Z"/>
+    <path
+        android:fillColor="#00B894"
+        android:pathData="M12,18L12,21.68L15.09,18.59L13,16.5L13,12.83L12,18Z"/>
+</vector> 

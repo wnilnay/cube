@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ic_rotate.xml - 旋转图标 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@color/primary_color"
+        android:pathData="M7.11,8.53L5.7,7.11C4.8,8.27 4.24,9.61 4.07,11H6.09C6.23,10.13 6.64,9.28 7.11,8.53ZM4.07,13H6.09C6.23,13.87 6.64,14.72 7.11,15.47L5.7,16.89C4.8,15.73 4.24,14.39 4.07,13ZM7.11,18.32C8.77,20.07 11.08,21 13.5,21C17.92,21 21.5,17.42 21.5,13C21.5,8.58 17.92,5 13.5,5C11.08,5 8.77,5.93 7.11,7.68L8.53,9.1C9.84,7.81 11.64,7 13.5,7C16.54,7 19,9.46 19,12.5C19,15.54 16.54,18 13.5,18C11.64,18 9.84,17.19 8.53,15.9L7.11,18.32Z"/>
+</vector> 

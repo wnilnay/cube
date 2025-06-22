@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- gradient_button_tertiary.xml - 第三级渐变按钮 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:startColor="#FD79A8"
+        android:endColor="#E84393"
+        android:angle="45" />
+    <corners android:radius="12dp" />
+    <stroke
+        android:width="2dp"
+        android:color="#FFFFFF" />
+</shape> 

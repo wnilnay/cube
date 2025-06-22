@@ -2,4 +2,34 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="transparent_white">#80FFFFFF</color>
+    <color name="transparent_black">#80000000</color>
+    <color name="transparent_primary">#806C5CE7</color>
+    <color name="transparent_secondary">#80A29BFE</color>
+    <color name="transparent_accent">#8000B894</color>
+    <color name="semi_transparent_overlay">#40000000</color>
+    <color name="light_overlay">#20FFFFFF</color>
+    
+    <!-- 主要顏色方案 -->
+    <color name="primary_color">#6C5CE7</color>
+    <color name="secondary_color">#A29BFE</color>
+    <color name="accent_color">#00B894</color>
+    <color name="primary_text">#2D3436</color>
+    <color name="secondary_text">#636E72</color>
+    <color name="card_background">#F8F9FA</color>
+    
+    <!-- 魔方顏色 -->
+    <color name="cube_white">#FFFFFF</color>
+    <color name="cube_yellow">#FDCB6E</color>
+    <color name="cube_green">#00B894</color>
+    <color name="cube_blue">#74B9FF</color>
+    <color name="cube_red">#E17055</color>
+    <color name="cube_orange">#F39C12</color>
+    
+    <!-- 狀態顏色 -->
+    <color name="success_color">#00B894</color>
+    <color name="warning_color">#FDCB6E</color>
+    <color name="error_color">#E17055</color>
+    <color name="info_color">#74B9FF</color>
 </resources>
