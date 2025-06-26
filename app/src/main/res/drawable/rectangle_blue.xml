@@ -5,9 +5,9 @@
             <!--元件的漸層-->
 
             <gradient
-                android:startColor="#0000FF"
-                android:centerColor="#0000FF"
-                android:endColor="#0000FF"
+                android:startColor="@color/cube_blue"
+                android:centerColor="@color/cube_blue"
+                android:endColor="@color/cube_blue"
                 android:angle="270" />
 
             <!--邊框顏色、粗細-->
@@ -16,7 +16,7 @@
                 android:color="#000" />
 
             <!--圓角-->
-            <corners android:radius="0dp" />
+            <corners android:radius="12dp" />
 
 
         </shape>

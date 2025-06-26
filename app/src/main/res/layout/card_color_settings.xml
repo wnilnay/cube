@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:backgroundTint="@color/white"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp"
+    android:stateListAnimator="@animator/button_elevation">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="24dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_palette"
+            app:tint="#2D3436"
+            android:layout_gravity="center_vertical"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7. 設定顏色"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2D3436"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• 於『設定』頁面點擊『設定顏色』\n• 點擊欲設定之顏色圖片 (如 White) 進入子頁\n• 可拍照或選取相簿照片，照片需為該色 3×3 整面\n• 拖曳遮罩左上、右下角，框住整面後按『儲存』，照片將回寫至列表\n• 若欲恢復預設值：進入該顏色頁點選『返回預設值』後直接儲存退出\n• 完成一色可繼續設定其他顏色，或返回上一層結束設定"
+                android:textSize="16sp"
+                android:textColor="#636e72"
+                android:lineSpacingExtra="4dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView> 

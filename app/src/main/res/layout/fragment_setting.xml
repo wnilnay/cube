@@ -62,6 +62,64 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
+            <!-- 使用說明 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/guide_card"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
+                android:backgroundTint="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="20dp"
+                    android:background="@drawable/card_ripple_effect">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_info"
+                        android:layout_marginBottom="12dp"
+                        app:tint="#0984E3" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="使用說明"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#2D3436"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="查看 APP 使用方式"
+                        android:textSize="14sp"
+                        android:textColor="#636e72"
+                        android:gravity="center"/>
+
+                    <Button
+                        android:id="@+id/guide_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="查看"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:background="@drawable/gradient_button_guide"
+                        android:stateListAnimator="@null"
+                        android:elevation="0dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
             <!-- 马达设置 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/motor_card"
@@ -216,7 +274,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="校準魔方位置"
+                        android:text="校準遮罩座標"
                         android:textSize="14sp"
                         android:textColor="#636e72"
                         android:gravity="center"/>
@@ -273,7 +331,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="配置顏色識別"
+                        android:text="配置顏色範圍"
                         android:textSize="14sp"
                         android:textColor="#636e72"
                         android:gravity="center"/>

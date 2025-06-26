@@ -279,7 +279,7 @@ public class BlueToothFragment extends Fragment {
                                 public void run() {
                                     Toast.makeText(getContext(), "連線成功", Toast.LENGTH_SHORT).show();
 
-                                    ((MainActivity)getActivity()).change_to_mainFragment();
+                                    ((MainActivity)requireActivity()).change_to_mainFragment();
                                 }
                             });
                         } else {

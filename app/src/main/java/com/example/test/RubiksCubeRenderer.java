@@ -5,12 +5,13 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
     private final float[] mMVPMatrix = new float[16];
@@ -29,6 +30,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
     // 追蹤實際的旋轉角度
     private float mAngleX = 0;
     private float mAngleY = 0;
+    private float mAngleZ = 0;
 
     private CubeFace[] faces;
     private int width, height;
@@ -90,6 +92,21 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
     private boolean showDebugPoint = false;
     private String lastTouchInfo = "";
 
+    private volatile boolean animationRunning = false;
+
+    // ===== 新增：GL 初始化完成旗標 =====
+    private volatile boolean initialized = false;
+
+    private static final float BASE_Y = 180f; // 讓紅色面(前)朝前的基準角
+
+    // 魔方六色的int常數（與color.xml一致）
+    public static final int COLOR_WHITE  = 0xFFFFFFFF;
+    public static final int COLOR_YELLOW = 0xFFFFEB3B;
+    public static final int COLOR_GREEN  = 0xFF00FF00;
+    public static final int COLOR_BLUE   = 0xFF0000FF;
+    public static final int COLOR_RED    = 0xFFFF0000;
+    public static final int COLOR_ORANGE = 0xFFFF9800;
+
     public RubiksCubeRenderer(GLSurfaceView surfaceView) {
         mSurfaceView = surfaceView;
         Matrix.setIdentityM(mAccumulatedRotation, 0);
@@ -102,7 +119,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         // 更新角度變數
         mAngleY = 180;
         
-        Log.d("RubiksCube", "初始化完成: 角度Y=" + mAngleY);
+        //Log.d("RubiksCube", "初始化完成: 角度Y=" + mAngleY);
     }
 
     @Override
@@ -118,6 +135,8 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
             faces[faceIndex] = new CubeFace(faceIndex);
         }
+
+        initialized = true; // 標記 GL 物件已建立完成
     }
 
     @Override
@@ -125,7 +144,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
         // 設置相機位置
-        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -4, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -2.7f, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
         //Matrix.setLookAtM(mViewMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 
         // 直接用累積旋轉矩陣
@@ -136,11 +155,6 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         for (CubeFace face : faces) {
             face.draw(mMVPMatrix);
         }
-        
-        // 繪製調試圓點
-        if (showDebugPoint && debugPoint != null) {
-            drawDebugPoint(mMVPMatrix, debugPoint);
-        }
     }
 
     @Override
@@ -150,8 +164,15 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
 
         GLES20.glViewport(0, 0, width, height);
 
+        //float ratio = (float) width / height;
+        //Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+
         float ratio = (float) width / height;
-        Matrix.frustumM(mProjectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+        Matrix.perspectiveM(mProjectionMatrix, 0,
+                45f,     // 固定 FOV 45°
+                ratio,   // 寬高比
+                1.5f,    // near
+                7.0f);   // far
     }
 
     public void setRotation(float angleX, float angleY) {
@@ -167,12 +188,15 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         return mAngleY;
     }
 
+    public float getAngleZ() {
+        return mAngleZ;
+    }
+
     public void handleClick(float x, float y, int screenWidth, int screenHeight) {
-        Log.d("RubiksCube", "開始點擊檢測: 屏幕(" + x + "," + y + ") 角度X=" + mAngleX + " 角度Y=" + mAngleY);
+        //Log.d("RubiksCube", "開始點擊檢測: 屏幕(" + x + "," + y + ") 角度X=" + mAngleX + " 角度Y=" + mAngleY);
         
-        // 清除之前的高亮和調試點
+        // 清除之前的高亮
         clearCurrentHighlight();
-        showDebugPoint = false;
         
         // 改進的點擊檢測 - 考慮相機位置和視角
         ClickResult result = performImprovedDetection(x, y, screenWidth, screenHeight);
@@ -185,19 +209,19 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
                 FACE_NAMES[result.faceIndex], result.faceIndex, result.gridX, result.gridY, 
                 result.intersectionPoint[0], result.intersectionPoint[1], result.intersectionPoint[2]);
             
-            Log.d("RubiksCube", debugInfo);
+            //Log.d("RubiksCube", debugInfo);
             lastDebugInfo = debugInfo;
             
-            // 設置調試圓點
-            debugPoint = result.intersectionPoint.clone();
-            showDebugPoint = true;
+            currentHighlightedFace = result.faceIndex;
+            currentHighlightedRow = result.gridY;
+            currentHighlightedCol = result.gridX;
             
             // 設置新的高亮
-            setHighlight(result.faceIndex, result.gridY, result.gridX);
+            //setHighlight(result.faceIndex, result.gridY, result.gridX);
             
         } else {
             String debugInfo = "檢測失敗: 未找到有效的交點";
-            Log.d("RubiksCube", debugInfo);
+            //Log.d("RubiksCube", debugInfo);
             lastDebugInfo = debugInfo;
         }
     }
@@ -207,7 +231,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         float normalizedX = (2.0f * x / screenWidth) - 1.0f;
         float normalizedY = 1.0f - (2.0f * y / screenHeight);
         
-        Log.d("RubiksCube", "標準化座標: (" + normalizedX + "," + normalizedY + ")");
+        //Log.d("RubiksCube", "標準化座標: (" + normalizedX + "," + normalizedY + ")");
         
         // 使用 VP 反矩陣將螢幕點回推到世界座標，生成精確射線
         float[] vpMatrix = new float[16];
@@ -243,8 +267,8 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         rayDirection[1] /= length;
         rayDirection[2] /= length;
         
-        Log.d("RubiksCube", "射線起點: (" + rayStart[0] + "," + rayStart[1] + "," + rayStart[2] + ")");
-        Log.d("RubiksCube", "射線方向: (" + rayDirection[0] + "," + rayDirection[1] + "," + rayDirection[2] + ")");
+        //Log.d("RubiksCube", "射線起點: (" + rayStart[0] + "," + rayStart[1] + "," + rayStart[2] + ")");
+        //Log.d("RubiksCube", "射線方向: (" + rayDirection[0] + "," + rayDirection[1] + "," + rayDirection[2] + ")");
         
         // 應用旋轉矩陣的逆矩陣到射線
         float[] invRotation = new float[16];
@@ -262,15 +286,15 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         Matrix.multiplyMV(transformedRayStart, 0, invRotation, 0, rayStart4, 0);
         float[] start = {transformedRayStart[0], transformedRayStart[1], transformedRayStart[2]};
         
-        Log.d("RubiksCube", "變換後射線起點: (" + start[0] + "," + start[1] + "," + start[2] + ")");
-        Log.d("RubiksCube", "變換後射線方向: (" + dir[0] + "," + dir[1] + "," + dir[2] + ")");
+        //Log.d("RubiksCube", "變換後射線起點: (" + start[0] + "," + start[1] + "," + start[2] + ")");
+        //Log.d("RubiksCube", "變換後射線方向: (" + dir[0] + "," + dir[1] + "," + dir[2] + ")");
         
         // 與立方體的6個面進行相交檢測
         float closestDistance = Float.MAX_VALUE;
         int bestFace = -1;
         float[] bestIntersection = null;
         
-        Log.d("RubiksCube", "開始面檢測...");
+        //Log.d("RubiksCube", "開始面檢測...");
         
         for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
             float[] normal = FACE_NORMALS[faceIndex];
@@ -279,17 +303,17 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
             // 計算射線與平面的交點
             float denom = dir[0] * normal[0] + dir[1] * normal[1] + dir[2] * normal[2];
             
-            Log.d("RubiksCube", String.format("面%d (%s): 法向量=(%.3f,%.3f,%.3f), 平面點=(%.3f,%.3f,%.3f), denom=%.6f", 
-                faceIndex, FACE_NAMES[faceIndex], 
-                normal[0], normal[1], normal[2],
-                planePoint[0], planePoint[1], planePoint[2], denom));
+            //Log.d("RubiksCube", String.format("面%d (%s): 法向量=(%.3f,%.3f,%.3f), 平面點=(%.3f,%.3f,%.3f), denom=%.6f",
+            //    faceIndex, FACE_NAMES[faceIndex],
+            //    normal[0], normal[1], normal[2],
+            //    planePoint[0], planePoint[1], planePoint[2], denom));
             
             if (Math.abs(denom) > 0.0001f) {
                 float t = ((planePoint[0] - start[0]) * normal[0] + 
                           (planePoint[1] - start[1]) * normal[1] + 
                           (planePoint[2] - start[2]) * normal[2]) / denom;
                 
-                Log.d("RubiksCube", String.format("面%d: t=%.6f", faceIndex, t));
+                //Log.d("RubiksCube", String.format("面%d: t=%.6f", faceIndex, t));
                 
                 if (t > 0) {
                     float[] intersection = {
@@ -298,32 +322,32 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
                         start[2] + t * dir[2]
                     };
                     
-                    Log.d("RubiksCube", String.format("面%d: 交點=(%.3f,%.3f,%.3f)", 
-                        faceIndex, intersection[0], intersection[1], intersection[2]));
+                    //Log.d("RubiksCube", String.format("面%d: 交點=(%.3f,%.3f,%.3f)",
+                    //    faceIndex, intersection[0], intersection[1], intersection[2]));
                     
                     // 檢查交點是否在立方體表面內
                     if (isPointOnCubeFace(intersection, faceIndex)) {
-                        Log.d("RubiksCube", String.format("面%d: 交點在面內，距離=%.6f", faceIndex, t));
+                        //Log.d("RubiksCube", String.format("面%d: 交點在面內，距離=%.6f", faceIndex, t));
                         if (t < closestDistance) {
                             closestDistance = t;
                             bestFace = faceIndex;
                             bestIntersection = intersection;
-                            Log.d("RubiksCube", String.format("面%d: 更新為最佳面", faceIndex));
+                            //Log.d("RubiksCube", String.format("面%d: 更新為最佳面", faceIndex));
                         }
                     } else {
-                        Log.d("RubiksCube", String.format("面%d: 交點不在面內", faceIndex));
+                        //Log.d("RubiksCube", String.format("面%d: 交點不在面內", faceIndex));
                     }
                 } else {
-                    Log.d("RubiksCube", String.format("面%d: t <= 0，跳過", faceIndex));
+                    //Log.d("RubiksCube", String.format("面%d: t <= 0，跳過", faceIndex));
                 }
             } else {
-                Log.d("RubiksCube", String.format("面%d: denom太小，跳過", faceIndex));
+                //Log.d("RubiksCube", String.format("面%d: denom太小，跳過", faceIndex));
             }
         }
         
         if (bestFace >= 0) {
-            Log.d("RubiksCube", "最終檢測結果: 面=" + FACE_NAMES[bestFace] + 
-                    ", 交點: (" + bestIntersection[0] + "," + bestIntersection[1] + "," + bestIntersection[2] + ")");
+            //Log.d("RubiksCube", "最終檢測結果: 面=" + FACE_NAMES[bestFace] +
+            //        ", 交點: (" + bestIntersection[0] + "," + bestIntersection[1] + "," + bestIntersection[2] + ")");
             
             // 計算格子座標
             int[] gridCoords = calculateGridCoordinates(bestIntersection, bestFace);
@@ -331,7 +355,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
             return new ClickResult(bestFace, gridCoords[0], gridCoords[1], bestIntersection);
         }
         
-        Log.d("RubiksCube", "沒有找到有效的交點");
+        //Log.d("RubiksCube", "沒有找到有效的交點");
         return null;
     }
     
@@ -385,7 +409,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         // 將3D點轉換為面的2D座標，然後計算格子位置
         float u, v;
         
-        Log.d("RubiksCube", "計算格子座標: 點(" + point[0] + "," + point[1] + "," + point[2] + ") 面=" + FACE_NAMES[faceIndex]);
+        //Log.d("RubiksCube", "計算格子座標: 點(" + point[0] + "," + point[1] + "," + point[2] + ") 面=" + FACE_NAMES[faceIndex]);
         
         switch (faceIndex) {
             case 0: // 上面 (Y = 1)
@@ -416,7 +440,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
                 return new int[]{0, 0};
         }
         
-        Log.d("RubiksCube", "2D座標: u=" + u + " v=" + v);
+        //Log.d("RubiksCube", "2D座標: u=" + u + " v=" + v);
         
         // 修正的格子座標計算
         // 座標範圍是 [-1, 1]，需要轉換為 [0, 2]
@@ -447,7 +471,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
                 break;
         }
         
-        Log.d("RubiksCube", "修正後格子座標: (" + gridX + "," + gridY + ")");
+        //Log.d("RubiksCube", "修正後格子座標: (" + gridX + "," + gridY + ")");
         
         return new int[]{gridX, gridY};
     }
@@ -472,8 +496,8 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
             currentHighlightedRow = row;
             currentHighlightedCol = col;
             
-            Log.d("RubiksCube", "設置高亮: 面=" + FACE_NAMES[faceIndex] + 
-                    ", 格子=(" + row + "," + col + ")");
+            //Log.d("RubiksCube", "設置高亮: 面=" + FACE_NAMES[faceIndex] +
+            //        ", 格子=(" + row + "," + col + ")");
             
             // 強制重新渲染
             requestRender();
@@ -504,28 +528,11 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
     // 新增：獲取當前高亮信息
     public String getCurrentHighlightInfo() {
         if (currentHighlightedFace >= 0) {
-            int cellIndex;
             int row = currentHighlightedRow;
             int col = currentHighlightedCol;
+            int cellIndex = convertRowColToCellIndex(currentHighlightedFace, row, col);
 
-            switch (currentHighlightedFace) {
-                case 0: // Up : 直接
-                    cellIndex = row * 3 + col;
-                    break;
-                case 1: // Right : 只翻轉 row
-                case 2: // Forward
-                case 3: // Down
-                    cellIndex = (2 - row) * 3 + col;
-                    break;
-                case 4: // Left : 翻轉 row 與 col
-                case 5: // Backward
-                    cellIndex = (2 - row) * 3 + (2 - col);
-                    break;
-                default:
-                    cellIndex = row * 3 + col;
-            }
-
-            return String.format("當前高亮: %d:%d", currentHighlightedFace, cellIndex);
+            return String.format("當前高亮：%d:%d", currentHighlightedFace, cellIndex);
         }
         return "無高亮";
     }
@@ -545,7 +552,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
     
     // 新增：重置到初始狀態
     public void resetToInitialState() {
-        Log.d("RubiksCube", "重置到初始狀態...");
+        //Log.d("RubiksCube", "重置到初始狀態...");
         
         // 重置旋轉矩陣
         Matrix.setIdentityM(mAccumulatedRotation, 0);
@@ -561,7 +568,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         clearCurrentHighlight();
         clearDebugPoint();
         
-        Log.d("RubiksCube", "重置完成: 角度X=" + mAngleX + ", 角度Y=" + mAngleY);
+        //Log.d("RubiksCube", "重置完成: 角度X=" + mAngleX + ", 角度Y=" + mAngleY);
         
         // 強制重新渲染
         requestRender();
@@ -569,7 +576,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
     
     // 新增：測試點擊檢測的方法
     public void testClickDetection() {
-        Log.d("RubiksCube", "開始測試點擊檢測...");
+        //Log.d("RubiksCube", "開始測試點擊檢測...");
         
         // 測試屏幕中心點擊
         int screenWidth = 1080; // 假設屏幕寬度
@@ -578,7 +585,7 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         float centerX = screenWidth / 2.0f;
         float centerY = screenHeight / 2.0f;
         
-        Log.d("RubiksCube", "測試中心點擊: (" + centerX + "," + centerY + ")");
+        //Log.d("RubiksCube", "測試中心點擊: (" + centerX + "," + centerY + ")");
         handleClick(centerX, centerY, screenWidth, screenHeight);
         
         // 測試四個角落
@@ -590,24 +597,24 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         };
         
         for (int i = 0; i < corners.length; i++) {
-            Log.d("RubiksCube", "測試角落 " + (i + 1) + ": (" + corners[i][0] + "," + corners[i][1] + ")");
+            //Log.d("RubiksCube", "測試角落 " + (i + 1) + ": (" + corners[i][0] + "," + corners[i][1] + ")");
             handleClick(corners[i][0], corners[i][1], screenWidth, screenHeight);
         }
     }
     
     // 新增：測試特定面的檢測
     public void testSpecificFaceDetection() {
-        Log.d("RubiksCube", "開始測試特定面檢測...");
+        //Log.d("RubiksCube", "開始測試特定面檢測...");
         
         // 測試每個面的法向量和平面點
         for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
             float[] normal = FACE_NORMALS[faceIndex];
             float[] planePoint = {normal[0] * CUBE_SIZE, normal[1] * CUBE_SIZE, normal[2] * CUBE_SIZE};
             
-            Log.d("RubiksCube", String.format("面%d (%s): 法向量=(%.1f,%.1f,%.1f), 平面點=(%.1f,%.1f,%.1f)", 
-                faceIndex, FACE_NAMES[faceIndex], 
-                normal[0], normal[1], normal[2],
-                planePoint[0], planePoint[1], planePoint[2]));
+            //Log.d("RubiksCube", String.format("面%d (%s): 法向量=(%.1f,%.1f,%.1f), 平面點=(%.1f,%.1f,%.1f)",
+            //    faceIndex, FACE_NAMES[faceIndex],
+            //    normal[0], normal[1], normal[2],
+            //    planePoint[0], planePoint[1], planePoint[2]));
         }
         
         // 測試射線與每個面的相交
@@ -632,15 +639,15 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
                         testRayStart[2] + t * testRayDir[2]
                     };
                     
-                    Log.d("RubiksCube", String.format("面%d (%s): 交點=(%.3f,%.3f,%.3f), 距離=%.3f", 
-                        faceIndex, FACE_NAMES[faceIndex], 
-                        intersection[0], intersection[1], intersection[2], t));
+                    //Log.d("RubiksCube", String.format("面%d (%s): 交點=(%.3f,%.3f,%.3f), 距離=%.3f",
+                    //    faceIndex, FACE_NAMES[faceIndex],
+                    //    intersection[0], intersection[1], intersection[2], t));
                 }
             }
         }
         
         // 新增：測試面的邊界檢查
-        Log.d("RubiksCube", "測試面的邊界檢查...");
+        //Log.d("RubiksCube", "測試面的邊界檢查...");
         float[][] testPoints = {
             // 前面 (Z = -1) 的測試點
             {0, 0, -1},   // 中心
@@ -658,103 +665,443 @@ public class RubiksCubeRenderer implements GLSurfaceView.Renderer {
         };
         
         for (int faceIndex = 2; faceIndex <= 5; faceIndex++) { // 只測試前面和後面
-            Log.d("RubiksCube", "測試面" + faceIndex + " (" + FACE_NAMES[faceIndex] + ") 的邊界檢查:");
+            //Log.d("RubiksCube", "測試面" + faceIndex + " (" + FACE_NAMES[faceIndex] + ") 的邊界檢查:");
             for (int i = 0; i < testPoints.length; i++) {
                 boolean isOnFace = isPointOnCubeFace(testPoints[i], faceIndex);
-                Log.d("RubiksCube", String.format("  點%d (%.1f,%.1f,%.1f): %s", 
-                    i, testPoints[i][0], testPoints[i][1], testPoints[i][2], 
-                    isOnFace ? "在面內" : "不在面內"));
+                //Log.d("RubiksCube", String.format("  點%d (%.1f,%.1f,%.1f): %s",
+                //    i, testPoints[i][0], testPoints[i][1], testPoints[i][2],
+                //    isOnFace ? "在面內" : "不在面內"));
             }
         }
     }
 
-    // 新增：繪製調試圓點
-    private void drawDebugPoint(float[] mvpMatrix, float[] point) {
-        // 創建一個小的球體來表示調試點
-        float radius = 0.05f;
-        int segments = 8;
+    // 新增：工具方法 —— row/col 與 cellIndex 互轉
+    private int convertRowColToCellIndex(int faceIndex,int row,int col){
+        switch(faceIndex){
+            case 0: // Up
+                return row*3+col;
+            case 1: // Right
+            case 2: // Forward
+            case 3: // Down
+                return (2-row)*3+col;
+            case 4: // Left
+            case 5: // Backward
+                return (2-row)*3+(2-col);
+            default:
+                return row*3+col;
+        }
+    }
+
+    private int[] convertCellIndexToRowCol(int faceIndex,int cellIndex){
+        int row = cellIndex/3;
+        int col = cellIndex%3;
+        switch(faceIndex){
+            case 0: // Up : direct
+                return new int[]{row,col};
+            case 1: // Right / Forward / Down : flip row
+            case 2:
+            case 3:
+                return new int[]{2-row,col};
+            case 4: // Left / Backward : flip row and col
+            case 5:
+                return new int[]{2-row,2-col};
+            default:
+                return new int[]{row,col};
+        }
+    }
+
+    // 更新：以 faceIndex + cellIndex 設定單格顏色（正確方向）
+    public void setCellColor(int faceIndex,int cellIndex,float[] color){
+        if (faces==null||faceIndex<0||faceIndex>=faces.length) return;
+        if (cellIndex<0||cellIndex>8) return;
+        int[] rc = convertCellIndexToRowCol(faceIndex,cellIndex);
+        faces[faceIndex].setCellColor(rc[0],rc[1],color);
+        requestRender();
+    }
+
+    // 直接設定到指定角度（重設矩陣）
+    private void setOrientation(float angleX,float angleY){
+        Matrix.setIdentityM(mAccumulatedRotation,0);
+        Matrix.rotateM(mAccumulatedRotation,0,angleY,0,1,0);
+        Matrix.rotateM(mAccumulatedRotation,0,-angleX,1,0,0); // 與 applyRotation 方向一致
+        mAngleX = angleX;
+        mAngleY = angleY;
+        requestRender();
+    }
+
+    // 新增：設定 Pitch/Yaw/Roll
+    private void setOrientation(float angleX,float angleY,float angleZ){
+        Matrix.setIdentityM(mAccumulatedRotation,0);
+        Matrix.rotateM(mAccumulatedRotation,0,angleY,0,1,0);
+        Matrix.rotateM(mAccumulatedRotation,0,-angleX,1,0,0);
+        Matrix.rotateM(mAccumulatedRotation,0,angleZ,0,0,1);
+        mAngleX = angleX;
+        mAngleY = angleY;
+        mAngleZ = angleZ;
+        requestRender();
+    }
+
+    // 調適用：直接設置三軸，不動畫
+    public void setOrientationImmediate(float x,float y,float z){
+        setOrientation(x,y,z);
+    }
+
+    // 對外提供：旋轉到指定面的視角
+    public void rotateToFace(char faceCode, boolean animate){
+        float targetX = 0f;
+        float targetY = BASE_Y; // 以基準 180 度為前面
+        switch(Character.toUpperCase(faceCode)){
+            case 'U': // 上面
+                targetX = -90f;
+                break;
+            case 'D': // 下面
+                targetX = 90f;
+                break;
+            case 'R': // 右面
+                targetY = BASE_Y - 90f;
+                break;
+            case 'L': // 左面
+                targetY = BASE_Y + 90f;
+                break;
+            case 'F': // 前面
+                // targetY 維持 180
+                break;
+            case 'B': // 後面 -> 0 度
+                targetY = 0f;
+                break;
+        }
+        // 正規化到 [0,360)
+        targetY = ((targetY % 360)+360)%360;
+        targetX = ((targetX % 360)+360)%360;
+
+        // 微小偏移，避免完全平視導致深度感不足
+        final float OFFSET = 5f;
+        if(faceCode=='U' || faceCode=='D') targetY += OFFSET;
+        else targetX += OFFSET;
+
+        // 若不需要動畫
+        if(!animate){
+            setOrientation(targetX,targetY);
+            return;
+        }
+
+        // 動畫模式
+        animationRunning = false; // 結束先前動畫
+        float diffX = shortestAngleDiff(mAngleX,targetX);
+        float diffY = shortestAngleDiff(mAngleY,targetY);
+        int steps = 20;
+        float stepX = diffX/steps;
+        float stepY = diffY/steps;
+        float finalTargetX = targetX;
+        float finalTargetY = targetY;
+        new Thread(() -> {
+            animationRunning = true;
+            for(int i=0;i<steps && animationRunning;i++){
+                applyRotation(stepX,stepY);
+                requestRender();
+                try{Thread.sleep(16);}catch(InterruptedException ignored){}
+            }
+            // 最後強制定位，避免累積誤差
+            setOrientation(finalTargetX, finalTargetY);
+            animationRunning = false;
+        }).start();
+    }
+
+    private float shortestAngleDiff(float current,float target){
+        float diff = target - current;
+        while(diff > 180) diff -= 360;
+        while(diff < -180) diff += 360;
+        return diff;
+    }
+
+    public void stopAnimation(){
+        animationRunning = false;
+    }
+
+    public void startSliceAnimation(String moveCode, Runnable onEnd){
+        // 只對 U / U' / D / D' / R / R' / L / L' / F / F' / B / B' 和 "2" 做簡易動畫
+        if(moveCode==null||moveCode.isEmpty()){
+            if(onEnd!=null) onEnd.run();
+            return;
+        }
+        char face = Character.toUpperCase(moveCode.charAt(0));
+        boolean prime = moveCode.contains("'");   // 是否為逆時針
+        boolean doubleTurn = moveCode.contains("2");
+        // direction / totalAngle 先暫不計算，待調整 prime 後再確定
         
-        // 簡單的球體頂點
-        float[] vertices = new float[segments * segments * 3];
-        int vertexIndex = 0;
-        
-        for (int i = 0; i < segments; i++) {
-            float phi = (float) (Math.PI * i / segments);
-            for (int j = 0; j < segments; j++) {
-                float theta = (float) (2 * Math.PI * j / segments);
-                
-                float x = point[0] + radius * (float) (Math.sin(phi) * Math.cos(theta));
-                float y = point[1] + radius * (float) (Math.sin(phi) * Math.sin(theta));
-                float z = point[2] + radius * (float) Math.cos(phi);
-                
-                vertices[vertexIndex++] = x;
-                vertices[vertexIndex++] = y;
-                vertices[vertexIndex++] = z;
+        float axisX=0,axisY=0,axisZ=0;
+        float pivotX=0,pivotY=0,pivotZ=0;
+        switch(face){
+            case 'U': axisY=1; pivotY=CUBE_SIZE; break;
+            case 'D': axisY=1; pivotY=-CUBE_SIZE; prime = !prime; break;
+            case 'R': axisX=1; pivotX=CUBE_SIZE; break;
+            case 'L': axisX=1; pivotX=-CUBE_SIZE; prime = !prime; break;
+            case 'F': axisZ=1; pivotZ=CUBE_SIZE; break;
+            case 'B': axisZ=1; pivotZ=-CUBE_SIZE; prime = !prime; break;
+        }
+
+        // 依最終 prime 重新計算旋轉方向與角度
+        float direction = prime ? 1f : -1f;
+        float totalAngle = direction * (doubleTurn ? 180f : 90f);
+
+        List<CubeCell> layerCells = getLayerCells(face);
+        if(layerCells.isEmpty()){
+            if(onEnd!=null) onEnd.run();
+            return;
+        }
+
+        final int steps = 15;
+        final long frameTimeMs = 16;
+        float finalPivotX = pivotX;
+        float finalPivotY = pivotY;
+        float finalPivotZ = pivotZ;
+        float finalAxisX = axisX;
+        float finalAxisY = axisY;
+        float finalAxisZ = axisZ;
+        new Thread(() -> {
+            float[] mat = new float[16];
+            for(int i=0;i<=steps;i++){
+                float angle = totalAngle * i / steps;
+                for(CubeCell cell:layerCells){
+                    Matrix.setIdentityM(mat,0);
+                    Matrix.translateM(mat,0, finalPivotX, finalPivotY, finalPivotZ);
+                    Matrix.rotateM(mat,0,angle, finalAxisX, finalAxisY, finalAxisZ);
+                    Matrix.translateM(mat,0,-finalPivotX,-finalPivotY,-finalPivotZ);
+                    cell.setLocalMatrix(mat);
+                }
+                requestRender();
+                try{Thread.sleep(frameTimeMs);}catch(InterruptedException ignored){}
+            }
+            // reset
+            for(CubeCell cell:layerCells){
+                cell.resetLocalMatrix();
+            }
+            requestRender();
+            if(onEnd!=null) onEnd.run();
+        }).start();
+    }
+
+    // 新增：取得指定層的 Cell 列表
+    private List<CubeCell> getLayerCells(char faceCode){
+        List<CubeCell> list = new ArrayList<>();
+        char f = Character.toUpperCase(faceCode);
+        switch(f){
+            case 'U':
+                for(int r=0;r<3;r++) for(int c=0;c<3;c++) list.add(faces[0].getCell(r,c));
+                for(int idx:new int[]{1,2,4,5}) for(int c=0;c<3;c++) list.add(faces[idx].getCell(2,c));
+                break;
+            case 'D':
+                for(int r=0;r<3;r++) for(int c=0;c<3;c++) list.add(faces[3].getCell(r,c));
+                for(int idx:new int[]{1,2,4,5}) for(int c=0;c<3;c++) list.add(faces[idx].getCell(0,c));
+                break;
+            case 'R':
+            case 'L':
+            case 'F':
+            case 'B':
+                float TH = 0.25f; // layer threshold
+                for(CubeFace faceObj:faces){
+                    for(int r=0;r<3;r++){
+                        for(int c=0;c<3;c++){
+                            CubeCell cell = faceObj.getCell(r,c);
+                            float[] ctr = cell.getCenter();
+                            if( (f=='R' && ctr[0] > TH) ||
+                                (f=='L' && ctr[0] < -TH) ||
+                                (f=='F' && ctr[2] > TH) ||
+                                (f=='B' && ctr[2] < -TH) ){
+                                list.add(cell);
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+        return list;
+    }
+
+    // 公開：設定預設三面角度 (上、前、右皆可見)
+    public void setPresetOrientation(boolean animate){
+        // 使用者最終確認的視角
+        final float targetX = 334.56f;
+        final float targetY = 144.88f;
+        final float targetZ = 345f;
+
+        if(!animate){
+            // 立即設定三軸
+            setOrientation(targetX,targetY,targetZ);
+            return;
+        }
+
+        // 先對 X/Y 做平滑動畫，Z 最後一次到位（通常 Z 角度改變較小）
+        animationRunning = false;
+        float diffX = shortestAngleDiff(mAngleX,targetX);
+        float diffY = shortestAngleDiff(mAngleY,targetY);
+        int steps = 20;
+        float stepX = diffX/steps;
+        float stepY = diffY/steps;
+        new Thread(() -> {
+            animationRunning = true;
+            for(int i=0;i<steps && animationRunning;i++){
+                applyRotation(stepX,stepY);
+                requestRender();
+                try{Thread.sleep(16);}catch(InterruptedException ignored){}
+            }
+            // 最終定位含 Z
+            setOrientation(targetX,targetY,targetZ);
+            animationRunning = false;
+        }).start();
+    }
+
+    // 專用內部：通用旋轉到指定角度 (公開給其他方法)
+    public void rotateTo(float targetX,float targetY,boolean animate){
+        if(!animate){
+            setOrientation(targetX,targetY);
+            return;
+        }
+        animationRunning = false;
+        float diffX = shortestAngleDiff(mAngleX,targetX);
+        float diffY = shortestAngleDiff(mAngleY,targetY);
+        int steps = 20;
+        float stepX = diffX/steps;
+        float stepY = diffY/steps;
+        new Thread(() -> {
+            animationRunning = true;
+            for(int i=0;i<steps && animationRunning;i++){
+                applyRotation(stepX,stepY);
+                requestRender();
+                try{Thread.sleep(16);}catch(InterruptedException ignored){}
+            }
+            setOrientation(targetX,targetY);
+            animationRunning = false;
+        }).start();
+    }
+
+    // 調適用：不支援動畫（animate=false）
+    public void rotateTo(float targetX,float targetY,float targetZ,boolean animate){
+        setOrientation(targetX,targetY,targetZ);
+    }
+
+    // 取得世界座標 (Pitch, Yaw) 角度，避免 Euler 次序影響
+    public float[] getWorldAngles(){
+        // 由 mAccumulatedRotation (4x4) 擷取
+        float[] r = mAccumulatedRotation;
+        // yaw (Y軸) = atan2(-m20, m00)
+        float yaw = (float)Math.toDegrees(Math.atan2(-r[8], r[0]));
+        // pitch (X軸) = asin(m10)
+        float pitch = (float)Math.toDegrees(Math.asin(r[4]));
+        // roll (Z) = atan2(-m12, m11)
+        float roll = (float)Math.toDegrees(Math.atan2(-r[6], r[5]));
+        roll = (roll%360+360)%360;
+        // 正規化
+        yaw = (yaw%360+360)%360;
+        pitch = (pitch%360+360)%360;
+        return new float[]{pitch,yaw,roll};
+    }
+
+    // 判斷是否已初始化完成（faces 已產生）
+    public boolean isInitialized(){
+        return initialized && faces!=null;
+    }
+
+    // 新增：重置初始化狀態
+    public void resetInitialization() {
+        initialized = false;
+    }
+
+    /**
+     * 取得目前 54 格顏色（以顏色字元字串，順序：face0~5, cell0~8）
+     */
+    public String getAllColors() {
+        StringBuilder sb = new StringBuilder(54);
+        for (int face = 0; face < 6; face++) {
+            for (int cell = 0; cell < 9; cell++) {
+                int[] rc = convertCellIndexToRowCol(face, cell);
+                float[] color = faces[face].getCellColor(rc[0], rc[1]);
+                char c = colorToChar(color);
+                // 只允許W/Y/G/B/R/O，其他一律回傳'N'
+                if(c!='W'&&c!='Y'&&c!='G'&&c!='B'&&c!='R'&&c!='O') c='N';
+                sb.append(c);
             }
         }
-        
-        // 創建頂點緩衝區
-        ByteBuffer bb = ByteBuffer.allocateDirect(vertices.length * 4);
-        bb.order(ByteOrder.nativeOrder());
-        FloatBuffer vertexBuffer = bb.asFloatBuffer();
-        vertexBuffer.put(vertices);
-        vertexBuffer.position(0);
-        
-        // 使用簡單的著色器
-        int program = createSimpleShaderProgram();
-        GLES20.glUseProgram(program);
-        
-        int positionHandle = GLES20.glGetAttribLocation(program, "vPosition");
-        int colorHandle = GLES20.glGetUniformLocation(program, "vColor");
-        int mvpMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix");
-        
-        GLES20.glEnableVertexAttribArray(positionHandle);
-        GLES20.glVertexAttribPointer(positionHandle, 3, GLES20.GL_FLOAT, false, 12, vertexBuffer);
-        
-        // 設置紅色調試點
-        float[] debugColor = {1.0f, 0.0f, 0.0f, 1.0f}; // 紅色
-        GLES20.glUniform4fv(colorHandle, 1, debugColor, 0);
-        GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false, mvpMatrix, 0);
-        
-        // 繪製點
-        GLES20.glDrawArrays(GLES20.GL_POINTS, 0, vertices.length / 3);
-        
-        GLES20.glDisableVertexAttribArray(positionHandle);
+        return sb.toString();
     }
-    
-    // 創建簡單的著色器程序
-    private int createSimpleShaderProgram() {
-        String vertexShaderCode = 
-            "uniform mat4 uMVPMatrix;" +
-            "attribute vec4 vPosition;" +
-            "void main() {" +
-            "  gl_Position = uMVPMatrix * vPosition;" +
-            "  gl_PointSize = 10.0;" +
-            "}";
-            
-        String fragmentShaderCode = 
-            "precision mediump float;" +
-            "uniform vec4 vColor;" +
-            "void main() {" +
-            "  gl_FragColor = vColor;" +
-            "}";
-        
-        int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
-        int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
-        
-        int program = GLES20.glCreateProgram();
-        GLES20.glAttachShader(program, vertexShader);
-        GLES20.glAttachShader(program, fragmentShader);
-        GLES20.glLinkProgram(program);
-        
-        return program;
+
+    /**
+     * 以顏色字元字串還原 54 格顏色（順序：face0~5, cell0~8）
+     */
+    public void setAllColors(String colorString) {
+        if (colorString == null || colorString.length() < 54) return;
+        for (int face = 0; face < 6; face++) {
+            for (int cell = 0; cell < 9; cell++) {
+                int[] rc = convertCellIndexToRowCol(face, cell);
+                char c = colorString.charAt(face * 9 + cell);
+                float[] rgba;
+                if(c=='N'){
+                    rgba = new float[]{0.6667f, 0.6667f, 0.6667f, 1.0f}; // 預設灰色
+                }
+                else{
+                    rgba = charToRgba(c);
+                }
+                if (faces == null || !isInitialized()) {
+                    Log.e("CubeDebug", "Renderer尚未初始化，setAllColors略過");
+                    return;
+                }
+                if(faces != null){
+                    faces[face].setCellColor(rc[0], rc[1], rgba);
+                }
+
+            }
+        }
+        requestRender();
     }
-    
-    // 載入著色器
-    private int loadShader(int type, String shaderCode) {
-        int shader = GLES20.glCreateShader(type);
-        GLES20.glShaderSource(shader, shaderCode);
-        GLES20.glCompileShader(shader);
-        return shader;
+
+    // 顏色float[]轉字元（根據face預設顏色做比對）
+    private char colorToChar(float[] color) {
+        int colorInt = rgbaToColorInt(color);
+        switch (colorInt){
+            case COLOR_WHITE:
+                return 'W';
+            case COLOR_YELLOW:
+                return 'Y';
+            case COLOR_GREEN:
+                return 'G';
+            case COLOR_BLUE:
+                return 'B';
+            case COLOR_RED:
+                return 'R';
+            case COLOR_ORANGE:
+                return 'O';
+            default:
+                return 'N';
+        }
+    }
+    // 字元轉float[]顏色
+    private float[] charToRgba(char c) {
+        switch (c) {
+            case 'W': return colorIntToRgba(COLOR_WHITE);
+            case 'B': return colorIntToRgba(COLOR_BLUE);
+            case 'R': return colorIntToRgba(COLOR_RED);
+            case 'Y': return colorIntToRgba(COLOR_YELLOW);
+            case 'G': return colorIntToRgba(COLOR_GREEN);
+            case 'O': return colorIntToRgba(COLOR_ORANGE);
+            default:  return new float[]{0.6667f, 0.6667f, 0.6667f, 1.0f};
+        }
+    }
+
+    // float[] 轉 int colorInt
+    private static int rgbaToColorInt(float[] rgba) {
+        int a = Math.round(rgba.length > 3 ? rgba[3] * 255 : 255);
+        int r = Math.round(rgba[0] * 255);
+        int g = Math.round(rgba[1] * 255);
+        int b = Math.round(rgba[2] * 255);
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    private static float[] colorIntToRgba(int colorInt) {
+        float r = ((colorInt >> 16) & 0xFF) / 255f;
+        float g = ((colorInt >> 8) & 0xFF) / 255f;
+        float b = (colorInt & 0xFF) / 255f;
+        float a = ((colorInt >> 24) & 0xFF) / 255f;
+
+        return new float[] { r, g, b, a };
     }
 }

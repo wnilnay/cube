@@ -57,7 +57,7 @@ public class SetMotorActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textView.setText(""+getResources().getResourceEntryName(textView.getId())+" : "+progress);
+                textView.setText(progress + "°");
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("MotorTop",seekBar_top.getProgress());

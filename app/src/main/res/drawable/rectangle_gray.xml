@@ -16,7 +16,7 @@
                 android:color="#000" />
 
             <!--圓角-->
-            <corners android:radius="0dp" />
+            <corners android:radius="12dp" />
 
 
         </shape>

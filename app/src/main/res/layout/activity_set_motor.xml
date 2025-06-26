@@ -80,7 +80,8 @@
             <!-- 顶层马达 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
@@ -111,7 +112,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="頂層"
+                            android:text="上"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="#2D3436"/>
@@ -136,14 +137,16 @@
                         android:max="180"
                         android:progress="180"
                         android:progressTint="#6C5CE7"
-                        android:thumbTint="#6C5CE7"/>
+                        android:thumbTint="#6C5CE7"
+                        android:layout_marginTop="12dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <!-- 底层马达 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
@@ -174,7 +177,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="底層"
+                            android:text="下"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="#2D3436"/>
@@ -199,14 +202,16 @@
                         android:max="180"
                         android:progress="180"
                         android:progressTint="#00B894"
-                        android:thumbTint="#00B894"/>
+                        android:thumbTint="#00B894"
+                        android:layout_marginTop="12dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <!-- 左侧马达 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
@@ -262,14 +267,17 @@
                         android:max="180"
                         android:progress="180"
                         android:progressTint="#E17055"
-                        android:thumbTint="#E17055"/>
+                        android:thumbTint="#E17055"
+                        android:layout_marginTop="12dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <!-- 右侧马达 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
                 android:backgroundTint="#f8f9fa">
@@ -324,56 +332,10 @@
                         android:max="180"
                         android:progress="180"
                         android:progressTint="#FDCB6E"
-                        android:thumbTint="#FDCB6E"/>
+                        android:thumbTint="#FDCB6E"
+                        android:layout_marginTop="12dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- 操作按钮 -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="8dp"
-        android:backgroundTint="@color/white">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <Button
-                android:id="@+id/reset_button"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:text="重置"
-                android:textSize="16sp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:background="@drawable/gradient_button_secondary"
-                android:stateListAnimator="@null"
-                android:elevation="0dp"/>
-
-            <Button
-                android:id="@+id/save_button"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:text="保存設定"
-                android:textSize="16sp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:background="@drawable/gradient_button"
-                android:stateListAnimator="@null"
-                android:elevation="0dp"/>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

@@ -10,46 +10,6 @@
     android:orientation="vertical"
     android:background="@drawable/gradient_background">
 
-    <!-- 标题栏 -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="8dp"
-        android:backgroundTint="@color/white">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_cube"
-                android:layout_marginEnd="12dp"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="魔方解算器"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="#2D3436"/>
-
-            <View
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:background="@drawable/status_dot"
-                android:backgroundTint="#00B894"/>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
     <!-- ViewPager 容器 -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -72,8 +32,8 @@
                 android:background="@drawable/tab_background"
                 android:paddingTop="12dp"
                 android:paddingBottom="12dp"
-                android:textColor="#6C5CE7"
-                android:textSize="16sp"/>
+                android:textColor="#2E2A6F"
+                android:textSize="12sp"/>
 
         </androidx.viewpager.widget.ViewPager>
 
