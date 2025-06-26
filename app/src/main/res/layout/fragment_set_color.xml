@@ -98,7 +98,7 @@
                     android:layout_marginStart="8dp"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="6dp"
-                    android:backgroundTint="#fff3cd">
+                    android:backgroundTint="#FFFACD">
 
                     <FrameLayout
                         android:id="@+id/yellow_frameLayout"
@@ -145,7 +145,7 @@
                     android:layout_marginEnd="8dp"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="6dp"
-                    android:backgroundTint="#d1ecf1">
+                    android:backgroundTint="#D1F1D5">
 
                     <FrameLayout
                         android:id="@+id/green_frameLayout"

@@ -18,7 +18,7 @@ import java.util.TimerTask;
 
 public class SettingFragment extends Fragment {
     private View view;
-    private Button motorButton, coordinateButton, colorButton, testMotorButton;
+    private Button motorButton, coordinateButton, colorButton, testMotorButton, guideButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,6 +29,7 @@ public class SettingFragment extends Fragment {
             coordinateButton = view.findViewById(R.id.coordinate_button);
             colorButton = view.findViewById(R.id.color_button);
             testMotorButton = view.findViewById(R.id.testMotor_button);
+            guideButton = view.findViewById(R.id.guide_button);
 
             motorButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -124,6 +125,10 @@ public class SettingFragment extends Fragment {
                         startActivity(intent);
                     }
                 }
+            });
+            guideButton.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), UsageGuideActivity.class);
+                startActivity(intent);
             });
         }
         return view;

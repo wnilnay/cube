@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:backgroundTint="@color/white"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp"
+    android:stateListAnimator="@animator/button_elevation">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="24dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_info"
+            app:tint="#2D3436"
+            android:layout_gravity="center_vertical"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8. 常見問題"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2D3436"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• 無法連線？請確認藍牙已開啟並完成配對\n• 轉動不準確？請至『設定馬達』重新校準\n• 顏色辨識不準確？\n  1) 若多數方塊被辨識為白色 → 可能遮罩未覆蓋魔方，請到『校準座標』重新設定遮罩\n  2) 若僅少部分顏色錯誤 → 請將解魔方機移至光線充足處\n  如仍異常，可至『設定顏色』調整 HSV 範圍\n• 解法顯示 Error 1~8？對照如下：\n  1) 顏色數量錯誤：六種顏色需各 9 格\n  2) 邊塊數量錯誤：12 條邊塊缺少或重複\n  3) 邊塊方向錯誤：有邊塊需要翻面\n  4) 角塊數量錯誤：8 顆角塊缺少或重複\n  5) 角塊方向錯誤：有角塊需要旋轉\n  6) 奇偶錯誤：需交換兩顆角塊或兩條邊塊\n  7) 搜尋深度內無解：請放寬 maxDepth\n  8) 搜尋上限超出：請提高 probMax"
+                android:textSize="16sp"
+                android:textColor="#636e72"
+                android:lineSpacingExtra="4dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView> 

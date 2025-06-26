@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fragment_background"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 標題 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@color/white"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="8dp"
+            android:stateListAnimator="@animator/button_elevation">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_info"
+                    android:layout_marginBottom="16dp"
+                    app:tint="@color/primary_text"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="使用說明"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:textColor="#2D3436"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="歡迎使用本 APP！以下將介紹各主要功能的操作方法。"
+                    android:textSize="16sp"
+                    android:textColor="#636e72"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 功能說明卡片樣式 -->
+        <include layout="@layout/card_bluetooth_connection" />
+        <include layout="@layout/card_auto_solve" />
+        <include layout="@layout/card_manual_input" />
+        <include layout="@layout/card_motor_settings" />
+        <include layout="@layout/card_motor_test" />
+        <include layout="@layout/card_coordinate_calibration" />
+        <include layout="@layout/card_color_settings" />
+        <include layout="@layout/card_faq" />
+
+        <!-- 開源授權 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp"
+            android:backgroundTint="@color/white"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="8dp"
+            android:stateListAnimator="@animator/button_elevation">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="24dp"
+                android:background="@drawable/card_ripple_effect">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/ic_info"
+                    android:layout_marginBottom="16dp"
+                    app:tint="#636e72" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="開源授權"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#2D3436"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="本 APP 及其所使用『min2phase』解算核心皆採 MIT License 發佈，點擊下方可查看全文。"
+                    android:textSize="16sp"
+                    android:textColor="#636e72"
+                    android:gravity="center"
+                    android:layout_marginBottom="24dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/open_source_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="查看授權"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
+                    android:backgroundTint="@color/primary_text"
+                    app:elevation="4dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</ScrollView> 

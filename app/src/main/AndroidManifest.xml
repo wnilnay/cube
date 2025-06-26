@@ -45,6 +45,14 @@
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".UsageGuideActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".OpenSourceActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".DeviceListActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>

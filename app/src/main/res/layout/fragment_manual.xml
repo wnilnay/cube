@@ -1,36 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient_background"
+    android:orientation="vertical"
     tools:context=".ManualFragment">
 
-    <LinearLayout
+    <!-- 標題卡片 -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/card_background"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="8dp">
 
-        <!-- 標題卡片 -->
-        <androidx.cardview.widget.CardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/card_background"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="8dp">
+            android:orientation="vertical"
+            android:padding="16dp">
 
+            <!-- 標題 + CheckBox 列 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="手動設置魔方"
                     android:textColor="@color/primary_text"
                     android:textSize="24sp"
@@ -38,1258 +42,608 @@
                     android:drawableStart="@drawable/ic_cube"
                     android:drawablePadding="8dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="手動選擇顏色並填入，然後點選OK按鈕"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- 魔方顯示區域 -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/card_background"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <!-- 上面 -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="上面 (Up)"
-                    android:textColor="@color/primary_text"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- 第一行：up_1, up_2, up_3 -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="2dp">
-
-                    <View
-                        android:id="@+id/up_1"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/up_2"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginHorizontal="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/up_3"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                </LinearLayout>
-
-                <!-- 第二行：up_4, up_5, up_6 -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="2dp">
-
-                    <View
-                        android:id="@+id/up_4"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/up_5"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginHorizontal="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/up_6"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                </LinearLayout>
-
-                <!-- 第三行：up_7, up_8, up_9 -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center">
-
-                    <View
-                        android:id="@+id/up_7"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/up_8"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginHorizontal="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/up_9"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginVertical="16dp"
-                    android:background="@drawable/divider_gradient" />
-
-                <!-- 中間四面 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <!-- 左側面 -->
-                    <LinearLayout
+                    android:orientation="vertical"
+                    >
+                    <CheckBox
+                        android:id="@+id/checkbox_animation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginEnd="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="左"
-                            android:textColor="@color/primary_text"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="4dp" />
-
-                        <!-- 第一行：left_1, left_2, left_3 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="2dp">
-
-                            <View
-                                android:id="@+id/left_1"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/left_2"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/left_3"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                        <!-- 第二行：left_4, left_5, left_6 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="2dp">
-
-                            <View
-                                android:id="@+id/left_4"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/left_5"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/left_6"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                        <!-- 第三行：left_7, left_8, left_9 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center">
-
-                            <View
-                                android:id="@+id/left_7"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/left_8"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/left_9"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <!-- 正面 -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginHorizontal="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="前"
-                            android:textColor="@color/primary_text"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="4dp" />
-
-                        <!-- 第一行：forward_1, forward_2, forward_3 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="2dp">
-
-                            <View
-                                android:id="@+id/forward_1"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/forward_2"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/forward_3"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                        <!-- 第二行：forward_4, forward_5, forward_6 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="2dp">
-
-                            <View
-                                android:id="@+id/forward_4"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/forward_5"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/forward_6"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                        <!-- 第三行：forward_7, forward_8, forward_9 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center">
-
-                            <View
-                                android:id="@+id/forward_7"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/forward_8"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/forward_9"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <!-- 右側面 -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginHorizontal="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="右"
-                            android:textColor="@color/primary_text"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="4dp" />
-
-                        <!-- 第一行：right_1, right_2, right_3 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="2dp">
-
-                            <View
-                                android:id="@+id/right_1"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/right_2"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/right_3"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                        <!-- 第二行：right_4, right_5, right_6 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="2dp">
-
-                            <View
-                                android:id="@+id/right_4"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/right_5"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/right_6"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                        <!-- 第三行：right_7, right_8, right_9 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center">
-
-                            <View
-                                android:id="@+id/right_7"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/right_8"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/right_9"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <!-- 背面 -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginStart="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="後"
-                            android:textColor="@color/primary_text"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="4dp" />
-
-                        <!-- 第一行：backward_1, backward_2, backward_3 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="2dp">
-
-                            <View
-                                android:id="@+id/backward_1"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/backward_2"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/backward_3"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                        <!-- 第二行：backward_4, backward_5, backward_6 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center"
-                            android:layout_marginBottom="2dp">
-
-                            <View
-                                android:id="@+id/backward_4"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/backward_5"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/backward_6"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                        <!-- 第三行：backward_7, backward_8, backward_9 -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center">
-
-                            <View
-                                android:id="@+id/backward_7"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginEnd="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/backward_8"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginHorizontal="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                            <View
-                                android:id="@+id/backward_9"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="2dp"
-                                android:background="@drawable/rectangle_gray"
-                                android:elevation="2dp" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_marginVertical="16dp"
-                    android:background="@drawable/divider_gradient" />
-
-                <!-- 下面 -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="下面 (Down)"
-                    android:textColor="@color/primary_text"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="8dp" />
-
-                <!-- 第一行：down_1, down_2, down_3 -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="2dp">
-
-                    <View
-                        android:id="@+id/down_1"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/down_2"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginHorizontal="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/down_3"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                </LinearLayout>
-
-                <!-- 第二行：down_4, down_5, down_6 -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="2dp">
-
-                    <View
-                        android:id="@+id/down_4"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/down_5"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginHorizontal="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/down_6"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                </LinearLayout>
-
-                <!-- 第三行：down_7, down_8, down_9 -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_gravity="center">
-
-                    <View
-                        android:id="@+id/down_7"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/down_8"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginHorizontal="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                    <View
-                        android:id="@+id/down_9"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="2dp"
-                        android:background="@drawable/rectangle_gray"
-                        android:elevation="2dp" />
-
-                </LinearLayout>
-
-                <!-- 狀態顯示 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center">
-
-                    <TextView
-                        android:id="@+id/lock"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="方塊已鎖定"
-                        android:textSize="16sp"
-                        android:textColor="@color/accent_color"
-                        android:textStyle="bold"
-                        android:visibility="invisible"
-                        android:background="@drawable/status_background"
-                        android:padding="8dp"
-                        android:drawableStart="@drawable/ic_lock"
-                        android:drawablePadding="4dp" />
-
-                    <TextView
-                        android:id="@+id/turn_of_code"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="12sp"
-                        android:textColor="@color/secondary_text"
-                        android:layout_marginStart="16dp"
-                        android:background="@drawable/code_background"
-                        android:padding="6dp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- 顏色選擇區域 -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/card_background"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="選擇顏色"
-                    android:textColor="@color/primary_text"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp"
-                    android:drawableStart="@drawable/ic_palette"
-                    android:drawablePadding="8dp" />
-
-                <!-- 第一排顏色 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp">
-
-                    <Button
-                        android:id="@+id/white_color_button"
-                        android:layout_width="0dp"
-                        android:layout_height="80dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/color_button_white"
-                        android:contentDescription="white"
-                        android:elevation="4dp"
-                        android:stateListAnimator="@animator/button_elevation" />
-
-                    <Button
-                        android:id="@+id/yellow_color_button"
-                        android:layout_width="0dp"
-                        android:layout_height="80dp"
-                        android:layout_weight="1"
-                        android:layout_marginHorizontal="6dp"
-                        android:background="@drawable/color_button_yellow"
-                        android:contentDescription="yellow"
-                        android:elevation="4dp"
-                        android:stateListAnimator="@animator/button_elevation" />
-
-                    <Button
-                        android:id="@+id/green_color_button"
-                        android:layout_width="0dp"
-                        android:layout_height="80dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="6dp"
-                        android:background="@drawable/color_button_green"
-                        android:contentDescription="green"
-                        android:elevation="4dp"
-                        android:stateListAnimator="@animator/button_elevation" />
-
-                </LinearLayout>
-
-                <!-- 第二排顏色 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/blue_color_button"
-                        android:layout_width="0dp"
-                        android:layout_height="80dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
-                        android:background="@drawable/color_button_blue"
-                        android:contentDescription="blue"
-                        android:elevation="4dp"
-                        android:stateListAnimator="@animator/button_elevation" />
-
-                    <Button
-                        android:id="@+id/red_color_button"
-                        android:layout_width="0dp"
-                        android:layout_height="80dp"
-                        android:layout_weight="1"
-                        android:layout_marginHorizontal="6dp"
-                        android:background="@drawable/color_button_red"
-                        android:contentDescription="red"
-                        android:elevation="4dp"
-                        android:stateListAnimator="@animator/button_elevation" />
-
-                    <Button
-                        android:id="@+id/orange_color_button"
-                        android:layout_width="0dp"
-                        android:layout_height="80dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="6dp"
-                        android:background="@drawable/color_button_orange"
-                        android:contentDescription="orange"
-                        android:elevation="4dp"
-                        android:stateListAnimator="@animator/button_elevation" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- 主要操作按鈕 -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/card_background"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp"
-                android:gravity="center">
-
-                <Button
-                    android:id="@+id/okButton"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:text="確認"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/white"
-                    android:background="@drawable/primary_button"
-                    android:drawableStart="@drawable/ic_check"
-                    android:drawablePadding="8dp"
-                    android:elevation="6dp"
-                    android:stateListAnimator="@animator/button_elevation" />
-
-                <Button
-                    android:id="@+id/solveButton"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:layout_marginHorizontal="8dp"
-                    android:text="解算"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/white"
-                    android:background="@drawable/accent_button"
-                    android:drawableStart="@drawable/ic_solve"
-                    android:drawablePadding="8dp"
-                    android:elevation="6dp"
-                    android:stateListAnimator="@animator/button_elevation" />
-
-                <Button
-                    android:id="@+id/clearButton"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:text="清除"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primary_text"
-                    android:background="@drawable/secondary_button"
-                    android:drawableStart="@drawable/ic_clear"
-                    android:drawablePadding="8dp"
-                    android:elevation="4dp"
-                    android:stateListAnimator="@animator/button_elevation" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- 旋轉操作區域 -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="@color/card_background"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="魔方旋轉操作"
-                    android:textColor="@color/primary_text"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp"
-                    android:drawableStart="@drawable/ic_rotate"
-                    android:drawablePadding="8dp" />
-
-                <!-- 基礎旋轉 -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="基礎旋轉"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="8dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp">
-
-                    <Button
-                        android:id="@+id/up_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
-                        android:text="Up"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                    <Button
-                        android:id="@+id/down_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginHorizontal="4dp"
-                        android:text="Down"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                    <Button
-                        android:id="@+id/right_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="4dp"
-                        android:text="Right"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
-
-                    <Button
-                        android:id="@+id/left_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
-                        android:text="Left"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                    <Button
-                        android:id="@+id/front_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginHorizontal="4dp"
-                        android:text="Front"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                    <Button
-                        android:id="@+id/back_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="4dp"
-                        android:text="Back"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                </LinearLayout>
-
-                <!-- 逆時針旋轉 -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="逆時針旋轉"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="8dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp">
-
-                    <Button
-                        android:id="@+id/up_bar_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
-                        android:text="Up'"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                    <Button
-                        android:id="@+id/down_bar_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginHorizontal="4dp"
-                        android:text="Down'"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                    <Button
-                        android:id="@+id/right_bar_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="4dp"
-                        android:text="Right'"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/left_bar_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
-                        android:text="Left'"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                    <Button
-                        android:id="@+id/front_bar_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginHorizontal="4dp"
-                        android:text="Front'"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                    <Button
-                        android:id="@+id/back_bar_button"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="4dp"
-                        android:text="Back'"
-                        android:textSize="14sp"
-                        android:background="@drawable/operation_button"
-                        android:textColor="@color/primary_text" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- 解算步驟控制 -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/card_background"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="解算步驟"
-                    android:textColor="@color/primary_text"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp"
-                    android:drawableStart="@drawable/ic_steps"
-                    android:drawablePadding="8dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <Button
-                        android:id="@+id/button_lest"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:text="◀"
-                        android:textSize="18sp"
-                        android:textColor="@color/white"
-                        android:background="@drawable/step_button"
-                        android:elevation="4dp" />
-
-                    <TextView
-                        android:id="@+id/TextView_Solve"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="16sp"
-                        android:gravity="center"
-                        android:layout_marginHorizontal="16dp"
+                        android:text="展示動畫"
                         android:textColor="@color/primary_text"
-                        android:background="@drawable/step_display"
-                        android:padding="12dp"
-                        android:minHeight="48dp" />
-
-                    <Button
-                        android:id="@+id/button_next"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
-                        android:text="▶"
-                        android:textSize="18sp"
-                        android:textColor="@color/white"
-                        android:background="@drawable/step_button"
-                        android:elevation="4dp" />
-
+                        android:checked="true"/>
                 </LinearLayout>
+
 
             </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="手動選擇顏色並填入，然後點選確認按鈕"
+                android:textColor="@color/secondary_text"
+                android:textSize="14sp" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-</ScrollView>
+    </androidx.cardview.widget.CardView>
+
+    <!-- 魔方顯示區域 -->
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/card_background"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="20dp">
+
+            <com.example.test.RubiksCube3DView
+                android:id="@+id/cube_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@id/status_LinerLayout"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- 返回預設視角按鈕 -->
+            <Button
+                android:id="@+id/button_reset_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="↺"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:background="@drawable/primary_button"
+                android:textColor="@color/white"
+                android:elevation="4dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/cube_view"
+                app:layout_constraintStart_toStartOf="@id/cube_view"
+                android:layout_margin="8dp" />
+
+            <!-- 狀態顯示 -->
+            <LinearLayout
+                android:id="@+id/status_LinerLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cube_view"
+                android:layout_marginVertical="10dp">
+
+                <TextView
+                    android:id="@+id/lock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/status_background"
+                    android:drawableStart="@drawable/ic_lock"
+                    android:drawablePadding="4dp"
+                    android:padding="8dp"
+                    android:text="方塊已鎖定"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/turn_of_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/code_background"
+                    android:textColor="@color/secondary_text"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <ScrollView
+        android:id="@+id/operation_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <!-- 顏色選擇區域 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/card_background"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="選擇顏色"
+                        android:textColor="@color/primary_text"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp"
+                        android:drawableStart="@drawable/ic_palette"
+                        android:drawablePadding="8dp" />
+
+                    <!-- 第一排顏色 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <Button
+                            android:id="@+id/white_color_button"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/rectangle_white"
+                            android:contentDescription="white"
+                            android:elevation="4dp"
+                            android:stateListAnimator="@animator/button_elevation" />
+
+                        <Button
+                            android:id="@+id/yellow_color_button"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:layout_marginHorizontal="6dp"
+                            android:background="@drawable/rectangle_yellow"
+                            android:contentDescription="yellow"
+                            android:elevation="4dp"
+                            android:stateListAnimator="@animator/button_elevation" />
+
+                        <Button
+                            android:id="@+id/green_color_button"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:background="@drawable/rectangle_green"
+                            android:contentDescription="green"
+                            android:elevation="4dp"
+                            android:stateListAnimator="@animator/button_elevation" />
+
+                    </LinearLayout>
+
+                    <!-- 第二排顏色 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/blue_color_button"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:background="@drawable/rectangle_blue"
+                            android:contentDescription="blue"
+                            android:elevation="4dp"
+                            android:stateListAnimator="@animator/button_elevation" />
+
+                        <Button
+                            android:id="@+id/red_color_button"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:layout_marginHorizontal="6dp"
+                            android:background="@drawable/rectangle_red"
+                            android:contentDescription="red"
+                            android:elevation="4dp"
+                            android:stateListAnimator="@animator/button_elevation" />
+
+                        <Button
+                            android:id="@+id/orange_color_button"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:background="@drawable/rectangle_orange"
+                            android:contentDescription="orange"
+                            android:elevation="4dp"
+                            android:stateListAnimator="@animator/button_elevation" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- 主要操作按鈕 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/card_background"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="20dp"
+                    android:gravity="center">
+
+                    <Button
+                        android:id="@+id/okButton"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:text="確認"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:background="@drawable/primary_button"
+                        android:drawableStart="@drawable/ic_check"
+                        android:drawablePadding="8dp"
+                        android:elevation="6dp"
+                        android:stateListAnimator="@animator/button_elevation" />
+
+                    <Button
+                        android:id="@+id/solveButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/accent_button"
+                        android:drawableStart="@drawable/ic_solve"
+                        android:drawablePadding="8dp"
+                        android:elevation="6dp"
+                        android:stateListAnimator="@animator/button_elevation"
+                        android:text="解算"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/clearButton"
+                        android:layout_width="0dp"
+                        android:layout_height="56dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:text="清除"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/primary_text"
+                        android:background="@drawable/secondary_button"
+                        android:drawableStart="@drawable/ic_clear"
+                        android:drawablePadding="8dp"
+                        android:elevation="4dp"
+                        android:stateListAnimator="@animator/button_elevation" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- 解算步驟控制 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/card_background"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="解算步驟"
+                        android:textColor="@color/primary_text"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp"
+                        android:drawableStart="@drawable/ic_steps"
+                        android:drawablePadding="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <Button
+                            android:id="@+id/button_lest"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:text="◀"
+                            android:textSize="18sp"
+                            android:textColor="@color/white"
+                            android:background="@drawable/step_button"
+                            android:elevation="4dp" />
+
+                        <TextView
+                            android:id="@+id/TextView_Solve"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textSize="16sp"
+                            android:gravity="center"
+                            android:layout_marginHorizontal="16dp"
+                            android:textColor="@color/primary_text"
+                            android:background="@drawable/step_display"
+                            android:padding="12dp"
+                            android:minHeight="48dp" />
+
+                        <Button
+                            android:id="@+id/button_next"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:text="▶"
+                            android:textSize="18sp"
+                            android:textColor="@color/white"
+                            android:background="@drawable/step_button"
+                            android:elevation="4dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- 旋轉操作區域 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/card_background"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="魔方旋轉操作"
+                        android:textColor="@color/primary_text"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="16dp"
+                        android:drawableStart="@drawable/ic_rotate"
+                        android:drawablePadding="8dp" />
+
+                    <!-- 基礎旋轉 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="順時針旋轉"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <Button
+                            android:id="@+id/up_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:text="Up"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                        <Button
+                            android:id="@+id/down_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="Down"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                        <Button
+                            android:id="@+id/right_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:text="Right"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <Button
+                            android:id="@+id/left_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:text="Left"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                        <Button
+                            android:id="@+id/front_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="Front"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                        <Button
+                            android:id="@+id/back_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:text="Back"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                    </LinearLayout>
+
+                    <!-- 逆時針旋轉 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="逆時針旋轉"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+
+                        <Button
+                            android:id="@+id/up_bar_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:text="Up'"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                        <Button
+                            android:id="@+id/down_bar_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="Down'"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                        <Button
+                            android:id="@+id/right_bar_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:text="Right'"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/left_bar_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:text="Left'"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                        <Button
+                            android:id="@+id/front_bar_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="Front'"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                        <Button
+                            android:id="@+id/back_bar_button"
+                            style="@style/OperationButton"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:text="Back'"
+                            android:textSize="14sp"
+                            android:background="@drawable/operation_button"
+                            android:textColor="@color/primary_text" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+
+</LinearLayout>

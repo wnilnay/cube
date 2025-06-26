@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:backgroundTint="@color/white"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp"
+    android:stateListAnimator="@animator/button_elevation">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="24dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_palette"
+            app:tint="#2D3436"
+            android:layout_gravity="center_vertical"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3. 手動輸入模式"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2D3436"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• 於頂部導覽列點選『Manual』 (手動)\n• 點擊顏色按鈕，再於 3D 魔方上點選格子填色：依序完成六面\n• 填色完成後，點擊『確認』鎖定顏色\n• 接著點擊『解算』，APP 需要數秒計算並於『解法步驟』區域顯示結果\n• 之後可利用『◀』與『▶』按鈕逐步觀看解法步驟\n• 底部提供旋轉操作列，可透過 UP、DOWN、LEFT、RIGHT、FRONT、BACK 等按鈕操控魔方旋轉"
+                android:textSize="16sp"
+                android:textColor="#636e72"
+                android:lineSpacingExtra="4dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView> 

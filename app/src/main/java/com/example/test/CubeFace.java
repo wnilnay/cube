@@ -1,7 +1,7 @@
 package com.example.test;
 
 import android.opengl.GLES20;
-import android.view.View;
+import android.opengl.Matrix;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -28,9 +28,9 @@ public class CubeFace {
     private ShortBuffer drawListBuffer;
     private ShortBuffer borderDrawListBuffer;
     private int mProgram;
+    private int mMVPMatrixHandle;
     private int mPositionHandle;
     private int mColorHandle;
-    private int mMVPMatrixHandle;
 
     // 面的索引
     private int faceIndex;
@@ -47,14 +47,24 @@ public class CubeFace {
     private final float[] BORDER_COLOR = {0.0f, 0.0f, 0.0f, 1.0f};
 
     // 默认的魔方颜色
+//    private final float[][] DEFAULT_FACE_COLORS = {
+//            {1.0f, 1.0f, 1.0f, 1.0f}, // 白色 (上面 - Up)
+//            {0.0f, 0.0f, 1.0f, 1.0f}, // 藍色 (右面 - Right)
+//            {1.0f, 0.0f, 0.0f, 1.0f}, // 紅色 (前面 - Forward)
+//            {1.0f, 1.0f, 0.0f, 1.0f}, // 黃色 (下面 - Down)
+//            {0.0f, 1.0f, 0.0f, 1.0f}, // 綠色 (左面 - Left)
+//            {1.0f, 0.5f, 0.0f, 1.0f}  // 橙色 (後面 - Backward)
+//    };
     private final float[][] DEFAULT_FACE_COLORS = {
-            {1.0f, 1.0f, 1.0f, 1.0f}, // 白色 (上面 - Up)
-            {0.0f, 0.0f, 1.0f, 1.0f}, // 藍色 (右面 - Right)
-            {1.0f, 0.0f, 0.0f, 1.0f}, // 紅色 (前面 - Forward)
-            {1.0f, 1.0f, 0.0f, 1.0f}, // 黃色 (下面 - Down)
-            {0.0f, 1.0f, 0.0f, 1.0f}, // 綠色 (左面 - Left)
-            {1.0f, 0.5f, 0.0f, 1.0f}  // 橙色 (後面 - Backward)
+            {0.6667f, 0.6667f, 0.6667f, 1.0f}, // 白色 (上面 - Up)
+            {0.6667f, 0.6667f, 0.6667f, 1.0f}, // 藍色 (右面 - Right)
+            {0.6667f, 0.6667f, 0.6667f, 1.0f}, // 紅色 (前面 - Forward)
+            {0.6667f, 0.6667f, 0.6667f, 1.0f}, // 黃色 (下面 - Down)
+            {0.6667f, 0.6667f, 0.6667f, 1.0f}, // 綠色 (左面 - Left)
+            {0.6667f, 0.6667f, 0.6667f, 1.0f}  // 橙色 (後面 - Backward)
     };
+
+    private CubeCell[][] cells = new CubeCell[3][3];
 
     // 为3x3网格生成顶点坐标
     private float[] getVerticesForFace(int faceIndex) {
@@ -356,61 +366,47 @@ public class CubeFace {
         GLES20.glAttachShader(mProgram, vertexShader);
         GLES20.glAttachShader(mProgram, fragmentShader);
         GLES20.glLinkProgram(mProgram);
+
+        // ===== 新增：取得 attribute / uniform =====
+        mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
+        mColorHandle    = GLES20.glGetUniformLocation(mProgram, "vColor");
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
+
+        Matrix.setIdentityM(localMatrix,0);
+
+        for(int row=0;row<3;row++){
+            for(int col=0;col<3;col++){
+                int idx = row*3+col;
+                CubeCell cell = new CubeCell(faceIndex,row,col,gridColors[idx]);
+                cells[row][col] = cell;
+            }
+        }
     }
 
     public void draw(float[] mvpMatrix) {
-        GLES20.glUseProgram(mProgram);
-
-        // 先绘制彩色方块
-        mPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
-        GLES20.glEnableVertexAttribArray(mPositionHandle);
-        GLES20.glVertexAttribPointer(mPositionHandle, 3, GLES20.GL_FLOAT, false, 12, vertexBuffer);
-
-        mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor");
-        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mvpMatrix, 0);
-
-        // 绘制9个小方块，每个使用不同的颜色
-        for (int i = 0; i < 9; i++) {
-            int row = i / 3;
-            int col = i % 3;
-            
-            // 如果格子被高亮，使用高亮顏色，否則使用原來的顏色
-            if (highlightedCells[row][col]) {
-                GLES20.glUniform4fv(mColorHandle, 1, HIGHLIGHT_COLOR, 0);
-            } else {
-                GLES20.glUniform4fv(mColorHandle, 1, gridColors[i], 0);
+        float[] mvpLocal = new float[16];
+        Matrix.multiplyMM(mvpLocal,0,mvpMatrix,0,localMatrix,0);
+        // 繪製 9 格
+        for(int row=0;row<3;row++){
+            for(int col=0;col<3;col++){
+                cells[row][col].draw(mvpLocal);
             }
-
-            drawListBuffer.position(i * 6);
-            GLES20.glDrawElements(GLES20.GL_TRIANGLES, 6, GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
         }
-
-        // 然后绘制黑色边框
-        GLES20.glVertexAttribPointer(mPositionHandle, 3, GLES20.GL_FLOAT, false, 12, borderVertexBuffer);
-        GLES20.glUniform4fv(mColorHandle, 1, BORDER_COLOR, 0);
-
-        for (int i = 0; i < 8; i++) {
-            borderDrawListBuffer.position(i * 6);
-            GLES20.glDrawElements(GLES20.GL_TRIANGLES, 6, GLES20.GL_UNSIGNED_SHORT, borderDrawListBuffer);
-        }
-
-        GLES20.glDisableVertexAttribArray(mPositionHandle);
+        // Cell 已自行繪製邊框，這裡不再額外描繪
     }
 
     // 设置特定小方块的颜色
     public void setCellColor(int row, int col, float[] color) {
         if (row >= 0 && row < 3 && col >= 0 && col < 3) {
-            int index = row * 3 + col;
-            System.arraycopy(color, 0, gridColors[index], 0, 4);
+            cells[row][col].setColor(color);
         }
     }
 
     // 获取特定小方块的颜色
     public float[] getCellColor(int row, int col) {
         if (row >= 0 && row < 3 && col >= 0 && col < 3) {
-            int index = row * 3 + col;
-            return gridColors[index].clone();
+            // 直接回傳 cell 物件的顏色
+            return cells[row][col].getColor();
         }
         return null;
     }
@@ -449,5 +445,18 @@ public class CubeFace {
         GLES20.glShaderSource(shader, shaderCode);
         GLES20.glCompileShader(shader);
         return shader;
+    }
+
+    private final float[] localMatrix = new float[16];
+
+    public void setLocalMatrix(float[] m){
+        System.arraycopy(m,0,localMatrix,0,16);
+    }
+    public void resetLocalMatrix(){
+        Matrix.setIdentityM(localMatrix,0);
+    }
+
+    public CubeCell getCell(int row,int col){
+        return cells[row][col];
     }
 }

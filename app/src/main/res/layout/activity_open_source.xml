@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/open_source_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fragment_background"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="開源授權"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#2D3436"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="本 APP 內建之解魔方核心採用『min2phase』專案 (Chen Shuang) ，並遵循下列條款：\n\n• GNU General Public License v3 (GPL-3.0)\n• MIT License\n\n您可於下方連結查看完整原始碼與授權內容：\nhttps://github.com/cs0x7f/min2phase"
+            android:textSize="16sp"
+            android:textColor="#636e72"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="本 APP 與『min2phase』解算核心皆以 MIT License 散布。\n\nMIT License 允許自由使用、修改與再散布，只需保留版權宣告與條款全文。\n\n完整文本已隨專案附於 LICENSE 檔，亦可至 GitHub 查看：\nhttps://github.com/cs0x7f/min2phase\n\n本專案原始碼：\nhttps://github.com/wnilnay/cube"
+            android:textSize="14sp"
+            android:textColor="#636e72"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="\n若將本程式用於公開或商業發佈，請確保於文件或關於頁面保留 MIT License 與原作者資訊。"
+            android:textSize="14sp"
+            android:textColor="#636e72"/>
+    </LinearLayout>
+
+</ScrollView> 

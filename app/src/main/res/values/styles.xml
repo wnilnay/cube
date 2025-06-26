@@ -1,0 +1,8 @@
+<resources>
+    <style name="OperationButton" parent=""> 
+        <item name="android:background">@drawable/operation_button</item>
+        <item name="android:stateListAnimator">@animator/button_elevation</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources> 

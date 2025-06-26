@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.text.SpannableString;
@@ -14,8 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ScrollView;
 
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -23,313 +26,226 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainFragment extends Fragment {
-    View[] backward_views = new View[9];
-    View[] right_views = new View[9];
-    View[] down_views = new View[9];
-    View[] forward_views = new View[9];
-    View[] left_views = new View[9];
-    View[] up_views = new View[9];
-    int[] bs = {R.id.backward_1,R.id.backward_2,R.id.backward_3,R.id.backward_4,R.id.backward_5,R.id.backward_6,R.id.backward_7,R.id.backward_8,R.id.backward_9};
-    int[] rs = {R.id.right_1,R.id.right_2,R.id.right_3,R.id.right_4,R.id.right_5,R.id.right_6,R.id.right_7,R.id.right_8,R.id.right_9};
-    int[] ds = {R.id.down_1,R.id.down_2,R.id.down_3,R.id.down_4,R.id.down_5,R.id.down_6,R.id.down_7,R.id.down_8,R.id.down_9};
-    int[] fs = {R.id.forward_1,R.id.forward_2,R.id.forward_3,R.id.forward_4,R.id.forward_5,R.id.forward_6,R.id.forward_7,R.id.forward_8,R.id.forward_9};
-    int[] ls = {R.id.left_1,R.id.left_2,R.id.left_3,R.id.left_4,R.id.left_5,R.id.left_6,R.id.left_7,R.id.left_8,R.id.left_9};
-    int[] us = {R.id.up_1,R.id.up_2,R.id.up_3,R.id.up_4,R.id.up_5,R.id.up_6,R.id.up_7,R.id.up_8,R.id.up_9};
-    //String[] type = {"white","red","green","orange","blue"};
-    private TextView turn_of_code;
-    private int click = -1,location = 0,white = 0,red = 0,green = 0,orange = 0,blue = 0,yellow = 0;
-    int[] click_button = new int[48];
-    int click_times = -1;
-    int[] last = {white,red,green,orange,blue,yellow};
-    View[][] views = {down_views,left_views,forward_views,right_views,backward_views,up_views};
-    View[][] viewsForNew = {up_views,right_views,forward_views,down_views,left_views,backward_views};
+    private RubiksCube3DView mGLView;
+    private RubiksCubeRenderer renderer;
+    private View view;
+    private Button button_ok, button_lest, button_next, resetViewButton;
+    private TextView textView_Solve, turn_of_code, lock;
+    private boolean presetAngleSet = false;
+    private String turn_code = "";
+    private int Solution_position = -1;
     private boolean isOk = false;
     private boolean isSolve = false;
-    private TextView lock;
-    int[] color_put_into_block = new int[54];
-    private String turn_code = "";
-    private Button button_lest, button_next,button_ok;
-    private TextView textView_Solve;
-    private int Solution_position = -1;
     private String cubeStatus = "";
-
+    private String cubeStatus_direction = null;
     private BluetoothSocket socket;
     private OutputStream outputStream;
     private ColorDirectionManager colorDirectionManager = new ColorDirectionManager();
+    private CheckBox animationCheckBox;
+    private ScrollView operation_scroll_view;
+    private int retryCount = 0;
+    private String savedCubeColors = null;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
-
-        socket = BluetoothSocketManager.getSocket();
-
-        button_lest = view.findViewById(R.id.button_lest);
-        button_next = view.findViewById(R.id.button_next);
-        button_ok = view.findViewById(R.id.button_ok);
-        textView_Solve = view.findViewById(R.id.TextView_Solve);
-        button_next.setText(">");
-        button_lest.setText("<");
-        for(int i = 0;i<9;i++){
-            backward_views[i] = view.findViewById(bs[i]);
-            right_views[i] = view.findViewById(rs[i]);
-            down_views[i] = view.findViewById(ds[i]);
-            forward_views[i] = view.findViewById(fs[i]);
-            left_views[i] = view.findViewById(ls[i]);
-            up_views[i] = view.findViewById(us[i]);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_main, container, false);
+            init();
         }
-        lock = view.findViewById(R.id.lock);
-        lock.setVisibility(View.INVISIBLE);
-        turn_of_code = view.findViewById(R.id.turn_of_code);
-        //initCube();
-
-        button_lest.setVisibility(View.INVISIBLE);
-        button_next.setVisibility(View.INVISIBLE);
-        Toast.makeText(getContext(),"請確認魔術方塊放置於解魔方機上",Toast.LENGTH_LONG).show();
-
-        button_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OkButton();
-            }
-        });
-
-        button_lest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                lest();
-            }
-        });
-
-        button_next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                next();
-            }
-        });
-
-//        requireActivity().getOnBackPressedDispatcher().addCallback(
-//                getViewLifecycleOwner(),
-//                new OnBackPressedCallback(true) {
-//                    @Override
-//                    public void handleOnBackPressed() {
-//                        if(((MainActivity)requireActivity()).getCurrentBottomFragment() ==
-//                                ((MainActivity)requireActivity()).getMainFragment() &&
-//                                ((MainActivity) requireActivity()).getCurrentSubFragment() ==
-//                        ((MainActivity)requireActivity()).getMainFragment()){
-//                            Log.v("wnilnay OnBackPress","YES");
-//
-//                            ((MainActivity)requireActivity()).hideAllFragment();
-//                            requireActivity().getSupportFragmentManager().beginTransaction()
-//                                    .show(((MainActivity)requireActivity()).getBlueToothFragment())
-//                                    .commit();
-//                            ((MainActivity)requireActivity())
-//                                    .updateCurrentSub((((MainActivity) requireActivity())
-//                                            .getBlueToothFragment()));
-//
-//                            try {
-//                                BluetoothSocketManager.getSocket().close();
-//                            } catch (IOException e) {
-//                                throw new RuntimeException(e);
-//                            }
-//                        }
-//                        else {
-//                            setEnabled(false);
-//                            requireActivity().onBackPressed();
-//                        }
-//                    }
-//                });
-
-
         return view;
     }
+
+    private void init() {
+        mGLView = view.findViewById(R.id.cube_view);
+        renderer = mGLView.getRenderer();
+        button_ok = view.findViewById(R.id.button_ok);
+        button_lest = view.findViewById(R.id.button_lest);
+        button_next = view.findViewById(R.id.button_next);
+        resetViewButton = view.findViewById(R.id.button_reset_view);
+        textView_Solve = view.findViewById(R.id.TextView_Solve);
+        turn_of_code = view.findViewById(R.id.turn_of_code);
+        lock = view.findViewById(R.id.lock);
+        animationCheckBox = view.findViewById(R.id.checkbox_animation);
+        animationCheckBox.setChecked(false);
+        operation_scroll_view = view.findViewById(R.id.operation_scroll_view);
+        operation_scroll_view.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                String lastTurn_code = "";
+                if(!turn_code.isEmpty()){
+                    char lastChar = turn_code.charAt(turn_code.length() - 1);
+                    if (lastChar == '\'') {
+                        char twoChar = turn_code.charAt(turn_code.length() - 2);
+                        lastTurn_code = twoChar + "'";
+                    }
+                    else if (lastChar == '2') {
+                        char twoChar = turn_code.charAt(turn_code.length() - 2);
+                        lastTurn_code = twoChar + "2";
+                    }
+                    else {
+                        lastTurn_code = String.valueOf(lastChar);
+                    }
+                }
+                clear(null);
+                turn_code = lastTurn_code;
+                turn_of_code.setText(lastTurn_code);
+            }
+        });
+        lock.setVisibility(View.INVISIBLE);
+        socket = BluetoothSocketManager.getSocket();
+        button_lest.setVisibility(View.INVISIBLE);
+        button_next.setVisibility(View.INVISIBLE);
+        button_ok.setOnClickListener(v -> OkButton());
+        button_lest.setOnClickListener(v -> lest());
+        button_next.setOnClickListener(v -> next());
+        resetViewButton.setOnClickListener(v -> {
+            boolean animate = animationCheckBox != null && animationCheckBox.isChecked();
+            renderer.setPresetOrientation(animate);
+            resetViewButton.setVisibility(View.GONE);
+        });
+        renderer.setPresetOrientation(false);
+        presetAngleSet = true;
+        resetViewButton.setVisibility(View.GONE);
+        mGLView.setOnTouchListener((v, event) -> {
+            if(event.getAction()==android.view.MotionEvent.ACTION_UP && presetAngleSet){
+                float dx = Math.abs(renderer.getAngleX() - 334.56f);
+                float dy = Math.abs(renderer.getAngleY() - 144.88f);
+                float dz = Math.abs(renderer.getAngleZ() - 345f);
+                dx = dx>180?360-dx:dx;
+                dy = dy>180?360-dy:dy;
+                dz = dz>180?360-dz:dz;
+                if((dx>3 || dy>3 || dz>3) && resetViewButton.getVisibility()==View.GONE){
+                    resetViewButton.setVisibility(View.VISIBLE);
+                }
+            }
+            return false;
+        });
+    }
+
     private void sendString(String sendTitle, String dataToSend){
         String result = BluetoothSocketManager.sendString(sendTitle, dataToSend);
         Toast.makeText(getContext(), result, Toast.LENGTH_SHORT).show();
     }
-//    private String getString(){
-//        try {
-//            if(socket.isConnected()){
-//                char read;
-//                String temp = "";
-//                InputStream is = socket.getInputStream();
-//                while (true){
-//                    if(is.available() == 0){
-//                        break;
-//                    }
-//                    read = (char)is.read();
-//                    if(read == '\0') break;
-//                    temp += read;
-//                    //Log.d("wnilnay",(int)read+"");
-//                }
-//                Log.d("wnilnay",temp);
-//                return temp;
-//            }
-//        }
-//        catch (IOException | NullPointerException e) {
-//            Log.d("wnilnay",e.getMessage());
-//            return "Error";
-//        }
-//        return "";
-//    }
 
     public void up_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.up(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="U";
-            turn_of_code.setText(turn_code);
+            executeMove("U", () -> {
+                cubeStatus = CubeStatusManager.up(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public void right_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.right(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="R";
-            turn_of_code.setText(turn_code);
+            executeMove("R", () -> {
+                cubeStatus = CubeStatusManager.right(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public void down_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.down(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="D";
-            turn_of_code.setText(turn_code);
+            executeMove("D", () -> {
+                cubeStatus = CubeStatusManager.down(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public void left_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.left(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="L";
-            turn_of_code.setText(turn_code);
+            executeMove("L", () -> {
+                cubeStatus = CubeStatusManager.left(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public void front_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.front(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="F";
-            turn_of_code.setText(turn_code);
+            executeMove("F", () -> {
+                cubeStatus = CubeStatusManager.front(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public void back_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.back(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="B";
-            turn_of_code.setText(turn_code);
+            executeMove("B", () -> {
+                cubeStatus = CubeStatusManager.back(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public void up_bar_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.up_bar(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="u";
-            turn_of_code.setText(turn_code);
+            executeMove("U'", () -> {
+                cubeStatus = CubeStatusManager.up_bar(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public void down_bar_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.down_bar(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="d";
-            turn_of_code.setText(turn_code);
+            executeMove("D'", () -> {
+                cubeStatus = CubeStatusManager.down_bar(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public void right_bar_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.right_bar(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="r";
-            turn_of_code.setText(turn_code);
+            executeMove("R'", () -> {
+                cubeStatus = CubeStatusManager.right_bar(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public void left_bar_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.left_bar(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="l";
-            turn_of_code.setText(turn_code);
+            executeMove("L'", () -> {
+                cubeStatus = CubeStatusManager.left_bar(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public void front_bar_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.front_bar(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="f";
-            turn_of_code.setText(turn_code);
+            executeMove("F'", () -> {
+                cubeStatus = CubeStatusManager.front_bar(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public void back_bar_button() {
         if(isOk){
-            cubeStatus = CubeStatusManager.back_bar(cubeStatus);
-            updateCubeStatus(cubeStatus);
-            turn_code+="b";
-            turn_of_code.setText(turn_code);
+            executeMove("B'", () -> {
+                cubeStatus = CubeStatusManager.back_bar(cubeStatus);
+                updateCubeStatus(cubeStatus);
+            });
         }
     }
 
     public String solve() {
         if(isOk){
-//            int[] cube_position = new int[]{51,52,53,48,49,50,45,46,47,33,34,35,30,31,32,27,28,29,24,25,26,21,22,23,18,19,20,6,7,8,3,4,5,0,1,2,15,16,17,12,13,14,9,10,11,42,43,44,39,40,41,36,37,38};
-//            String cubeStatus = "";
-//            for(int i = 0;i<cube_position.length;i++){
-//                switch (color_put_into_block[cube_position[i]]){
-//                    case 0:
-//                        cubeStatus += "D";
-//                        break;
-//                    case 1:
-//                        cubeStatus += "L";
-//                        break;
-//                    case 2:
-//                        cubeStatus += "F";
-//                        break;
-//                    case 3:
-//                        cubeStatus += "R";
-//                        break;
-//                    case 4:
-//                        cubeStatus += "B";
-//                        break;
-//                    case 5:
-//                        cubeStatus += "U";
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            }
-            //cubeStatus = "FBFBUDBFUBBUURLURBDDRRFFURBRDLLDURFDDLRBLFFDFLRLUBULLD";
-//          Log.d("wnilnay", cubeStatus);
             String solution = new Search().solution(cubeStatus,20,1000000,10000,0);
             solution = solution.replaceAll("  "," ");
-            Log.d("wnilnay",solution);
             isSolve = true;
+
+            if (solution.contains("Error")) solution += " ";
+            String finalSolution = solution;
             Solution_position = -1;
-//            button_lest.setVisibility(View.VISIBLE);
-//            button_right.setVisibility(View.VISIBLE);
-//            textView_Solve.setVisibility(View.VISIBLE);
-            String[] solutions = solution.split(" ");
-            String newSolution = "";
-            for(int i = 0;i<solutions.length;i++){
-                if(i%9 == 8){
-                    newSolution += "\n";
-                }
-                newSolution += solutions[i];
-                newSolution += " ";
-            }
-            textView_Solve.setText(newSolution);
+
+            textView_Solve.setText(finalSolution);
 
             return solution;
         }
@@ -337,25 +253,27 @@ public class MainFragment extends Fragment {
     }
 
     public void lest() {
-        if(isSolve){
-            String solution = textView_Solve.getText().toString().replaceAll("\n","");
-            String[] solutions = solution.split(" ");
-            if(Solution_position != -1){
-                SolveCube(solutions[Solution_position],false);
-                Solution_position--;
-                SolutionText(Solution_position);
-            }
+        if(!isSolve) return;
+        String solution = textView_Solve.getText().toString();
+        String[] solutions = solution.split(" ");
+        if(Solution_position != -1){
+            SolveCube(solutions[Solution_position],false);
+            Solution_position--;
+            SolutionText(Solution_position);
         }
     }
 
     public void next() {
-        if(isSolve){
-            String solution = textView_Solve.getText().toString().replaceAll("\n","");
-            String[] solutions = solution.split(" ");
-            Solution_position++;
-            if(Solution_position < solutions.length)
-                SolveCube(solutions[Solution_position],true);
+        if(!isSolve) return;
+        String solution = textView_Solve.getText().toString();
+        String[] solutions = solution.split(" ");
+        Solution_position++;
+        if(Solution_position < solutions.length){
+            SolveCube(solutions[Solution_position],true);
             SolutionText(Solution_position);
+        }
+        else {
+            Solution_position--;
         }
     }
     private void SolutionText(int solution_position){
@@ -375,37 +293,60 @@ public class MainFragment extends Fragment {
 
         textView_Solve.setText(spannableString);
     }
-    private void SolveCube(String turn_code,boolean isPositive){
-        //Log.d("wnilnay",turn_code);
-        if(isPositive){
-            switch (turn_code){
+    private void SolveCube(String turn_code, boolean isPositive) {
+        if (isPositive) {
+            switch (turn_code) {
                 case "R2":
-                    right_button();
+                    executeMove("R2", () -> {
+                        cubeStatus = CubeStatusManager.right_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
                 case "R":
                     right_button();
                     break;
                 case "U2":
-                    up_button();
+                    executeMove("U2", () -> {
+                        cubeStatus = CubeStatusManager.up_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
                 case "U":
                     up_button();
                     break;
                 case "F2":
-                    front_button();
+                    executeMove("F2", () -> {
+                        cubeStatus = CubeStatusManager.front_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
                 case "F":
                     front_button();
                     break;
                 case "L2":
-                    left_button();
+                    executeMove("L2", () -> {
+                        cubeStatus = CubeStatusManager.left_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
                 case "L":
                     left_button();
                     break;
                 case "D2":
-                    down_button();
+                    executeMove("D2", () -> {
+                        cubeStatus = CubeStatusManager.down_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
                 case "D":
                     down_button();
                     break;
                 case "B2":
-                    back_button();
+                    executeMove("B2", () -> {
+                        cubeStatus = CubeStatusManager.back_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
                 case "B":
                     back_button();
                     break;
@@ -426,60 +367,100 @@ public class MainFragment extends Fragment {
                     break;
                 case "B'":
                     back_bar_button();
+                    break;
+            }
+        } else {
+            switch (turn_code) {
+                case "R2":
+                    executeMove("R2", () -> {
+                        cubeStatus = CubeStatusManager.right_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
+                case "R":
+                    right_bar_button();
+                    break;
+                case "U2":
+                    executeMove("U2", () -> {
+                        cubeStatus = CubeStatusManager.up_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
+                case "U":
+                    up_bar_button();
+                    break;
+                case "F2":
+                    executeMove("F2", () -> {
+                        cubeStatus = CubeStatusManager.front_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
+                case "F":
+                    front_bar_button();
+                    break;
+                case "L2":
+                    executeMove("L2", () -> {
+                        cubeStatus = CubeStatusManager.left_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
+                case "L":
+                    left_bar_button();
+                    break;
+                case "D2":
+                    executeMove("D2", () -> {
+                        cubeStatus = CubeStatusManager.down_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
+                case "D":
+                    down_bar_button();
+                    break;
+                case "B2":
+                    executeMove("B2", () -> {
+                        cubeStatus = CubeStatusManager.back_two(cubeStatus);
+                        updateCubeStatus(cubeStatus);
+                    });
+                    break;
+                case "B":
+                    back_bar_button();
+                    break;
+                case "R'":
+                    right_button();
+                    break;
+                case "U'":
+                    up_button();
+                    break;
+                case "F'":
+                    front_button();
+                    break;
+                case "L'":
+                    left_button();
+                    break;
+                case "D'":
+                    down_button();
+                    break;
+                case "B'":
+                    back_button();
                     break;
             }
         }
-        else {
-            switch (turn_code){
-                case "R2":
-                    right_bar_button();
-                case "R":
-                    right_bar_button();
-                    break;
-                case "U2":
-                    up_bar_button();
-                case "U":
-                    up_bar_button();
-                    break;
-                case "F2":
-                    front_bar_button();
-                case "F":
-                    front_bar_button();
-                    break;
-                case "L2":
-                    left_bar_button();
-                case "L":
-                    left_bar_button();
-                    break;
-                case "D2":
-                    down_bar_button();
-                case "D":
-                    down_bar_button();
-                    break;
-                case "B2":
-                    back_bar_button();
-                case "B":
-                    back_bar_button();
-                    break;
-                case "R'":
-                    right_button();
-                    break;
-                case "U'":
-                    up_button();
-                    break;
-                case "F'":
-                    front_button();
-                    break;
-                case "L'":
-                    left_button();
-                    break;
-                case "D'":
-                    down_button();
-                    break;
-                case "B'":
-                    back_button();
-                    break;
-            }
+    }
+
+    private void executeMove(String moveCode, Runnable action) {
+        boolean showAnim = animationCheckBox != null && animationCheckBox.isChecked();
+        if (showAnim) {
+            renderer.startSliceAnimation(moveCode, () -> {
+                action.run();
+                requireActivity().runOnUiThread(() -> {
+                    turn_code += moveCode;
+                    turn_of_code.setText(turn_code);
+                });
+            });
+        } else {
+            action.run();
+            turn_code += moveCode;
+            turn_of_code.setText(turn_code);
         }
     }
 
@@ -569,42 +550,49 @@ public class MainFragment extends Fragment {
         }
         return new String(directionCharArray);
     }
-    @SuppressLint("UseCompatLoadingForDrawables")
     private void updateCubeStatus(String newStatus){
         char[] newStatuses = newStatus.toCharArray();
         int position = 0;
         int[] drawableIDs = new int[6];
-        drawableIDs[colorDirectionManager.getYellowDirection().ordinal()] = R.drawable.rectangle_yellow;
-        drawableIDs[colorDirectionManager.getBlueDirection().ordinal()] = R.drawable.rectangle_blue;
-        drawableIDs[colorDirectionManager.getRedDirection().ordinal()] = R.drawable.rectangle_red;
-        drawableIDs[colorDirectionManager.getWhiteDirection().ordinal()] = R.drawable.rectangle_white;
-        drawableIDs[colorDirectionManager.getOrangeDirection().ordinal()] = R.drawable.rectangle_orange;
-        drawableIDs[colorDirectionManager.getGreenDirection().ordinal()] = R.drawable.rectangle_green;
+        drawableIDs[colorDirectionManager.getYellowDirection().ordinal()] = R.color.cube_yellow;
+        drawableIDs[colorDirectionManager.getBlueDirection().ordinal()] = R.color.cube_blue;
+        drawableIDs[colorDirectionManager.getRedDirection().ordinal()] = R.color.cube_red;
+        drawableIDs[colorDirectionManager.getWhiteDirection().ordinal()] = R.color.cube_white;
+        drawableIDs[colorDirectionManager.getOrangeDirection().ordinal()] = R.color.cube_orange;
+        drawableIDs[colorDirectionManager.getGreenDirection().ordinal()] = R.color.cube_green;
         for (char status : newStatuses){
+            int faceIndex = position / 9;
+            int cellIndex = position - (faceIndex * 9);
             switch (status){
                 case 'U':
-                    viewsForNew[position / 9][position - ((position / 9) * 9)]
-                            .setBackground(requireContext().getDrawable(drawableIDs[Direction.UP.ordinal()]));
+                    renderer.setCellColor(faceIndex, cellIndex, colorIntToRgba(
+                            ContextCompat.getColor(requireContext(), drawableIDs[Direction.UP.ordinal()])
+                    ));
                     break;
                 case 'R':
-                    viewsForNew[position / 9][position - ((position / 9) * 9)]
-                            .setBackground(requireContext().getDrawable(drawableIDs[Direction.RIGHT.ordinal()]));
+                    renderer.setCellColor(faceIndex, cellIndex, colorIntToRgba(
+                            ContextCompat.getColor(requireContext(), drawableIDs[Direction.RIGHT.ordinal()])
+                    ));
                     break;
                 case 'F':
-                    viewsForNew[position / 9][position - ((position / 9) * 9)]
-                            .setBackground(requireContext().getDrawable(drawableIDs[Direction.FORWARD.ordinal()]));
+                    renderer.setCellColor(faceIndex, cellIndex, colorIntToRgba(
+                            ContextCompat.getColor(requireContext(), drawableIDs[Direction.FORWARD.ordinal()])
+                    ));
                     break;
                 case 'D':
-                    viewsForNew[position / 9][position - ((position / 9) * 9)]
-                            .setBackground(requireContext().getDrawable(drawableIDs[Direction.DOWN.ordinal()]));
+                    renderer.setCellColor(faceIndex, cellIndex, colorIntToRgba(
+                            ContextCompat.getColor(requireContext(), drawableIDs[Direction.DOWN.ordinal()])
+                    ));
                     break;
                 case 'L':
-                    viewsForNew[position / 9][position - ((position / 9) * 9)]
-                            .setBackground(requireContext().getDrawable(drawableIDs[Direction.LEFT.ordinal()]));
+                    renderer.setCellColor(faceIndex, cellIndex, colorIntToRgba(
+                            ContextCompat.getColor(requireContext(), drawableIDs[Direction.LEFT.ordinal()])
+                    ));
                     break;
                 case 'B':
-                    viewsForNew[position / 9][position - ((position / 9) * 9)]
-                            .setBackground(requireContext().getDrawable(drawableIDs[Direction.BACKWARD.ordinal()]));
+                    renderer.setCellColor(faceIndex, cellIndex, colorIntToRgba(
+                            ContextCompat.getColor(requireContext(), drawableIDs[Direction.BACKWARD.ordinal()])
+                    ));
                     break;
                 default:
                     break;
@@ -612,70 +600,129 @@ public class MainFragment extends Fragment {
             position++;
         }
     }
+    public static float[] colorIntToRgba(int colorInt) {
+        float r = ((colorInt >> 16) & 0xFF) / 255f;
+        float g = ((colorInt >> 8) & 0xFF) / 255f;
+        float b = (colorInt & 0xFF) / 255f;
+        float a = ((colorInt >> 24) & 0xFF) / 255f;
+
+        return new float[] { r, g, b, a };
+    }
 
     public void OkButton() {
         isOk = true;
-        //inputColor();
-        sendString("OK","");
+        sendString("OK", "");
         button_ok.setVisibility(View.INVISIBLE);
+        button_lest.setVisibility(View.INVISIBLE);
+        button_next.setVisibility(View.INVISIBLE);
+        lock.setVisibility(View.VISIBLE);
+        textView_Solve.setText("解法顯示區");
+        cubeStatus = "";
+        animationCheckBox.setChecked(false);
+        startColorPolling();
+    }
+
+    private void startColorPolling() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 String[] cubeColor = BluetoothSocketManager.getDataString();
-                if(cubeColor != null && cubeColor[0].contains("Color")){
-                    requireActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String color = cubeColor[1];
-                            Log.d("wnilnay color",color);
-                            setColor(color);
-                            sendString("SolveStep",solve());
-
-                            Timer timer1 = new Timer();
-                            timer1.schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    String[] nextString = BluetoothSocketManager.getDataString();
-                                    if(nextString == null) return;
-                                    if(nextString[0].contains("next")){
-                                        requireActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                next();
-                                            }
-                                        });
-                                    }
-                                    else if(nextString[0].contains("end")){
-                                        requireActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                button_lest.setVisibility(View.VISIBLE);
-                                                button_next.setVisibility(View.VISIBLE);
-                                                button_ok.setVisibility(View.VISIBLE);
-                                                Toast.makeText(getContext(),"完成!",Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-
-                                        timer1.cancel();
-                                    }
-                                }
-                            },0,100);
-                        }
-                    });
+                if (cubeColor != null && cubeColor[0].contains("Color")) {
+                    requireActivity().runOnUiThread(() -> handleColorReceived(cubeColor[1]));
                     timer.cancel();
                 }
             }
-        },0,100);
+        }, 0, 100);
     }
 
+    private void handleColorReceived(String color) {
+        Log.d("wnilnay color", color);
+        setColor(color);
+        sendString("SolveStep", solve());
+        startSolveStepPolling();
+    }
 
+    private void startSolveStepPolling() {
+        Timer timer1 = new Timer();
+        timer1.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                String[] nextString = BluetoothSocketManager.getDataString();
+                if (nextString == null) return;
+                requireActivity().runOnUiThread(() -> handleSolveStep(nextString, timer1));
+            }
+        }, 0, 100);
+    }
 
+    private void handleSolveStep(String[] nextString, Timer timer1) {
+        if (nextString[0].contains("next")) {
+            next();
+        } else if (nextString[0].contains("end")) {
+            button_lest.setVisibility(View.VISIBLE);
+            button_next.setVisibility(View.VISIBLE);
+            button_ok.setVisibility(View.VISIBLE);
+            Toast.makeText(getContext(), "完成!", Toast.LENGTH_SHORT).show();
+            if (animationCheckBox != null) animationCheckBox.setChecked(true);
+            timer1.cancel();
+        }
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mGLView != null && renderer != null) {
+            mGLView.onPause();
+            renderer.resetInitialization();
+            // 保存目前顏色狀態
+            savedCubeColors = renderer.getAllColors();
+        }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mGLView != null && renderer != null) {
+            mGLView.onResume();
+            mGLView.post(()->{
+                if(savedCubeColors != null && savedCubeColors.length() == 54){
+                    renderer.setAllColors(savedCubeColors);
+                }
+                mGLView.requestRender();
+            });
+        }
+    }
 
-//    public void BlueToothTest(View view) {
-//        Intent intent = new Intent(getContext(), BlueToothActivity.class);
-//        startActivity(intent);
-//    }
+    private String exchangeDirection2ColorString(String direction){
+        char[] directionCharArray = direction.toCharArray();
+        char[] colorCharArray = new char[54];
+        for (int i = 0; i< directionCharArray.length; i++){
+            char color;
+            switch (directionCharArray[i]){
+                case 'U':
+                    color = colorDirectionManager.getColorFromDirection(Direction.UP);
+                    break;
+                case 'R':
+                    color = colorDirectionManager.getColorFromDirection(Direction.RIGHT);
+                    break;
+                case 'F':
+                    color = colorDirectionManager.getColorFromDirection(Direction.FORWARD);
+                    break;
+                case 'D':
+                    color = colorDirectionManager.getColorFromDirection(Direction.DOWN);
+                    break;
+                case 'L':
+                    color = colorDirectionManager.getColorFromDirection(Direction.LEFT);
+                    break;
+                case 'B':
+                    color = colorDirectionManager.getColorFromDirection(Direction.BACKWARD);
+                    break;
+                default:
+                    color = '\0';
+                    break;
+            }
+            colorCharArray[i] = color;
+        }
+        return new String(colorCharArray);
+    }
 }

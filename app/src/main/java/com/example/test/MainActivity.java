@@ -6,16 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
-import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
-    private Fragment[] fs = new Fragment[4];
-    private String[] titles = {"Manual","Automatic","3D Cube","Setting"};
+    private Fragment[] fs = new Fragment[3];
+    private String[] titles = {"Manual","Automatic","Setting"};
     private final BlueToothFragment blueToothFragment = new BlueToothFragment();
     private final MainFragment mainFragment = new MainFragment();
 
@@ -27,8 +25,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         fs[0] = new ManualFragment();
         fs[1] = blueToothFragment;
-        fs[2] = new Cube3DFragment();
-        fs[3] = new SettingFragment();
+        fs[2] = new SettingFragment();
 
         initViewPager();
         viewPager.setCurrentItem(1,true);

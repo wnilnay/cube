@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:backgroundTint="@color/white"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp"
+    android:stateListAnimator="@animator/button_elevation">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="24dp">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_solve"
+            app:tint="#2D3436"
+            android:layout_gravity="center_vertical"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2. 自動解魔方"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#2D3436"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="•  進入主畫面，將魔方放在解魔方機中\n• 點擊『OK』開始顏色辨識；過程中請勿移動魔方\n• 顏色資料傳回後，手機會自動計算最佳解法並傳送給解魔方機\n• 伺服馬達執行轉動直至完成\n• 轉動完成後可透過下方『◀』與『▶』按鈕瀏覽每一步驟"
+                android:textSize="16sp"
+                android:textColor="#636e72"
+                android:lineSpacingExtra="4dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
