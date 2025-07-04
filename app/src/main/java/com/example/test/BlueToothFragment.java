@@ -7,11 +7,14 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -43,7 +46,7 @@ public class BlueToothFragment extends Fragment {
     private BluetoothDevice device;
     private BluetoothAdapter adapter;
     private String deviceName,deviceAddress;
-    private TextView showDevice;
+    private TextView showDevice, status_textView;
     private Button button_pair, button_connect;
     private EditText dataText;
     private BluetoothSocket socket;
@@ -53,6 +56,7 @@ public class BlueToothFragment extends Fragment {
     private Timer timer = new Timer();
     private static final int REQUEST_CODE = 1;
     private boolean isComplete = true;
+    private View statusDotView;
 
     @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
@@ -64,6 +68,8 @@ public class BlueToothFragment extends Fragment {
         showDevice = view.findViewById(R.id.textView);
         button_connect = view.findViewById(R.id.button_connect);
         button_pair = view.findViewById(R.id.button_pair);
+        status_textView = view.findViewById(R.id.status_textView);
+        statusDotView = view.findViewById(R.id.status_dot);
 
 //        Intent intent = new Intent(this, MainActivity.class);
 //        startActivity(intent);
@@ -233,6 +239,12 @@ public class BlueToothFragment extends Fragment {
             deviceUUid = device.getUuids();
 
             Toast.makeText(getContext(), "連線中", Toast.LENGTH_SHORT).show();
+            status_textView.setText("連線中");
+            status_textView.setTextColor(Color.parseColor("#F86E44"));
+            statusDotView.setBackground(AppCompatResources.getDrawable(requireContext(),
+                    R.drawable.status_wait));
+            status_textView.setBackgroundTintList(ColorStateList.
+                    valueOf(Color.parseColor("#DC5E39")));
             //Log.d("brad", "" + deviceUUid.length);
 
             new Thread(new Runnable() {
@@ -278,6 +290,13 @@ public class BlueToothFragment extends Fragment {
                                 @Override
                                 public void run() {
                                     Toast.makeText(getContext(), "連線成功", Toast.LENGTH_SHORT).show();
+                                    status_textView.setText("連線成功");
+                                    status_textView.setTextColor(ContextCompat
+                                            .getColor(requireContext(), R.color.success_color));
+                                    statusDotView.setBackground(AppCompatResources.getDrawable(requireContext(),
+                                            R.drawable.status_background));
+                                    status_textView.setBackgroundTintList(ColorStateList.
+                                            valueOf(Color.parseColor("#009E82")));
 
                                     ((MainActivity)requireActivity()).change_to_mainFragment();
                                 }
@@ -287,6 +306,12 @@ public class BlueToothFragment extends Fragment {
                                 @Override
                                 public void run() {
                                     Toast.makeText(getContext(), "連線失敗", Toast.LENGTH_SHORT).show();
+                                    status_textView.setText("等待連線");
+                                    status_textView.setTextColor(Color.parseColor("#636e72"));
+                                    statusDotView.setBackground(AppCompatResources.getDrawable(requireContext(),
+                                            R.drawable.status_dot));
+                                    status_textView.setBackgroundTintList(ColorStateList.
+                                            valueOf(Color.parseColor("#DDDDDD")));
                                 }
                             });
                         }

@@ -73,7 +73,8 @@ public class SetSingleColorFragment extends Fragment {
             upperHSVtextview = view.findViewById(R.id.upper_hsv_textview);
             lowerHSVtextview = view.findViewById(R.id.lower_hsv_textview);
 
-            saveDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            // 改為 App-specific External Storage，避免 Scoped Storage 寫入受限
+            saveDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
             Bundle arg = getArguments();
             assert arg != null;
@@ -331,15 +332,18 @@ public class SetSingleColorFragment extends Fragment {
     }
 
     private void fromCamara() {
-        Uri uri = FileProvider.getUriForFile(getContext(),
-                getActivity().getPackageName() + ".fileprovider",
-                new File(saveDir, "cube.jpg"));
+        File photoFile = new File(saveDir, "cube.jpg");
+        Uri uri = FileProvider.getUriForFile(requireContext(),
+                requireActivity().getPackageName() + ".fileprovider",
+                photoFile);
         RectF overlayRect_forCamara = overlayView.getMaskRect();
         overlayRect_forCamara_coordinate = new float[]{overlayRect_forCamara.left, overlayRect_forCamara.top,
                 overlayRect_forCamara.right, overlayRect_forCamara.bottom};
         //Log.d("wnilnay", "overlayRect_forCamara: " + overlayRect_forCamara.toString());
         Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePicture.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        // 授予相機寫入權限
+        takePicture.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(takePicture, REQUEST_CAMERA);
     }
     private void setBackToDefault(){

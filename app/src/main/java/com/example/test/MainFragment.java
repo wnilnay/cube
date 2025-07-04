@@ -5,6 +5,8 @@ import android.bluetooth.BluetoothSocket;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -25,7 +27,7 @@ import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements BluetoothDisconnectListener {
     private RubiksCube3DView mGLView;
     private RubiksCubeRenderer renderer;
     private View view;
@@ -38,21 +40,36 @@ public class MainFragment extends Fragment {
     private boolean isSolve = false;
     private String cubeStatus = "";
     private String cubeStatus_direction = null;
-    private BluetoothSocket socket;
     private OutputStream outputStream;
     private ColorDirectionManager colorDirectionManager = new ColorDirectionManager();
     private CheckBox animationCheckBox;
     private ScrollView operation_scroll_view;
     private int retryCount = 0;
     private String savedCubeColors = null;
+    // 用於在 onDestroy 統一取消
+    private java.util.Timer colorPollingTimer;
+    private java.util.Timer solveStepTimer;
+    private static MainFragment instance;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (view == null) {
+            instance = this;
             view = inflater.inflate(R.layout.fragment_main, container, false);
             init();
         }
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(BluetoothSocketManager.getSocket() != null && BluetoothSocketManager.getSocket().isConnected()){
+            // 由 BluetoothSocketManager 統一管理 keep-alive timer
+        }
+
+        // 向 BluetoothSocketManager 註冊自身，方便斷線時回呼
+        BluetoothSocketManager.addDisconnectListener(this);
     }
 
     private void init() {
@@ -92,7 +109,6 @@ public class MainFragment extends Fragment {
             }
         });
         lock.setVisibility(View.INVISIBLE);
-        socket = BluetoothSocketManager.getSocket();
         button_lest.setVisibility(View.INVISIBLE);
         button_next.setVisibility(View.INVISIBLE);
         button_ok.setOnClickListener(v -> OkButton());
@@ -612,6 +628,7 @@ public class MainFragment extends Fragment {
     public void OkButton() {
         isOk = true;
         sendString("OK", "");
+        SettingFragment.setButtonsEnabledGlobal(false);
         button_ok.setVisibility(View.INVISIBLE);
         button_lest.setVisibility(View.INVISIBLE);
         button_next.setVisibility(View.INVISIBLE);
@@ -623,14 +640,15 @@ public class MainFragment extends Fragment {
     }
 
     private void startColorPolling() {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        colorPollingTimer = new java.util.Timer();
+        colorPollingTimer.schedule(new java.util.TimerTask() {
             @Override
             public void run() {
                 String[] cubeColor = BluetoothSocketManager.getDataString();
                 if (cubeColor != null && cubeColor[0].contains("Color")) {
                     requireActivity().runOnUiThread(() -> handleColorReceived(cubeColor[1]));
-                    timer.cancel();
+                    colorPollingTimer.cancel();
+                    colorPollingTimer = null;
                 }
             }
         }, 0, 100);
@@ -638,33 +656,73 @@ public class MainFragment extends Fragment {
 
     private void handleColorReceived(String color) {
         Log.d("wnilnay color", color);
+        if (!areCenterColorsValid(color)) {
+            sendString("SolveStep", "Error 1 ");
+            textView_Solve.setText("Error 1 ");
+            Solution_position = -1;
+            Toast.makeText(getContext(), "中心塊顏色錯誤，終止流程", Toast.LENGTH_SHORT).show();
+            updateCubeColorsWithRawColors(color);
+            showErrorAndStop();
+            return;
+        }
         setColor(color);
-        sendString("SolveStep", solve());
-        startSolveStepPolling();
+        final String[] solution = {null};
+        if(isOk){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    solution[0] = new Search().solution
+                            (cubeStatus,20,1000000,10000,0);
+                    requireActivity().runOnUiThread(() -> {
+                        solution[0] = solution[0].replaceAll("  "," ");
+                        isSolve = true;
+
+                        if (solution[0].contains("Error")) solution[0] += " ";
+                        Solution_position = -1;
+
+                        textView_Solve.setText(solution[0]);
+
+                        if (solution[0] != null && solution[0].contains("Error")) {
+                            sendString("SolveStep", solution[0]);
+                            showErrorAndStop();
+                            Toast.makeText(getContext(), "錯誤！", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        assert solution[0] != null;
+                        sendString("SolveStep", solution[0].trim());
+                        startSolveStepPolling();
+                    });
+                }
+            }).start();
+        }
     }
 
     private void startSolveStepPolling() {
-        Timer timer1 = new Timer();
-        timer1.schedule(new TimerTask() {
+        solveStepTimer = new java.util.Timer();
+        solveStepTimer.schedule(new java.util.TimerTask() {
             @Override
             public void run() {
                 String[] nextString = BluetoothSocketManager.getDataString();
                 if (nextString == null) return;
-                requireActivity().runOnUiThread(() -> handleSolveStep(nextString, timer1));
+                requireActivity().runOnUiThread(() -> handleSolveStep(nextString));
             }
         }, 0, 100);
     }
 
-    private void handleSolveStep(String[] nextString, Timer timer1) {
+    private void handleSolveStep(String[] nextString) {
         if (nextString[0].contains("next")) {
             next();
         } else if (nextString[0].contains("end")) {
             button_lest.setVisibility(View.VISIBLE);
             button_next.setVisibility(View.VISIBLE);
             button_ok.setVisibility(View.VISIBLE);
-            Toast.makeText(getContext(), "完成!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "完成！", Toast.LENGTH_SHORT).show();
             if (animationCheckBox != null) animationCheckBox.setChecked(true);
-            timer1.cancel();
+            SettingFragment.setButtonsEnabledGlobal(true);
+            if(solveStepTimer!=null){
+                solveStepTimer.cancel();
+                solveStepTimer=null;
+            }
         }
     }
 
@@ -724,5 +782,103 @@ public class MainFragment extends Fragment {
             colorCharArray[i] = color;
         }
         return new String(colorCharArray);
+    }
+
+    private boolean areCenterColorsValid(String colors) {
+        if (colors == null || colors.length() < 50) return false;
+        int[] centerIdx = {4, 13, 22, 31, 40, 49};
+        char[] arr = colors.toCharArray();
+        for (int i = 0; i < centerIdx.length; i++) {
+            for (int j = i + 1; j < centerIdx.length; j++) {
+                if (arr[centerIdx[i]] == arr[centerIdx[j]]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void updateCubeColorsWithRawColors(String colors) {
+        if (colors == null || colors.length() != 54) return;
+        char[] colorChars = colors.toCharArray();
+        int pos = 0;
+        for (char c : colorChars) {
+            int faceIdx = pos / 9;
+            int cellIdx = pos - (faceIdx * 9);
+            int colorResId;
+            switch (c) {
+                case 'Y':
+                    colorResId = R.color.cube_yellow;
+                    break;
+                case 'O':
+                    colorResId = R.color.cube_orange;
+                    break;
+                case 'G':
+                    colorResId = R.color.cube_green;
+                    break;
+                case 'W':
+                    colorResId = R.color.cube_white;
+                    break;
+                case 'R':
+                    colorResId = R.color.cube_red;
+                    break;
+                case 'B':
+                    colorResId = R.color.cube_blue;
+                    break;
+                default:
+                    colorResId = R.color.cube_white;
+                    break;
+            }
+            renderer.setCellColor(faceIdx, cellIdx, colorIntToRgba(
+                    ContextCompat.getColor(requireContext(), colorResId)
+            ));
+            pos++;
+        }
+    }
+
+    private void showErrorAndStop() {
+        button_lest.setVisibility(View.VISIBLE);
+        button_next.setVisibility(View.VISIBLE);
+        button_ok.setVisibility(View.VISIBLE);
+        if (animationCheckBox != null) animationCheckBox.setChecked(true);
+    }
+
+    @Override
+    public void onBluetoothDisconnected() {
+        showErrorAndStop();
+        if(CubeSolver.getTopActivity() instanceof MainActivity){
+            Toast.makeText(getContext(), "藍芽斷線，操作停止，切換到連接藍牙頁面", Toast.LENGTH_SHORT).show();
+        }
+
+        if(getActivity() instanceof MainActivity){
+            //Log.d("wnilnay", "MainActivity");
+            ((MainActivity) getActivity()).change_to_bluetoothFragment();
+        }
+    }
+    public static void setOkButtonEnabled(boolean enabled){
+        if(instance != null){
+            instance.setButtonsEnabled(enabled);
+        }
+    }
+
+    private void setButtonsEnabled(boolean enabled) {
+        button_ok.setEnabled(enabled);
+
+        float alpha = enabled ? 1f : 0.4f;
+        button_ok.setAlpha(alpha);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BluetoothSocketManager.removeDisconnectListener(this);
+        if(colorPollingTimer!=null){
+            colorPollingTimer.cancel();
+            colorPollingTimer=null;
+        }
+        if(solveStepTimer!=null){
+            solveStepTimer.cancel();
+            solveStepTimer=null;
+        }
     }
 }

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <external-path
-        name="wnilnay_cube"
-        path="Download/"/>
+    <!-- 可存取 APP 專屬 External Files 目錄 (Pictures 等) -->
+    <external-files-path
+        name="wnilnay_cube_files"
+        path="."/>
 
 </paths>

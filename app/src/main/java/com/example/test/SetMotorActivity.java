@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SetMotorActivity extends AppCompatActivity {
+public class SetMotorActivity extends AppCompatActivity implements BluetoothDisconnectListener {
     private SeekBar seekBar_top, seekBar_down, seekBar_left, seekBar_right;
     private TextView tvw_top, tvw_down, tvw_left, tvw_right;
     private long lastUpdateTimeMillis = 0;
@@ -31,6 +32,9 @@ public class SetMotorActivity extends AppCompatActivity {
             return insets;
         });
         init();
+
+        // 註冊至 BluetoothSocketManager，以便藍芽斷線時自動關閉
+        BluetoothSocketManager.addDisconnectListener(this);
     }
     private void init()
     {
@@ -97,6 +101,8 @@ public class SetMotorActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        // 取消註冊
+        BluetoothSocketManager.removeDisconnectListener(this);
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("MotorTop",seekBar_top.getProgress());
@@ -109,5 +115,11 @@ public class SetMotorActivity extends AppCompatActivity {
         BluetoothSocketManager.sendString("EndMotorMode", "");
         //StorageUtil.saveString(this, "MotorSetting", jsonObject.toString());
         super.onDestroy();
+    }
+
+    @Override
+    public void onBluetoothDisconnected() {
+        Toast.makeText(this, "藍芽斷線，將退出設定馬達頁面", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

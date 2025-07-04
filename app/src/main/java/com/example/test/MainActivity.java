@@ -14,8 +14,8 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private Fragment[] fs = new Fragment[3];
     private String[] titles = {"Manual","Automatic","Setting"};
-    private final BlueToothFragment blueToothFragment = new BlueToothFragment();
-    private final MainFragment mainFragment = new MainFragment();
+    private BlueToothFragment blueToothFragment = new BlueToothFragment();
+    private MainFragment mainFragment = new MainFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +41,17 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
     public void change_to_mainFragment(){
+        mainFragment = new MainFragment();
         fs[1] = mainFragment;
         viewPager.getAdapter().notifyDataSetChanged();
         viewPager.setCurrentItem(1,true);
     }
     public void change_to_bluetoothFragment(){
+        blueToothFragment = new BlueToothFragment();
         fs[1] = blueToothFragment;
         viewPager.getAdapter().notifyDataSetChanged();
-        viewPager.setCurrentItem(1,true);
+        //viewPager.setCurrentItem(1,true);
+        mainFragment = new MainFragment();
     }
     public ViewPager getViewPager(){
         return viewPager;
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getItemPosition(@NonNull Object object) {
             // 強制第 1 頁（index=1）重建
-            if (object instanceof ManualFragment && fs[1] instanceof BlueToothFragment) return POSITION_NONE;
+            if (object instanceof MainFragment && fs[1] instanceof BlueToothFragment) return POSITION_NONE;
             if (object instanceof BlueToothFragment && fs[1] instanceof MainFragment) return POSITION_NONE;
             return POSITION_UNCHANGED;
         }

@@ -41,7 +41,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="•  進入主畫面，將魔方放在解魔方機中\n• 點擊『OK』開始顏色辨識；過程中請勿移動魔方\n• 顏色資料傳回後，手機會自動計算最佳解法並傳送給解魔方機\n• 伺服馬達執行轉動直至完成\n• 轉動完成後可透過下方『◀』與『▶』按鈕瀏覽每一步驟"
+                android:text="•  進入主畫面，將魔方放在解魔方機中\n• 點擊『OK』開始顏色辨識；過程中請勿移動魔方\n• 顏色資料傳回後，手機會自動計算最佳解法並傳送給解魔方機\n• 伺服馬達執行轉動直至完成\n• 轉動完成後可透過下方『◀』與『▶』按鈕瀏覽每一步驟\n• 解魔方機執行過程中無法調整設定"
                 android:textSize="16sp"
                 android:textColor="#636e72"
                 android:lineSpacingExtra="4dp"/>
