@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 樹莓派USB設備 -->
+    <usb-device vendor-id="0x0525" product-id="0xa4a7" /> <!-- 常見的USB串口設備 -->
+    <usb-device vendor-id="0x0403" product-id="0x6001" /> <!-- FTDI USB串口 -->
+    <usb-device vendor-id="0x067b" product-id="0x2303" /> <!-- Prolific USB串口 -->
+    <usb-device vendor-id="0x10c4" product-id="0xea60" /> <!-- Silicon Labs CP210x -->
+    <usb-device vendor-id="0x1a86" product-id="0x7523" /> <!-- CH340 USB串口 -->
+    <usb-device vendor-id="0x0483" product-id="0x5740" /> <!-- STM32 Virtual COM -->
+
+    <!-- 通用USB串口設備 -->
+    <usb-device class="2" /> <!-- CDC類設備 -->
+    <usb-device class="255" /> <!-- 廠商特定類設備 -->
+
+    <!-- VMware虛擬串口 -->
+    <usb-device vendor-id="0x15a2" product-id="0x0076" /> <!-- VMware虛擬設備 -->
+</resources>
