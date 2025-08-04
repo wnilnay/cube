@@ -51,7 +51,7 @@ public class BluetoothSocketManager {
         keepAliveTimer.schedule(new java.util.TimerTask() {
             @Override
             public void run() {
-                //Log.d("wnilnay", "run");
+                //Log.d("wnilnay", "startKeepAliveTimer");
                 // 每秒嘗試寫入 keep-alive，透過 IOException 判斷實際連線狀態
                 if(bluetoothSocket == null){
                     // 尚未建立連線

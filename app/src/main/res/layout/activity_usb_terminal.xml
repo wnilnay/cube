@@ -2,318 +2,191 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fragment_background"
-    android:padding="16dp">
+    android:padding="8dp">  <!-- [修改] 左右邊框縮小 -->
 
-    <!-- 標題 -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/title_card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="6dp"
-        android:backgroundTint="@color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="20dp"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/ic_link"
-                android:layout_marginEnd="12dp"
-                app:tint="#6C5CE7" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="USB 終端控制"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="#2D3436"/>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- 主程式終端 -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/main_terminal_card"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        android:backgroundTint="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/title_card"
-        app:layout_constraintBottom_toTopOf="@id/new_terminal_card"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="主程式終端 (唯讀)"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#2D3436"
-                android:layout_marginBottom="8dp"/>
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/code_background"
-                android:padding="8dp">
-
-                <TextView
-                    android:id="@+id/main_terminal_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="等待主程式輸出..."
-                    android:textSize="12sp"
-                    android:textColor="#00FF00"
-                    android:fontFamily="monospace"
-                    android:lineSpacingExtra="2dp"/>
-
-            </ScrollView>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- 新終端 -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/new_terminal_card"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        android:backgroundTint="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/main_terminal_card"
-        app:layout_constraintBottom_toTopOf="@id/button_container"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="命令終端"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#2D3436"/>
-
-                <Button
-                    android:id="@+id/toggle_readonly_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="解除唯讀"
-                    android:textSize="12sp"
-                    android:background="@drawable/gradient_button_secondary"
-                    android:textColor="@color/white"
-                    android:stateListAnimator="@null"
-                    android:elevation="0dp"/>
-
-            </LinearLayout>
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="@drawable/code_background"
-                android:padding="8dp">
-
-                <TextView
-                    android:id="@+id/new_terminal_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="等待命令輸入..."
-                    android:textSize="12sp"
-                    android:textColor="#00FF00"
-                    android:fontFamily="monospace"
-                    android:lineSpacingExtra="2dp"/>
-
-            </ScrollView>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <EditText
-                    android:id="@+id/command_input"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="輸入命令..."
-                    android:textSize="12sp"
-                    android:background="@drawable/value_background"
-                    android:padding="8dp"
-                    android:enabled="false"/>
-
-                <Button
-                    android:id="@+id/send_command_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="發送"
-                    android:textSize="12sp"
-                    android:background="@drawable/gradient_button"
-                    android:textColor="@color/white"
-                    android:stateListAnimator="@null"
-                    android:elevation="0dp"
-                    android:layout_marginStart="8dp"
-                    android:enabled="false"/>
-
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- 功能按鈕容器 -->
+    <!-- 底部控制區塊 (輸入框) -->
     <LinearLayout
-        android:id="@+id/button_container"
+        android:id="@+id/command_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <!-- 第一行按鈕 -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/command_input"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
+            android:layout_weight="1"
+            android:background="@drawable/value_background"
+            android:enabled="false"
+            android:hint="輸入命令..."
+            android:imeOptions="actionSend"
+            android:padding="12dp"
+            android:textSize="14sp" />
 
-            <Button
-                android:id="@+id/shutdown_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="關機"
-                android:textSize="12sp"
-                android:background="@drawable/gradient_button"
-                android:textColor="@color/white"
-                android:stateListAnimator="@null"
-                android:elevation="0dp"
-                android:layout_marginEnd="4dp"/>
-
-            <Button
-                android:id="@+id/reset_bluetooth_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="重設藍牙"
-                android:textSize="12sp"
-                android:background="@drawable/gradient_button_secondary"
-                android:textColor="@color/white"
-                android:stateListAnimator="@null"
-                android:elevation="0dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"/>
-
-            <Button
-                android:id="@+id/restart_program_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="重啟程式"
-                android:textSize="12sp"
-                android:background="@drawable/gradient_button_tertiary"
-                android:textColor="@color/white"
-                android:stateListAnimator="@null"
-                android:elevation="0dp"
-                android:layout_marginStart="4dp"/>
-
-        </LinearLayout>
-
-        <!-- 第二行按鈕 -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/send_command_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/pair_bluetooth_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="配對藍牙"
-                android:textSize="12sp"
-                android:background="@drawable/gradient_button_quaternary"
-                android:textColor="@color/white"
-                android:stateListAnimator="@null"
-                android:elevation="0dp"
-                android:layout_marginEnd="4dp"/>
-
-            <Button
-                android:id="@+id/clear_terminal_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="清空終端"
-                android:textSize="12sp"
-                android:background="@drawable/gradient_button_guide"
-                android:textColor="@color/white"
-                android:stateListAnimator="@null"
-                android:elevation="0dp"
-                android:layout_marginStart="4dp"/>
-
-        </LinearLayout>
-
-        <!-- 第三行按鈕 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp">
-
-            <Button
-                android:id="@+id/test_usb_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="測試USB"
-                android:textSize="12sp"
-                android:background="@drawable/gradient_button_quaternary"
-                android:textColor="@color/white"
-                android:stateListAnimator="@null"
-                android:elevation="0dp"/>
-
-        </LinearLayout>
-
+            android:layout_marginStart="8dp"
+            android:background="@drawable/gradient_button"
+            android:elevation="0dp"
+            android:enabled="false"
+            android:stateListAnimator="@null"
+            android:text="發送"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout> 
+    <!-- 功能按鈕網格佈局 (6個按鈕) -->
+    <GridLayout
+        android:id="@+id/button_grid_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:columnCount="3"
+        android:rowCount="2"
+        app:layout_constraintBottom_toTopOf="@id/command_input_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- [修改] 按鈕屬性保持良好換行 -->
+        <Button
+            android:id="@+id/shutdown_button"
+            style="@style/UsbTerminalButton"
+            android:layout_columnWeight="1"
+            android:background="@drawable/gradient_button"
+            android:text="關機" />
+
+        <Button
+            android:id="@+id/restart_program_button"
+            style="@style/UsbTerminalButton"
+            android:layout_columnWeight="1"
+            android:background="@drawable/gradient_button_tertiary"
+            android:text="重啟程式" />
+
+        <Button
+            android:id="@+id/reset_bluetooth_button"
+            style="@style/UsbTerminalButton"
+            android:layout_columnWeight="1"
+            android:background="@drawable/gradient_button_secondary"
+            android:text="重設藍牙" />
+
+        <Button
+            android:id="@+id/clear_terminal_button"
+            style="@style/UsbTerminalButton"
+            android:layout_columnWeight="1"
+            android:background="@drawable/gradient_button_guide"
+            android:text="清空終端" />
+
+        <Button
+            android:id="@+id/toggle_readonly_button"
+            style="@style/UsbTerminalButton"
+            android:layout_columnWeight="1"
+            android:background="@drawable/gradient_button_secondary"
+            android:text="解除唯讀" />
+
+        <Button
+            android:id="@+id/pair_bluetooth_button"
+            style="@style/UsbTerminalButton"
+            android:layout_columnWeight="1"
+            android:background="@drawable/gradient_button_quaternary"
+            android:text="配對藍牙" />
+
+    </GridLayout>
+
+    <!-- 主程式終端 (上半部) -->
+    <LinearLayout
+        android:id="@+id/main_terminal_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/terminal_background"
+        android:orientation="vertical"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/command_terminal_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_weight="3"> <!-- [修改] 比例增大為 2 -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="主程式終端 (唯讀)"
+            android:textColor="#2D3436"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ScrollView
+            android:id="@+id/main_terminal_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/code_background"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/main_terminal_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:lineSpacingExtra="4dp"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                tools:text="等待主程式輸出...\n" />
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- 命令終端 (下半部) -->
+    <LinearLayout
+        android:id="@+id/command_terminal_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/terminal_background"
+        android:orientation="vertical"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/button_grid_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/main_terminal_container"
+        app:layout_constraintVertical_weight="2"> <!-- [修改] 比例維持為 1 -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="命令終端"
+            android:textColor="#2D3436"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ScrollView
+            android:id="@+id/command_terminal_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/code_background"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/command_terminal_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:lineSpacingExtra="4dp"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                tools:text="等待命令輸入...\n" />
+        </ScrollView>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

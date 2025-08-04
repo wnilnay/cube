@@ -170,7 +170,9 @@ public class SettingFragment extends Fragment implements BluetoothDisconnectList
         UsbConnectionManager.getInstance(requireContext()).connect(progressText -> {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    Log.d(TAG, "handleUsbConnection: 進度更新 -> " + progressText);
+                    if(!progressText.contains("正在掃描:")){
+                        Log.d(TAG, "handleUsbConnection: 進度更新 -> " + progressText);
+                    }
                     updateProgressDialogText(progressText);
                 });
             }

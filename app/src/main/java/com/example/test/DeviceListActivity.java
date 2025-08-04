@@ -51,6 +51,8 @@ public class DeviceListActivity extends AppCompatActivity {
      */
     private BluetoothAdapter mBtAdapter;
 
+    private Button scanButton; // <-- [新增] 為掃描按鈕添加一個成員變數
+
     /**
      * Newly discovered devices
      */
@@ -64,53 +66,6 @@ public class DeviceListActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_device_list);
 
-//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
-//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
-//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-//                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-//                ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-//                ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-//
-//            requestPermissions(
-//                    new String[]{android.Manifest.permission.BLUETOOTH, android.Manifest.permission.BLUETOOTH_ADMIN, android.Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_SCAN},
-//                    0);
-//            Log.d("wnilnay ContextCompat1", ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT) + "");
-//        }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//            // Android 12 (API 31) 和以上需要的權限
-//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-//                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED ||
-//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//
-//                // 請求 Android 12 的新權限
-//                requestPermissions(
-//                        new String[]{
-//                                Manifest.permission.BLUETOOTH_CONNECT,
-//                                Manifest.permission.BLUETOOTH_SCAN,
-//                                Manifest.permission.ACCESS_FINE_LOCATION,
-//                                Manifest.permission.ACCESS_COARSE_LOCATION
-//                        },
-//                        0);
-//            }
-//        } else {
-//            // Android 12 以下版本需要的權限
-//            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
-//                    ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
-//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-//                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//
-//                // 請求舊版 Android 所需的權限
-//                requestPermissions(
-//                        new String[]{
-//                                android.Manifest.permission.BLUETOOTH,
-//                                android.Manifest.permission.BLUETOOTH_ADMIN,
-//                                Manifest.permission.ACCESS_FINE_LOCATION,
-//                                Manifest.permission.ACCESS_COARSE_LOCATION
-//                        },
-//                        0);
-//            }
-//        }
         // 檢查和請求藍牙權限
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // API 31 及以上
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
@@ -137,7 +92,7 @@ public class DeviceListActivity extends AppCompatActivity {
         setResult(Activity.RESULT_CANCELED);
 
         // Initialize the button to perform device discovery
-        Button scanButton = findViewById(R.id.button_scan);
+        scanButton = findViewById(R.id.button_scan);
         scanButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 doDiscovery();
@@ -192,7 +147,31 @@ public class DeviceListActivity extends AppCompatActivity {
             String noDevices = "No devices have been paired";
             pairedDevicesArrayAdapter.add(noDevices);
         }
+
+        handleIntentExtras();
     }
+
+    /**
+     * [新增] 一個輔助方法，用於處理傳入的 Intent 中的額外數據。
+     */
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    private void handleIntentExtras() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            // 檢查是否包含我們定義的 "自動掃描" 旗標
+            boolean shouldStartScan = intent.getBooleanExtra("start_scan_on_open", false);
+            if (shouldStartScan) {
+                Log.d(TAG, "接收到自動掃描請求，開始掃描...");
+                // 直接呼叫掃描方法
+                doDiscovery();
+                // 隱藏掃描按鈕，因為掃描已經自動開始了
+                if (scanButton != null) {
+                    scanButton.setVisibility(View.GONE);
+                }
+            }
+        }
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
