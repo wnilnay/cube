@@ -61,6 +61,11 @@
         <include layout="@layout/card_motor_test" />
         <include layout="@layout/card_coordinate_calibration" />
         <include layout="@layout/card_color_settings" />
+        <!-- [新增] 藍牙模式與 USB 終端機說明 -->
+        <include layout="@layout/card_bluetooth_mode" />
+        <include layout="@layout/card_usb_terminal" />
+
+        <!-- 原有的常見問題與開源授權卡片 -->
         <include layout="@layout/card_faq" />
 
         <!-- 開源授權 -->

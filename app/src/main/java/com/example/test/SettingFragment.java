@@ -164,33 +164,44 @@ public class SettingFragment extends Fragment implements BluetoothDisconnectList
     }
 
     private void handleUsbConnection() {
-        Log.d(TAG, "handleUsbConnection: USB 連接按鈕被點擊。");
+        Log.d(TAG, "handleUsbConnection: 統一連接流程已啟動。");
         showProgressDialog("正在準備連接...");
 
+        // 直接呼叫唯一的 connect 方法，它內部會自動處理快速/慢速邏輯
         UsbConnectionManager.getInstance(requireContext()).connect(progressText -> {
             if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    if(!progressText.contains("正在掃描:")){
-                        Log.d(TAG, "handleUsbConnection: 進度更新 -> " + progressText);
-                    }
-                    updateProgressDialogText(progressText);
-                });
+                getActivity().runOnUiThread(() -> updateProgressDialogText(progressText));
             }
         }).thenAccept(result -> {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    Log.d(TAG, "handleUsbConnection: 連接流程結束，結果: " + result.success + ", 訊息: " + result.message);
                     hideProgressDialog();
                     if (result.success) {
                         Toast.makeText(getContext(), "連接成功！", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getContext(), UsbTerminalActivity.class);
                         startActivity(intent);
                     } else {
+                        // 只有在最終（掃描也）失敗後才顯示錯誤
                         showUsbCheckAlertDialog(result.message);
                     }
                 });
             }
         });
+    }
+
+    // 失敗時的提示對話框
+    private void showUsbCheckAlertDialog(String errorMessage) {
+        if (getContext() == null) return;
+        new AlertDialog.Builder(getContext())
+                .setTitle("USB 連接失敗")
+                .setMessage(errorMessage)
+                .setNegativeButton("取消", null)
+                .setPositiveButton("重試", (dialogInterface, i) -> {
+                    // "重試" 再次觸發統一流程
+                    handleUsbConnection();
+                })
+                .create()
+                .show();
     }
 
     private void showProgressDialog(String initialText) {
@@ -244,21 +255,6 @@ public class SettingFragment extends Fragment implements BluetoothDisconnectList
         }
         progressDialog = null;
         setButtonsEnabled(true); // 重新啟用背景按鈕
-    }
-
-    private void showUsbCheckAlertDialog(String errorMessage) {
-        if (getContext() == null) return;
-        new AlertDialog.Builder(getContext())
-                .setTitle("USB 連接失敗")
-                .setMessage(errorMessage)
-                .setNegativeButton("取消", null)
-                .setPositiveButton("重試", (dialogInterface, i) -> {
-                    if (usbTerminalButton != null) {
-                        usbTerminalButton.performClick();
-                    }
-                })
-                .create()
-                .show();
     }
 
     @Override

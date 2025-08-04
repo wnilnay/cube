@@ -19,7 +19,7 @@
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_info"
+            android:src="@drawable/ic_usb"
             app:tint="#2D3436"
             android:layout_gravity="center_vertical"/>
 
@@ -32,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="8. 常見問題"
+                android:text="10. USB 終端機 (進階除錯)"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#2D3436"
@@ -41,7 +41,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="• 無法連線？\n  請確認藍牙已開啟。若持續失敗，可至『藍牙模式』頁面點選『重設藍牙』，或使用『USB 終端機』的配對功能重新配對。\n\n• 轉動不準確？\n  請至『設定馬達』重新校準。\n\n• 顏色辨識不準確？\n  1) 若多數方塊被辨識為白色 → 可能遮罩未覆蓋魔方，請到『校準座標』重新設定遮罩。\n  2) 若僅少部分顏色錯誤 → 請將解魔方機移至光線充足處，或至『設定顏色』調整 HSV 範圍。\n\n• 解法顯示 Error 1~8？\n  代表魔方狀態有誤(如顏色數不對、角塊被翻轉)，請參考錯誤碼說明手動復原魔方。\n\n• USB 終端機無法連線？\n  請確認手機已啟用『USB 網路共享』，且樹莓派主程式正在運行。若仍失敗，可嘗試重新插拔 USB 線。\n\n• 如遇其他問題，嘗試重開 APP 再試一次，或使用『藍牙模式』/『USB 終端機』內的重啟功能。\n\n• 如遇問題無法解決，可至「sivsics7th19@gmail.com」信箱進行回報。"
+                android:text="此功能提供一個強大的除錯工具，可直接與樹莓派的作業系統互動。\n\n如何連接：\n1. 使用 USB 線連接您的手機與樹莓派。\n2. 在手機的系統設定中，找到『網路與網際網路』或類似選項。\n3. 啟用『USB 網路共享』(或稱 USB Tethering)。此功能僅分享連線能力，您的手機不需有網際網路連線。\n4. 回到本 App 的『設定』頁面，點擊『USB 終端機』，App 將自動掃描並建立連線。\n\n功能與注意事項：\n• 主畫面會即時顯示樹莓派主程式的所有日誌輸出。\n• 您可透過下方的命令列輸入 Linux 指令 (如 ls, dmesg) 來檢查系統狀態。\n• 『配對藍牙』按鈕可在此模式下為樹莓派與您的手機進行配對，解決藍牙無法正常配對的問題。\n• 警告：請謹慎使用關機、重啟藍牙等系統指令，不當操作可能導致程式或系統不穩定。"
                 android:textSize="16sp"
                 android:textColor="#636e72"
                 android:lineSpacingExtra="4dp"/>

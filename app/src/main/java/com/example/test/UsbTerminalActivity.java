@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,7 +54,12 @@ public class UsbTerminalActivity extends AppCompatActivity {
     private Runnable mainTerminalUpdater;
     private Runnable commandTerminalUpdater;
     private boolean isResettingBluetooth = false;
-    private boolean isPairingModeActive = false;
+
+    // --- [修改] ---
+    // isPairingModeActive 用於追蹤當前是否處於配對鎖定狀態
+    // pairingCountdownTimer 用於處理配對超時
+    private volatile boolean isPairingModeActive = false;
+    private CountDownTimer pairingCountdownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +80,12 @@ public class UsbTerminalActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume: Activity 恢復前景。");
-        checkConnectionStatus();
-        if (usbManager.isConnected()) {
-            startListening();
+        // 如果不在配對模式下，才檢查連線狀態和啟動監聽
+        if (!isPairingModeActive) {
+            checkConnectionStatus();
+            if (usbManager.isConnected()) {
+                startListening();
+            }
         }
     }
 
@@ -84,11 +93,28 @@ public class UsbTerminalActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause: Activity 進入背景。");
-        stopListening();
+        // 只有在非配對模式下離開才停止監聽
+        if (!isPairingModeActive) {
+            stopListening();
+        }
     }
+
+    /**
+     * 當此 Activity 不再可見時呼叫。
+     * 這是清理網路連接的最佳時機。
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: Activity 停止，正在斷開 USB 連接...");
+        // 明確地告訴 UsbConnectionManager 斷開並清理所有資源
+        UsbConnectionManager.getInstance(this).disconnectNetwork();
+    }
+
     @Override
     public void onBackPressed() {
-        // 如果正在配對模式中，則禁用返回鍵，並給出提示
+        // --- [修改] ---
+        // 使用 isPairingModeActive 判斷是否鎖定返回鍵
         if (isPairingModeActive) {
             Toast.makeText(this, "正在進行藍牙配對，請稍候...", Toast.LENGTH_SHORT).show();
         } else {
@@ -123,34 +149,28 @@ public class UsbTerminalActivity extends AppCompatActivity {
 
         toggleReadOnlyButton.setOnClickListener(v -> toggleInputLock());
 
-        // [修改] 將清空功能綁定到網格中的按鈕
         findViewById(R.id.clear_terminal_button).setOnClickListener(v -> {
             if (commandTerminalText != null) {
                 commandTerminalText.setText("");
             }
         });
 
-        // 系統命令按鈕
         findViewById(R.id.shutdown_button).setOnClickListener(v -> {
-            // 先檢查連接狀態
             if (!usbManager.isConnected()) {
                 Toast.makeText(this, "USB未連接，無法執行操作", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // 建立並顯示確認對話框
             new AlertDialog.Builder(this)
                     .setTitle("確認關機")
                     .setMessage("您確定要將樹莓派關機嗎？\n此操作無法復原。")
                     .setPositiveButton("確定關機", (dialog, which) -> {
-                        // 當使用者點擊「確定關機」後，才真正發送命令
                         sendSystemCommand("shutdown", "sudo shutdown -h now");
                     })
-                    .setNegativeButton("取消", null) // 點擊「取消」則什麼都不做，對話框自動關閉
-                    .setIcon(android.R.drawable.ic_dialog_alert) // 加上一個警告圖示
+                    .setNegativeButton("取消", null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         });
         findViewById(R.id.reset_bluetooth_button).setOnClickListener(v ->{
-            // 先檢查連接狀態
             if (!usbManager.isConnected()) {
                 Toast.makeText(this, "USB未連接，無法執行操作", Toast.LENGTH_SHORT).show();
                 return;
@@ -164,12 +184,10 @@ public class UsbTerminalActivity extends AppCompatActivity {
         });
 
         restartProgramButton.setOnClickListener(v ->{
-            // 先檢查連接狀態
             if (!usbManager.isConnected()) {
                 Toast.makeText(this, "USB未連接，無法執行操作", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // 建立並顯示確認對話框
             new AlertDialog.Builder(this)
                     .setTitle("確認重啟")
                     .setMessage("您確定要重啟主程式嗎？\n此操作會造成USB連接斷開，需退出重新連接。")
@@ -177,8 +195,8 @@ public class UsbTerminalActivity extends AppCompatActivity {
                         sendSystemCommand("restart_program",
                                 "");
                     })
-                    .setNegativeButton("取消", null) // 點擊「取消」則什麼都不做，對話框自動關閉
-                    .setIcon(android.R.drawable.ic_dialog_alert) // 加上一個警告圖示
+                    .setNegativeButton("取消", null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         });
 
@@ -194,49 +212,47 @@ public class UsbTerminalActivity extends AppCompatActivity {
 
             String myDeviceName = getBluetoothDeviceName();
             if (myDeviceName == null || myDeviceName.isEmpty()) {
-                // 如果获取失败，弹出一个明确的错误提示框
                 new AlertDialog.Builder(this)
-                        .setTitle("错误：无法获取设备名称")
-                        .setMessage("无法获取本机的蓝牙名称。\n请检查：\n1. App 是否已被授予『邻近设备』权限。\n2. 您是否在手机的系统设定中为蓝牙设定了名称。")
+                        .setTitle("錯誤：無法獲取設備名稱")
+                        .setMessage("無法獲取本機的藍牙名稱。\n請檢查：\n1. App 是否已被授予「鄰近設配」權限。\n" +
+                                "2. 您是否在手機的系統設定中為藍牙設定了名稱。")
                         .setPositiveButton("好的", null)
                         .show();
                 return;
             }
 
+            // --- [修改] ---
+            // 修改提示文字，並在點擊「開始」後呼叫 startPairingLockdown()
             new AlertDialog.Builder(this)
                     .setTitle("開始配對")
-                    .setMessage("即將讓樹莓派與您的手機 '" + myDeviceName + "' 配對。\n\n點擊「開始」後，請留意手機螢幕上彈出的系統配對請求。")
+                    .setMessage("即將讓樹莓派與您的手機 '" + myDeviceName + "' 配對。\n\n點擊「開始」後，" +
+                            "請留意手機螢幕上彈出的系統配對請求，並在 60 秒內完成確認。\n\n" +
+                            "若是在藍牙配對的彈窗中，取消、點擊空白處或是不配對，都會導致配對失敗。\n(即使回傳結果表示成功，也仍然沒有成功配對。)")
                     .setPositiveButton("開始", (dialog, which) -> {
                         String command = "{\"id\":\"system_initiate_pairing\",\"name\":\"" + myDeviceName + "\"}";
                         appendToCommandTerminal("📤 發送配對請求，目標: '" + myDeviceName + "'");
                         usbManager.sendUsbCommand(command);
+                        // 開始 UI 鎖定和倒數計時
+                        startPairingLockdown();
                     })
                     .setNegativeButton("取消", null)
                     .show();
         });
     }
-    /**
-     * [修改] 獲取本機藍牙名稱的輔助方法。
-     * @return 返回裝置名稱字串，如果失敗則返回 null。
-     */
+
     private String getBluetoothDeviceName() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             Log.e(TAG, "裝置不支援藍牙");
             return null;
         }
-
-        // 從 Android 12 (API 31) 開始，獲取名稱也需要 BLUETOOTH_CONNECT 權限
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
                     != PackageManager.PERMISSION_GRANTED) {
                 Log.e(TAG, "缺少 BLUETOOTH_CONNECT 權限");
-                // 這裡應該觸發權限請求，或者直接返回 null 讓呼叫者處理
-                // 為了簡潔，我們假設權限已在 Activity 啟動時請求
                 return null;
             }
         }
-
         try {
             return bluetoothAdapter.getName();
         } catch (Exception e) {
@@ -259,19 +275,21 @@ public class UsbTerminalActivity extends AppCompatActivity {
         if (!isConnected) {
             appendToCommandTerminal("❌ USB網路共享未連接");
         } else {
-            // 只在命令終端顯示簡短連接成功提示
             appendToCommandTerminal("✅ USB網路共享已連接");
         }
-        // 更新所有依賴連接狀態的按鈕
-        commandInput.setEnabled(isInputEnabled && isConnected);
-        sendButton.setEnabled(isInputEnabled && isConnected);
-        toggleReadOnlyButton.setEnabled(isConnected);
-        findViewById(R.id.shutdown_button).setEnabled(isConnected);
-        findViewById(R.id.reset_bluetooth_button).setEnabled(isConnected);
-        findViewById(R.id.restart_program_button).setEnabled(isConnected);
-        findViewById(R.id.pair_bluetooth_button).setEnabled(isConnected);
-        findViewById(R.id.clear_terminal_button).setEnabled(isConnected);
 
+        // --- [修改] ---
+        // 如果不在配對模式下，才更新UI；否則UI由 setLockdownUI 控制
+        if (!isPairingModeActive) {
+            commandInput.setEnabled(isInputEnabled && isConnected);
+            sendButton.setEnabled(isInputEnabled && isConnected);
+            toggleReadOnlyButton.setEnabled(isConnected);
+            findViewById(R.id.shutdown_button).setEnabled(isConnected);
+            findViewById(R.id.reset_bluetooth_button).setEnabled(isConnected);
+            findViewById(R.id.restart_program_button).setEnabled(isConnected);
+            findViewById(R.id.pair_bluetooth_button).setEnabled(isConnected);
+            findViewById(R.id.clear_terminal_button).setEnabled(isConnected);
+        }
     }
 
     private void sendCommand() {
@@ -280,21 +298,15 @@ public class UsbTerminalActivity extends AppCompatActivity {
             Toast.makeText(this, command.isEmpty() ? "請輸入命令" : "USB未連接", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // 檢查是否包含 "bluetooth" 關鍵字 (忽略大小寫)
         if (command.toLowerCase().contains("bluetooth")) {
-            // 如果是藍牙相關命令，則顯示確認對話框
             new AlertDialog.Builder(this)
                     .setTitle("警告：藍牙相關命令")
                     .setMessage("直接操作藍牙服務 (如 bluetoothctl) 可能會干擾主程式的正常連線，建議使用上方的『重設藍牙』按鈕。" +
                             "\n\n您確定要繼續發送原始命令嗎？")
                     .setPositiveButton("確定發送", (dialog, which) -> {
-                        // *** 當使用者點擊「確定」後，才執行真正的發送邏輯 ***
                         executeCommand(command);
                     })
                     .setNegativeButton("取消", (dialog, which) -> {
-                        // 當使用者點擊「取消」，我們什麼都不做，只是讓對話框關閉
-                        // 可以在這裡給使用者一個提示
                         appendToCommandTerminal("🚫 命令已取消: " + command);
                         commandInput.setText("");
                     })
@@ -302,29 +314,16 @@ public class UsbTerminalActivity extends AppCompatActivity {
                     .show();
         }
         else {
-            // 如果不是藍牙相關命令，則直接執行
             executeCommand(command);
         }
     }
 
-    /**
-     * 新增一個輔助方法，專門用來執行命令的發送。
-     * 這樣可以避免在 AlertDialog 和 else 區塊中寫重複的程式碼。
-     * @param commandToExecute 要執行的命令字串
-     */
     private void executeCommand(String commandToExecute) {
-        // 1. 在命令終端顯示發送的日誌
         appendToCommandTerminal("📤 發送: " + commandToExecute);
-
-        // 2. 組裝 JSON
         String jsonCommand = commandToExecute.startsWith("{") ? commandToExecute :
                 "{\"type\":\"shell\",\"command\":\"" + commandToExecute.replace("\"", "\\\"")
                         + "\",\"id\":\"cmd_" + System.currentTimeMillis() + "\"}";
-
-        // 3. 透過 USB 管理器發送
         usbManager.sendUsbCommand(jsonCommand);
-
-        // 4. 清空輸入框
         commandInput.setText("");
     }
 
@@ -342,23 +341,18 @@ public class UsbTerminalActivity extends AppCompatActivity {
     private void displayResponse(String response) {
         try {
             JSONObject jsonResponse = new JSONObject(response.trim());
-
             String id = jsonResponse.optString("id", "N/A");
             if(id.equals("system_reset_bluetooth")){
                 isResettingBluetooth = false;
             }
-
             StringBuilder sb = new StringBuilder();
             sb.append("📥 收到回應:\n");
             sb.append("  ID: ").append(id).append("\n");
             sb.append("  成功: ").append(jsonResponse.optBoolean("success")).append("\n");
-
             String output = jsonResponse.optString("output", "").trim();
             if (!output.isEmpty()) sb.append("  輸出:\n").append(output).append("\n");
-
             String error = jsonResponse.optString("error", "").trim();
             if (!error.isEmpty()) sb.append("  錯誤:\n").append(error).append("\n");
-
             sb.append("---");
             appendToCommandTerminal(sb.toString());
         } catch (JSONException e) {
@@ -368,21 +362,15 @@ public class UsbTerminalActivity extends AppCompatActivity {
 
     private void appendToMainTerminal(final String text) {
         if (mainTerminalText == null || text == null) return;
-
-        // 將新文字加入緩衝區 (需要同步化以保證執行緒安全)
         synchronized (mainTerminalBuffer) {
             mainTerminalBuffer.append(text).append("\n");
         }
-        // 取消之前任何待執行的更新任務
         mainHandler.removeCallbacks(mainTerminalUpdater);
-        // 安排一個新的更新任務在 50 毫秒後執行。
-        // 如果在這 50 毫秒內有新訊息進來，這個任務會被再次取消並重新安排。
-        mainHandler.postDelayed(mainTerminalUpdater, 50); // 50ms 是一個不錯的防抖延遲
+        mainHandler.postDelayed(mainTerminalUpdater, 50);
     }
 
     private void appendToCommandTerminal(final String text) {
         if (commandTerminalText == null || text == null) return;
-
         synchronized (commandTerminalBuffer) {
             commandTerminalBuffer.append(text).append("\n");
         }
@@ -400,7 +388,7 @@ public class UsbTerminalActivity extends AppCompatActivity {
                 while (isListening && !Thread.currentThread().isInterrupted()) {
                     String line = reader.readLine();
                     if (line == null) {
-                        Log.w(TAG, "監聽執行緒讀取到 null，連接已中斷。");
+                        Log.w(TAG, "監聽執行緒讀取到 null，連接可能已中斷。");
                         break;
                     }
                     processReceivedData(line);
@@ -410,7 +398,12 @@ public class UsbTerminalActivity extends AppCompatActivity {
             } finally {
                 Log.d(TAG, "🎧 監聽執行緒已停止。");
                 isListening = false;
-                mainHandler.post(this::checkConnectionStatus);
+                // --- [修改] ---
+                // 連線中斷後，如果不在配對模式，才更新UI
+                // 如果正在配對，則讓倒數計時器來處理超時狀況
+                if (!isPairingModeActive) {
+                    mainHandler.post(this::checkConnectionStatus);
+                }
             }
         });
         listeningThread.start();
@@ -447,15 +440,21 @@ public class UsbTerminalActivity extends AppCompatActivity {
                         String pin = json.optString("pin", "------");
                         showPinConfirmationDialog(pin);
                         break;
-
-                    // --- [新增] 處理最終配對結果 ---
                     case "PairingResult":
+                        // 無論成功或失敗，都應先停止 UI 鎖定和倒數計時
+                        stopPairingLockdown();
+
                         boolean success = json.optBoolean("success", false);
-                        String message = json.optString("message", "未知結果");
+                        String message = json.optString("message", "");
+                        String error = json.optString("error", "未知結果");
+                        String dialogMessage = success ? message : error;
+
                         new AlertDialog.Builder(this)
-                                .setTitle(success ? "配對成功" : "配對失敗")
-                                .setMessage(message)
-                                .setPositiveButton("好的", null)
+                                .setTitle(success ? "🎉 配對成功" : "😕 配對失敗")
+                                .setMessage(dialogMessage)
+                                // 對話框關閉後，重新檢查一次所有按鈕的狀態
+                                .setPositiveButton("好的", (dialog, which) -> checkConnectionStatus())
+                                .setCancelable(false) // 避免使用者在看到結果前誤觸關閉
                                 .show();
                         break;
                     default:
@@ -463,136 +462,166 @@ public class UsbTerminalActivity extends AppCompatActivity {
                         break;
                 }
             } catch (JSONException e) {
+                // 如果解析失敗，也嘗試解除鎖定，避免App卡死
+                if(isPairingModeActive){
+                    stopPairingLockdown();
+                    new AlertDialog.Builder(this)
+                            .setTitle("處理錯誤")
+                            .setMessage("收到來自樹莓派的無效配對結果，配對流程已終止。")
+                            .setPositiveButton("好的", null).show();
+                }
                 appendToCommandTerminal("📥 收到非JSON數據:\n" + data);
             }
         });
     }
-    /**
-     * [新增] 顯示一個對話框讓使用者輸入 PIN 碼。
-     * @param pinToConfirm 從後端收到的 PIN 碼，用於提示
-     */
+
     private void showPinConfirmationDialog(final String pinToConfirm) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("請確認 PIN 碼");
-        builder.setMessage("請核對您手機系統彈出的配對請求中的 PIN 碼，並在下方輸入以確認。\n\n提示 PIN 碼: " + pinToConfirm);
-
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-        input.setHint("輸入 6 位 PIN 碼");
-        builder.setView(input);
-
-        builder.setPositiveButton("確認配對", (dialog, which) -> {
-            String userInputPin = input.getText().toString().trim();
-            // 可以在這裡做更嚴格的驗證，例如檢查長度
-            if (userInputPin.isEmpty()) {
-                Toast.makeText(this, "PIN 碼不能為空", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            String command = "{\"id\":\"system_confirm_pairing\",\"pin\":\"" + userInputPin + "\"}";
-            appendToCommandTerminal("📤 發送 PIN 碼確認");
-            usbManager.sendUsbCommand(command);
-        });
-        builder.setNegativeButton("取消", null);
-        builder.setCancelable(false);
-        builder.show();
+        // 自動確認 PIN 碼
+        String command = "{\"id\":\"system_confirm_pairing\",\"pin\":\"" + pinToConfirm + "\"}";
+        appendToCommandTerminal("✅ 自動發送 PIN 碼 (" + pinToConfirm + ") 確認");
+        usbManager.sendUsbCommand(command);
     }
     private void initUpdateRunnable() {
         mainTerminalUpdater = () -> {
-            // 如果緩衝區沒內容，就沒必要更新
             if (mainTerminalBuffer.length() == 0) return;
 
-            // 在更新前檢查是否在底部，這是捕捉使用者的意圖
-            View child = mainTerminalScrollView.getChildAt(0);
-            boolean isAtBottom = (child.getBottom() <= (mainTerminalScrollView.getHeight() +
-                    mainTerminalScrollView.getScrollY() + 20));
+            // 1. 同樣，在添加文本前檢查用戶是否在底部
+            final boolean shouldScroll = isUserAtBottom(mainTerminalScrollView);
 
-            // 一次性將緩衝區內所有文字添加到 TextView
-            mainTerminalText.append(mainTerminalBuffer);
-            // 清空緩衝區，為下一批次做準備
-            mainTerminalBuffer.setLength(0);
+            // 2. 添加文本
+            synchronized (mainTerminalBuffer) {
+                mainTerminalText.append(mainTerminalBuffer);
+                mainTerminalBuffer.setLength(0);
+            }
 
-            // 只有當使用者意圖是在底部時，才在佈局完成後滾動
-            if (isAtBottom) {
-                mainTerminalScrollView.getViewTreeObserver().addOnGlobalLayoutListener(
-                        new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        mainTerminalScrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        mainTerminalScrollView.fullScroll(View.FOCUS_DOWN);
-                    }
-                });
+            // 3. 如果需要滾動，使用 post() 將滾動任務發送到消息隊列的末尾
+            if (shouldScroll) {
+                // 這個任務會在當前佈局計算完畢後執行，從而獲得正確的底部位置
+                mainTerminalScrollView.post(() -> mainTerminalScrollView.fullScroll(View.FOCUS_DOWN));
             }
         };
 
+        // 對 commandTerminalUpdater 應用完全相同的邏輯
         commandTerminalUpdater = () -> {
             if (commandTerminalBuffer.length() == 0) return;
 
-            View child = commandTerminalScrollView.getChildAt(0);
-            boolean isAtBottom = (child.getBottom() <= (commandTerminalScrollView.getHeight() +
-                    commandTerminalScrollView.getScrollY() + 20));
+            final boolean shouldScroll = isUserAtBottom(commandTerminalScrollView);
 
-            commandTerminalText.append(commandTerminalBuffer);
-            commandTerminalBuffer.setLength(0);
+            synchronized (commandTerminalBuffer) {
+                commandTerminalText.append(commandTerminalBuffer);
+                commandTerminalBuffer.setLength(0);
+            }
 
-            if (isAtBottom) {
-                commandTerminalScrollView.getViewTreeObserver().addOnGlobalLayoutListener
-                        (new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        commandTerminalScrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        commandTerminalScrollView.fullScroll(View.FOCUS_DOWN);
-                    }
-                });
+            if (shouldScroll) {
+                commandTerminalScrollView.post(() -> commandTerminalScrollView.fullScroll(View.FOCUS_DOWN));
             }
         };
     }
+
+    // 輔助方法 isUserAtBottom 保持不變
+    private boolean isUserAtBottom(ScrollView scrollView) {
+        if (scrollView.getChildCount() == 0) {
+            return true;
+        }
+        View view = scrollView.getChildAt(0);
+        int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
+        // 您可以稍微放寬這個容錯值，例如 30 或 40，以應對不同的螢幕密度
+        return diff <= 30;
+    }
+
     private boolean isBluetoothConnected() {
         return BluetoothSocketManager.getSocket() != null && BluetoothSocketManager.getSocket().isConnected();
     }
+
+    // --- [新增] ---
+    /**
+     * 開始配對鎖定：鎖定UI並啟動一個60秒的倒數計時器。
+     */
     private void startPairingLockdown() {
+        if (isPairingModeActive) return; // 如果已在鎖定模式，則不重複執行
+
         isPairingModeActive = true;
         setLockdownUI(true); // 立即鎖定UI
 
-        new CountDownTimer(60000, 1000) {
+        pairingCountdownTimer = new CountDownTimer(60000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                int secondsRemaining = (int) (millisUntilFinished / 1000);
                 // 更新按鈕文字以顯示倒數計時
-                pairBluetoothButton.setText("配對鎖定中 (" + secondsRemaining + "s)");
+                int secondsRemaining = (int) (millisUntilFinished / 1000);
+                if (pairBluetoothButton != null) {
+                    pairBluetoothButton.setText("配對中 (" + secondsRemaining + "s)");
+                }
             }
 
             @Override
             public void onFinish() {
-                // 這個 onFinish 會在60秒到期時執行
-                if(isPairingModeActive) { // 再次檢查，避免重複執行
-                    isPairingModeActive = false;
-                    setLockdownUI(false); // 解除UI鎖定
-                    appendToCommandTerminal("ℹ️ 藍牙配對窗口已超時結束。");
+                // 這個 onFinish 會在60秒到期時執行（即超時）
+                if (isPairingModeActive) { // 再次檢查狀態，避免重複執行
+                    appendToCommandTerminal("⚠️ 配對流程超時。");
+                    stopPairingLockdown(); // 解除UI鎖定
+
+                    // 顯示一個超時專用的對話框
+                    new AlertDialog.Builder(UsbTerminalActivity.this)
+                            .setTitle("配對超時")
+                            .setMessage("未能在指定時間內收到配對結果。\n\n" +
+                                    "可能原因：\n" +
+                                    "1. USB 連線中斷。\n" +
+                                    "2. 您未在手機上確認系統配對請求。\n" +
+                                    "3. 樹莓派端發生錯誤。\n\n" +
+                                    "請檢查手機藍牙設定，確認是否已配對成功。")
+                            .setPositiveButton("好的", (dialog, which) -> {
+                                // 對話框關閉後，重新檢查一次連線狀態
+                                checkConnectionStatus();
+                            })
+                            .setCancelable(false)
+                            .show();
                 }
             }
         }.start();
     }
 
+    // --- [新增] ---
+    /**
+     * 停止配對鎖定：取消倒數計時器並解鎖UI。
+     */
+    private void stopPairingLockdown() {
+        if (!isPairingModeActive) return; // 如果不在鎖定模式，則不執行
+
+        if (pairingCountdownTimer != null) {
+            pairingCountdownTimer.cancel(); // 停止倒數計時
+            pairingCountdownTimer = null;
+        }
+        isPairingModeActive = false;
+        setLockdownUI(false); // 解鎖UI
+        appendToCommandTerminal("ℹ️ 配對流程已結束。");
+    }
+
+    // --- [修改] ---
     /**
      * 統一管理鎖定期間的 UI 狀態。
      * @param isLocked true 為鎖定，false 為解鎖
      */
     private void setLockdownUI(boolean isLocked) {
         // 鎖定或解鎖所有相關按鈕和輸入
-        pairBluetoothButton.setEnabled(!isLocked);
+        findViewById(R.id.shutdown_button).setEnabled(!isLocked);
+        findViewById(R.id.reset_bluetooth_button).setEnabled(!isLocked);
+        findViewById(R.id.clear_terminal_button).setEnabled(!isLocked);
         restartProgramButton.setEnabled(!isLocked);
-        sendButton.setEnabled(!isLocked);
-        commandInput.setEnabled(!isLocked);
+        sendButton.setEnabled(!isLocked && isInputEnabled); // sendButton還需考慮輸入是否啟用
+        commandInput.setEnabled(!isLocked && isInputEnabled);
         toggleReadOnlyButton.setEnabled(!isLocked);
+        pairBluetoothButton.setEnabled(!isLocked);
 
         if (isLocked) {
-            // 進入鎖定狀態時，可以改變按鈕樣式以提供更清晰的視覺回饋
-            toggleReadOnlyButton.setText("功能鎖定");
+            // 進入鎖定狀態時，改變按鈕樣式以提供更清晰的視覺回饋
+            toggleReadOnlyButton.setText("配對鎖定中");
+            pairBluetoothButton.setText("配對中...");
         } else {
-            // 解除鎖定時，恢復按鈕的原始文字
+            // 解除鎖定時，恢復按鈕的原始文字和狀態
             pairBluetoothButton.setText("配對藍牙");
-            // 恢復唯讀按鈕的原始狀態 (基於 isInputEnabled 變數)
             toggleReadOnlyButton.setText(isInputEnabled ? "鎖定輸入" : "解除唯讀");
+            // 重新整理一次所有按鈕的可用狀態
+            checkConnectionStatus();
         }
     }
 }
