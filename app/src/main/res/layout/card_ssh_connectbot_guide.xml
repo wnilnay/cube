@@ -19,7 +19,7 @@
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_usb"
+            android:src="@drawable/ic_terminal_advanced"
             app:tint="#2D3436"
             android:layout_gravity="center_vertical"/>
 
@@ -32,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="9. USB 終端機 (進階除錯)"
+                android:text="10. 進階操作：使用專業 SSH App"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#2D3436"
@@ -41,7 +41,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="此功能提供一個強大的除錯工具，可直接與樹莓派的作業系統互動。\n\n如何連接：\n1. 請務必使用支援資料傳輸的 USB 線 (而不只是充電線)，以確保手機與樹莓派能建立網路連線。\n2. 使用 USB 線連接您的手機與樹莓派。\n3. 在手機的系統設定中，找到『網路與網際網路』或類似選項。\n4. 啟用『USB 網路共享』(或稱 USB Tethering)。此功能僅分享連線能力，您的手機不需有網際網路連線。\n5. 回到本 App 的『設定』頁面，點擊『USB 終端機』，App 將自動掃描並建立連線。\n\n功能與注意事項：\n• 主畫面會即時顯示樹莓派主程式的所有日誌輸出。\n• 您可透過下方的命令列輸入 Linux 指令 (如 ls, dmesg) 來檢查系統狀態。\n• 『配對藍牙』按鈕可在此模式下為樹莓派與您的手機進行配對，解決藍牙無法正常配對的問題。\n• 警告：請謹慎使用關機、重啟藍牙等系統指令，不當操作可能導致程式或系統不穩定。"
+                android:text="若您需要複製貼上文字、管理多個視窗或執行更複雜的指令，推薦您使用功能更完整的 SSH App。以下將以開源且強大的 ConnectBot (由 Kenny Root 開發) 為例進行教學。\n\n操作步驟：\n1. 獲取連線資訊\n首先，請在本 App 的 USB 終端機中，獲取連線所需的資訊：\n  • 使用者名稱：在命令列輸入 logname 並發送，您將會看到使用者名稱 (例如 pi、sivs或其他使用者名稱)。\n  • IP 位址：接著輸入 ip addr 並發送。在 usb0 或類似介面的 inet 欄位找到一組 192.168.x.x 格式的 IP 位址。\n\n2. 使用 ConnectBot 連線\n在保持 USB 網路共享開啟的狀態下，打開 ConnectBot App：\n  • 在主畫面的連線欄位中，輸入 使用者名稱@IP位址 的格式，例如：pi@192.168.42.50\n  • ConnectBot 會自動使用標準的 SSH 埠號 (Port 22)，您無需手動設定。\n\n3. 輸入密碼\n當提示輸入密碼時，請輸入解魔方機的樹莓派預設密碼：\n151932\n\n完成後，您就可以透過 ConnectBot 享受完整的 SSH 終端機體驗了。"
                 android:textSize="16sp"
                 android:textColor="#636e72"
                 android:lineSpacingExtra="4dp"/>

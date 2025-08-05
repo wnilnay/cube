@@ -93,13 +93,10 @@ public class UsbConnectionManager {
         return instance;
     }
 
-    /**
-     * 唯一的公開連接方法。
-     * 透過完整掃描 USB 網路共享介面下的子網路，來尋找並連接到樹莓派伺服器。
-     *
-     * @param progressCallback 用於向 UI 回報進度字串的回呼。
-     * @return 一個 CompletableFuture，其結果為 ConnectionResult 物件。
-     */
+    public String getLastSuccessfullyConnectedIp(){
+        return lastSuccessfullyConnectedIp;
+    }
+
     /**
      * 統一的連接方法，實現了「嘗試快速連接，失敗則自動降級為完整掃描」的邏輯。
      * @param progressCallback 用於向 UI 回報進度。

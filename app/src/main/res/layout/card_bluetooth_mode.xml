@@ -32,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="9. 藍牙模式進階操作"
+                android:text="8. 藍牙模式進階操作"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#2D3436"

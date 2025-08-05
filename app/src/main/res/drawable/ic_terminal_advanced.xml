@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorControlNormal">
+
+    <!-- 一個經典的終端機提示符號，由一個大於號和一個游標組成。 -->
+
+    <!-- The '>' 提示字元，繪製成一個三角形。 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M6,7 L13,12 6,17 Z" />
+
+    <!-- The '_' 游標，繪製成一個矩形。 -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M8,18 L15,18 L15,20 L8,20 Z" />
+
+</vector>

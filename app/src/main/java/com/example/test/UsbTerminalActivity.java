@@ -60,6 +60,7 @@ public class UsbTerminalActivity extends AppCompatActivity {
     // pairingCountdownTimer 用於處理配對超時
     private volatile boolean isPairingModeActive = false;
     private CountDownTimer pairingCountdownTimer;
+    private boolean isFirstClickEditView = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -262,6 +263,17 @@ public class UsbTerminalActivity extends AppCompatActivity {
     }
 
     private void toggleInputLock() {
+        if(isFirstClickEditView){
+            isFirstClickEditView = false;
+            String ip = usbManager.getLastSuccessfullyConnectedIp();
+            new AlertDialog.Builder(UsbTerminalActivity.this)
+                    .setTitle("更強大的終端")
+                    .setMessage("此終端功能較薄弱，若是需要更強大的終端功能，可在保持USB網路共享的情況下，使用其他app。\n\n" +
+                            "目前在樹莓派上的USB網路共享IP為" + ip + "\n\n" +
+                            "若需要密碼，則解魔方機樹莓派密碼為「151932」。")
+                    .setPositiveButton("好的", null)
+                    .show();
+        }
         isInputEnabled = !isInputEnabled;
         commandInput.setEnabled(isInputEnabled);
         sendButton.setEnabled(isInputEnabled);

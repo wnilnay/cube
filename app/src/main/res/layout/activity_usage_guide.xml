@@ -64,6 +64,7 @@
         <!-- [新增] 藍牙模式與 USB 終端機說明 -->
         <include layout="@layout/card_bluetooth_mode" />
         <include layout="@layout/card_usb_terminal" />
+        <include layout="@layout/card_ssh_connectbot_guide"/>
 
         <!-- 原有的常見問題與開源授權卡片 -->
         <include layout="@layout/card_faq" />
