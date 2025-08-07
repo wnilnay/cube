@@ -8,7 +8,7 @@
     android:background="@drawable/fragment_background"
     tools:context=".SetColorFragment">
 
-    <!-- 现代化工具栏 -->
+    <!-- 現代化工具欄 -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
             app:title="顏色設定"/>
     </androidx.cardview.widget.CardView>
 
-    <!-- 颜色网格 -->
+    <!-- 顏色網格 -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"

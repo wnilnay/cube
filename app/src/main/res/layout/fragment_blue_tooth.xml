@@ -9,7 +9,7 @@
     android:padding="24dp"
     tools:context=".BlueToothFragment">
 
-    <!-- 蓝牙图标 -->
+    <!-- 藍牙圖標 -->
     <ImageView
         android:id="@+id/bluetooth_icon"
         android:layout_width="80dp"
@@ -73,7 +73,7 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- 配对按钮 -->
+    <!-- 配對按鈕 -->
     <androidx.cardview.widget.CardView
         android:id="@+id/pair_button_card"
         android:layout_width="200dp"
@@ -99,7 +99,7 @@
             android:elevation="0dp"/>
     </androidx.cardview.widget.CardView>
 
-    <!-- 连接按钮 -->
+    <!-- 連接按鈕 -->
     <androidx.cardview.widget.CardView
         android:id="@+id/connect_button_card"
         android:layout_width="200dp"
@@ -125,7 +125,7 @@
             android:elevation="0dp"/>
     </androidx.cardview.widget.CardView>
 
-    <!-- 状态指示器 -->
+    <!-- 狀態指示器 -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

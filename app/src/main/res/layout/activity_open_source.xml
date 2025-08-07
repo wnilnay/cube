@@ -30,7 +30,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="本 APP 與『min2phase』解算核心皆以 MIT License 散布。\n\nMIT License 允許自由使用、修改與再散布，只需保留版權宣告與條款全文。\n\n完整文本已隨專案附於 LICENSE 檔，亦可至 GitHub 查看：\nhttps://github.com/cs0x7f/min2phase\n\n本專案原始碼：\nhttps://github.com/wnilnay/cube"
+            android:text="本 APP 與『min2phase』解算核心皆以 MIT License 散佈。\n\nMIT License 允許自由使用、修改與再散佈，只需保留版權宣告與條款全文。\n\n完整文本已隨專案附於 LICENSE 檔，亦可至 GitHub 查看：\nhttps://github.com/cs0x7f/min2phase\n\n本專案原始碼：\nhttps://github.com/wnilnay/cube"
             android:textSize="14sp"
             android:textColor="#636e72"/>
 

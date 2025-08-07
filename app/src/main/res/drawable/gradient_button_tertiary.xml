@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- gradient_button_tertiary.xml - 第三级渐变按钮 -->
+<!-- gradient_button_tertiary.xml - 第三級漸變按鈕 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <gradient

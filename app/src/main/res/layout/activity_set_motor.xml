@@ -10,7 +10,7 @@
     android:background="@drawable/gradient_background"
     tools:context=".SetMotorActivity">
 
-    <!-- 标题栏 -->
+    <!-- 標題欄 -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
                 android:textColor="#636e72"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- 顶层马达 -->
+            <!-- 頂層馬達 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -142,7 +142,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 底层马达 -->
+            <!-- 底層馬達 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -207,7 +207,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 左侧马达 -->
+            <!-- 左側馬達 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -272,7 +272,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 右侧马达 -->
+            <!-- 右側馬達 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

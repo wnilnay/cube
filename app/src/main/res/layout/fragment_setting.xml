@@ -14,7 +14,7 @@
         android:padding="20dp"
         >
 
-        <!-- 设置标题 -->
+        <!-- 設置標題 -->
         <androidx.cardview.widget.CardView
             android:id="@+id/title_card"
             android:layout_width="match_parent"
@@ -51,7 +51,7 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- 设置选项容器 -->
+        <!-- 設置選項容器 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -120,7 +120,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 马达设置 -->
+            <!-- 馬達設置 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/motor_card"
                 android:layout_width="match_parent"
@@ -178,7 +178,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 马达测试 -->
+            <!-- 馬達測試 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/test_motor_card"
                 android:layout_width="match_parent"
@@ -236,7 +236,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 坐标设置 -->
+            <!-- 座標設置 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/coordinate_card"
                 android:layout_width="match_parent"
@@ -294,7 +294,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- 颜色设置 -->
+            <!-- 顏色設置 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/color_card"
                 android:layout_width="match_parent"

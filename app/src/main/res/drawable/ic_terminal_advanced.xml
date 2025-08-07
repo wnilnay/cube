@@ -6,14 +6,14 @@
     android:viewportHeight="24"
     android:tint="?attr/colorControlNormal">
 
-    <!-- 一個經典的終端機提示符號，由一個大於號和一個游標組成。 -->
+    <!-- 一個經典的終端機提示符號，由一個大於號和一個遊標組成。 -->
 
     <!-- The '>' 提示字元，繪製成一個三角形。 -->
     <path
         android:fillColor="#000000"
         android:pathData="M6,7 L13,12 6,17 Z" />
 
-    <!-- The '_' 游標，繪製成一個矩形。 -->
+    <!-- The '_' 遊標，繪製成一個矩形。 -->
     <path
         android:fillColor="#000000"
         android:pathData="M8,18 L15,18 L15,20 L8,20 Z" />

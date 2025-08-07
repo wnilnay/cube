@@ -34,7 +34,7 @@ public class CubeFace {
 
     // 面的索引
     private int faceIndex;
-    // 3x3 网格的颜色数组
+    // 3x3 網格的顏色數組
     private float[][] gridColors;
     
     // 高亮狀態 - 記錄哪些格子被高亮
@@ -43,10 +43,10 @@ public class CubeFace {
     // 高亮顏色 - 使用黑色
     private final float[] HIGHLIGHT_COLOR = {0.0f, 0.0f, 0.0f, 1.0f}; // 黑色，不透明
 
-    // 黑色边框颜色
+    // 黑色邊框顏色
     private final float[] BORDER_COLOR = {0.0f, 0.0f, 0.0f, 1.0f};
 
-    // 默认的魔方颜色
+    // 默認的魔方顏色
 //    private final float[][] DEFAULT_FACE_COLORS = {
 //            {1.0f, 1.0f, 1.0f, 1.0f}, // 白色 (上面 - Up)
 //            {0.0f, 0.0f, 1.0f, 1.0f}, // 藍色 (右面 - Right)
@@ -66,30 +66,30 @@ public class CubeFace {
 
     private CubeCell[][] cells = new CubeCell[3][3];
 
-    // 为3x3网格生成顶点坐标
+    // 爲3x3網格生成頂點座標
     private float[] getVerticesForFace(int faceIndex) {
         float size = 0.5f;
         float cellSize = size * 2 / 3;
-        float gap = 0.01f; // 小间隙
+        float gap = 0.01f; // 小間隙
 
-        // 每个面需要9个小方块，每个小方块4个顶点
+        // 每個面需要9個小方塊，每個小方塊4個頂點
         float[] vertices = new float[9 * 4 * 3];
 
         int vertexIndex = 0;
 
-        // 生成3x3网格
+        // 生成3x3網格
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                // 计算小方块的位置
+                // 計算小方塊的位置
                 float startX = -size + col * cellSize + gap;
                 float endX = startX + cellSize - gap;
                 float startY = size - row * cellSize - gap;
                 float endY = startY - cellSize + gap;
 
-                // 根据面的索引生成对应的顶点
+                // 根據面的索引生成對應的頂點
                 float[] cellVertices = getCellVertices(faceIndex, startX, endX, startY, endY, size);
 
-                // 将顶点添加到数组中
+                // 將頂點添加到數組中
                 for (int i = 0; i < cellVertices.length; i++) {
                     vertices[vertexIndex++] = cellVertices[i];
                 }
@@ -99,16 +99,16 @@ public class CubeFace {
         return vertices;
     }
 
-    // 生成边框顶点
+    // 生成邊框頂點
     private float[] getBorderVerticesForFace(int faceIndex) {
         float size = 0.5f;
         float cellSize = size * 2 / 3;
 
-        // 生成网格线 - 4条垂直线 + 4条水平线
-        float[] borderVertices = new float[8 * 4 * 3]; // 8条线，每条4个顶点，每个顶点3个坐标
+        // 生成網格線 - 4條垂直線 + 4條水平線
+        float[] borderVertices = new float[8 * 4 * 3]; // 8條線，每條4個頂點，每個頂點3個座標
         int vertexIndex = 0;
 
-        // 垂直线
+        // 垂直線
         for (int i = 0; i < 4; i++) {
             float x = -size + i * cellSize;
             float[] lineVertices = getBorderLine(faceIndex, x, -size, x, size, true);
@@ -117,7 +117,7 @@ public class CubeFace {
             }
         }
 
-        // 水平线
+        // 水平線
         for (int i = 0; i < 4; i++) {
             float y = size - i * cellSize;
             float[] lineVertices = getBorderLine(faceIndex, -size, y, size, y, false);
@@ -129,12 +129,12 @@ public class CubeFace {
         return borderVertices;
     }
 
-    // 生成单条边框线的顶点
+    // 生成單條邊框線的頂點
     private float[] getBorderLine(int faceIndex, float x1, float y1, float x2, float y2, boolean isVertical) {
         float size = 0.5f;
         float lineWidth = 0.01f;
 
-        float[] vertices = new float[12]; // 4个顶点，每个3个坐标
+        float[] vertices = new float[12]; // 4個頂點，每個3個座標
 
         switch (faceIndex) {
             case 0: // 上面 (Up)
@@ -220,45 +220,45 @@ public class CubeFace {
         return vertices;
     }
 
-    // 为单个小方块生成顶点
+    // 爲單個小方塊生成頂點
     private float[] getCellVertices(int faceIndex, float startX, float endX, float startY, float endY, float size) {
         switch (faceIndex) {
-            case 0: // 上面 (Up) (从上方看，顺时针)
+            case 0: // 上面 (Up) (從上方看，順時針)
                 return new float[] {
                         startX, size, -endY,
                         endX, size, -endY,
                         endX, size, -startY,
                         startX, size, -startY
                 };
-            case 1: // 右面 (Right) (从右方看，顺时针)
+            case 1: // 右面 (Right) (從右方看，順時針)
                 return new float[] {
                         size, -endY, -startX,
                         size, -endY, -endX,
                         size, -startY, -endX,
                         size, -startY, -startX
                 };
-            case 2: // 前面 (Forward) (从前方看，顺时针)
+            case 2: // 前面 (Forward) (從前方看，順時針)
                 return new float[] {
                         startX, -endY, size,
                         endX, -endY, size,
                         endX, -startY, size,
                         startX, -startY, size
                 };
-            case 3: // 下面 (Down) (从下方看，顺时针)
+            case 3: // 下面 (Down) (從下方看，順時針)
                 return new float[] {
                         startX, -size, -startY,
                         endX, -size, -startY,
                         endX, -size, -endY,
                         startX, -size, -endY
                 };
-            case 4: // 左面 (Left) (从左方看，顺时针)
+            case 4: // 左面 (Left) (從左方看，順時針)
                 return new float[] {
                         -size, -endY, -endX,
                         -size, -endY, -startX,
                         -size, -startY, -startX,
                         -size, -startY, -endX
                 };
-            case 5: // 後面 (Backward) (从后方看，顺时针)
+            case 5: // 後面 (Backward) (從後方看，順時針)
                 return new float[] {
                         startX, -startY, -size,
                         endX, -startY, -size,
@@ -270,9 +270,9 @@ public class CubeFace {
         }
     }
 
-    // 绘制顺序 - 9个小方块，每个2个三角形
+    // 繪製順序 - 9個小方塊，每個2個三角形
     private short[] generateDrawOrder() {
-        short[] drawOrder = new short[9 * 6]; // 9个方块 * 6个索引
+        short[] drawOrder = new short[9 * 6]; // 9個方塊 * 6個索引
 
         for (int i = 0; i < 9; i++) {
             short baseIndex = (short)(i * 4);
@@ -289,9 +289,9 @@ public class CubeFace {
         return drawOrder;
     }
 
-    // 边框绘制顺序
+    // 邊框繪製順序
     private short[] generateBorderDrawOrder() {
-        short[] drawOrder = new short[8 * 6]; // 8条线 * 6个索引
+        short[] drawOrder = new short[8 * 6]; // 8條線 * 6個索引
 
         for (int i = 0; i < 8; i++) {
             short baseIndex = (short)(i * 4);
@@ -311,7 +311,7 @@ public class CubeFace {
     public CubeFace(int faceIndex) {
         this.faceIndex = faceIndex;
 
-        // 初始化3x3网格颜色，全部使用该面的默认颜色
+        // 初始化3x3網格顏色，全部使用該面的默認顏色
         gridColors = new float[9][4];
         for (int i = 0; i < 9; i++) {
             System.arraycopy(DEFAULT_FACE_COLORS[faceIndex], 0, gridColors[i], 0, 4);
@@ -330,35 +330,35 @@ public class CubeFace {
         short[] drawOrder = generateDrawOrder();
         short[] borderDrawOrder = generateBorderDrawOrder();
 
-        // 初始化顶点缓冲区
+        // 初始化頂點緩衝區
         ByteBuffer bb = ByteBuffer.allocateDirect(vertices.length * 4);
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(vertices);
         vertexBuffer.position(0);
 
-        // 初始化边框顶点缓冲区
+        // 初始化邊框頂點緩衝區
         ByteBuffer bbb = ByteBuffer.allocateDirect(borderVertices.length * 4);
         bbb.order(ByteOrder.nativeOrder());
         borderVertexBuffer = bbb.asFloatBuffer();
         borderVertexBuffer.put(borderVertices);
         borderVertexBuffer.position(0);
 
-        // 初始化绘制顺序缓冲区
+        // 初始化繪製順序緩衝區
         ByteBuffer dlb = ByteBuffer.allocateDirect(drawOrder.length * 2);
         dlb.order(ByteOrder.nativeOrder());
         drawListBuffer = dlb.asShortBuffer();
         drawListBuffer.put(drawOrder);
         drawListBuffer.position(0);
 
-        // 初始化边框绘制顺序缓冲区
+        // 初始化邊框繪製順序緩衝區
         ByteBuffer bdlb = ByteBuffer.allocateDirect(borderDrawOrder.length * 2);
         bdlb.order(ByteOrder.nativeOrder());
         borderDrawListBuffer = bdlb.asShortBuffer();
         borderDrawListBuffer.put(borderDrawOrder);
         borderDrawListBuffer.position(0);
 
-        // 准备shader
+        // 準備shader
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
         int fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
 
@@ -395,14 +395,14 @@ public class CubeFace {
         // Cell 已自行繪製邊框，這裡不再額外描繪
     }
 
-    // 设置特定小方块的颜色
+    // 設置特定小方塊的顏色
     public void setCellColor(int row, int col, float[] color) {
         if (row >= 0 && row < 3 && col >= 0 && col < 3) {
             cells[row][col].setColor(color);
         }
     }
 
-    // 获取特定小方块的颜色
+    // 獲取特定小方塊的顏色
     public float[] getCellColor(int row, int col) {
         if (row >= 0 && row < 3 && col >= 0 && col < 3) {
             // 直接回傳 cell 物件的顏色
