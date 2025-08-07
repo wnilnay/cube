@@ -1,4 +1,3 @@
-// DeviceListActivity.java (修改後，引導使用者使用 USB 配對)
 package com.example.test;
 
 import android.Manifest;
@@ -28,173 +27,205 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class DeviceListActivity extends AppCompatActivity {
 
+    private Set<BluetoothDevice> pairedDevices = null;
+    private final Set<BluetoothDevice> newDevices = new HashSet<>();
+
+    /**
+     * Tag for Log
+     */
     private static final String TAG = "DeviceListActivity";
+
+    /**
+     * Return Intent extra
+     */
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
+    /**
+     * Member fields
+     */
     private BluetoothAdapter mBtAdapter;
-    private ArrayAdapter<String> mPairedDevicesArrayAdapter;
+
+    private Button scanButton; // <-- [新增] 為掃描按鈕添加一個成員變數
+
+    /**
+     * Newly discovered devices
+     */
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
-    private Set<BluetoothDevice> mPairedDevices;
-    private final Set<BluetoothDevice> mNewDevices = new HashSet<>();
 
     @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        // 在 setContentView 之前請求視窗特性
-        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_device_list);
 
-        // 檢查和請求必要的藍牙權限
-        checkAndRequestBluetoothPermissions();
+        // 檢查和請求藍牙權限
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // API 31 及以上
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
 
-        // 設置預設結果，以防使用者直接返回
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN},
+                        0);
+            }
+        } else { // 針對 API 30 及以下
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                        0);
+            }
+        }
+
+
+        // Set result CANCELED in case the user backs out
         setResult(Activity.RESULT_CANCELED);
 
-        // 初始化掃描按鈕
-        Button scanButton = findViewById(R.id.button_scan);
-        scanButton.setOnClickListener(v -> {
-            doDiscovery();
-            v.setVisibility(View.GONE); // 點擊後隱藏按鈕
+        // Initialize the button to perform device discovery
+        scanButton = findViewById(R.id.button_scan);
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                new AlertDialog.Builder(DeviceListActivity.this)
+                        .setTitle("配對建議")
+                        .setMessage("為了獲得最穩定可靠的配對體驗，強烈建議您返回『設定』頁面，使用『USB 終端機』功能來完成首次配對。")
+                        .setPositiveButton("我知道了", null) // 只提供一個確認按鈕
+                        .setIcon(android.R.drawable.ic_dialog_info)
+                        .show();
+                doDiscovery();
+                v.setVisibility(View.GONE);
+            }
         });
+        // Initialize array adapters. One for already paired devices and
+        // one for newly discovered devices
 
-        // 初始化用於已配對和新發現裝置的 ArrayAdapter
-        mPairedDevicesArrayAdapter = new ArrayAdapter<>(this, R.layout.device_name);
+        /*
+        important pairedDevicesArrayAdapter mNewDevicesArrayAdapter
+         */
+        ArrayAdapter<String> pairedDevicesArrayAdapter =
+                new ArrayAdapter<>(this, R.layout.device_name);
         mNewDevicesArrayAdapter = new ArrayAdapter<>(this, R.layout.device_name);
 
-        // 設定已配對裝置的 ListView
+        // Find and set up the ListView for paired devices
         ListView pairedListView = findViewById(R.id.paired_devices);
-        pairedListView.setAdapter(mPairedDevicesArrayAdapter);
+        pairedListView.setAdapter(pairedDevicesArrayAdapter);
         pairedListView.setOnItemClickListener(mDeviceClickListener);
 
-        // 設定新發現裝置的 ListView
+        // Find and set up the ListView for newly discovered devices
         ListView newDevicesListView = findViewById(R.id.new_devices);
         newDevicesListView.setAdapter(mNewDevicesArrayAdapter);
         newDevicesListView.setOnItemClickListener(mDeviceClickListener);
 
-        // 註冊廣播接收器以監聽裝置發現和掃描完成事件
+        // Register for broadcasts when a device is discovered
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         this.registerReceiver(mReceiver, filter);
 
+        // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         this.registerReceiver(mReceiver, filter);
 
-        // 獲取本地藍牙適配器
+        // Get the local Bluetooth adapter
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // 填充已配對裝置列表
-        populatePairedDevicesList();
-    }
-
-    /**
-     * 獲取並顯示已配對的裝置列表。
-     */
-    @RequiresApi(api = Build.VERSION_CODES.S)
-    private void populatePairedDevicesList() {
-        // 權限檢查
+//        // Get a set of currently paired devices
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            checkAndRequestBluetoothPermissions(); // 如果沒有權限，再次請求
-            return;
+            //Log.d("wnilnay ContextCompat2", ContextCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT) + "");
+            requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT},0);
         }
+        pairedDevices = mBtAdapter.getBondedDevices();
 
-        mPairedDevices = mBtAdapter.getBondedDevices();
-        mPairedDevicesArrayAdapter.clear(); // 清空以防重複添加
-
-        if (mPairedDevices != null && mPairedDevices.size() > 0) {
+        // If there are paired devices, add each one to the ArrayAdapter
+        if (pairedDevices.size() > 0) {
             findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
-            for (BluetoothDevice device : mPairedDevices) {
-                mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+            for (BluetoothDevice device : pairedDevices) {
+                pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             }
         } else {
-            String noDevices = "沒有已配對的裝置";
-            mPairedDevicesArrayAdapter.add(noDevices);
+            String noDevices = "No devices have been paired";
+            pairedDevicesArrayAdapter.add(noDevices);
         }
+
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 確保在 Activity 銷毀時停止掃描
-        if (mBtAdapter != null) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
-                mBtAdapter.cancelDiscovery();
-            }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},0);
         }
-        // 取消註冊廣播接收器
+        mBtAdapter.cancelDiscovery();
+        // Unregister broadcast listeners
         this.unregisterReceiver(mReceiver);
     }
 
     /**
-     * 開始掃描新裝置。
+     * Start device discover with the BluetoothAdapter
      */
     @RequiresApi(api = Build.VERSION_CODES.S)
     private void doDiscovery() {
         Log.d(TAG, "doDiscovery()");
-        // 顯示標題欄的進度條
+
+        // Indicate scanning in the title
         setProgressBarIndeterminateVisibility(true);
-        setTitle("正在掃描裝置...");
+        setTitle("scanning for devices...");
 
-        // 顯示 "新裝置" 的標題
-        findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
+        // Turn on sub-title for new devices
+        //findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
 
-        // 權限檢查
+        // If we're already discovering, stop it
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-            checkAndRequestBluetoothPermissions();
-            return;
+            requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},0);
         }
-
-        // 如果正在掃描，先取消
         if (mBtAdapter.isDiscovering()) {
             mBtAdapter.cancelDiscovery();
         }
 
-        // 清空上次掃描到的新裝置列表
-        mNewDevicesArrayAdapter.clear();
-        mNewDevices.clear();
-
-        // 開始掃描
+        // Request discover from BluetoothAdapter
         mBtAdapter.startDiscovery();
     }
 
-    /**
-     * ListView 中項目被點擊時的監聽器。
-     */
     private final AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
         @RequiresApi(api = Build.VERSION_CODES.S)
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            // 權限檢查
+            // Cancel discovery because it's costly and we're about to connect
             if (ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                checkAndRequestBluetoothPermissions();
-                return;
+                requestPermissions(new String[]{Manifest.permission.BLUETOOTH_SCAN},0);
             }
-            // 在嘗試連接前，停止掃描以節省資源
             mBtAdapter.cancelDiscovery();
+            Object[] bluetoothDevices = null;
 
-            // 從點擊的文字中獲取 MAC 位址（最後17個字元）
-            String info = ((TextView) view).getText().toString();
-            String address = info.substring(info.length() - 17);
+            if(parent.getId() == R.id.paired_devices){
+                bluetoothDevices = pairedDevices.toArray();
+            }
+            else if(parent.getId() == R.id.new_devices){
+                bluetoothDevices = newDevices.toArray();
+            }
 
-            // 根據位址獲取 BluetoothDevice 物件
-            BluetoothDevice device = mBtAdapter.getRemoteDevice(address);
+            assert bluetoothDevices != null;
+            BluetoothDeviceManager.setDevice((BluetoothDevice) bluetoothDevices[position]);
 
-            // 將選擇的裝置設定到管理器中
-            BluetoothDeviceManager.setDevice(device);
-
-            // 設置結果並結束此 Activity
+            // Set result and finish this Activity
             setResult(Activity.RESULT_OK);
             finish();
         }
     };
 
     /**
-     * 監聽藍牙掃描廣播的接收器。
+     * The BroadcastReceiver that listens for discovered devices and changes the title when
+     * discovery is finished
      */
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @RequiresApi(api = Build.VERSION_CODES.S)
@@ -202,76 +233,27 @@ public class DeviceListActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            // 當發現一個新裝置時
+            // When discovery finds a device
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                // 權限檢查
+                // If it's already paired, skip it, because it's been listed already
                 if (ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    checkAndRequestBluetoothPermissions();
-                    return;
+                    requestPermissions(new String[]{Manifest.permission.BLUETOOTH_CONNECT},0);
                 }
-
-                if (device != null && device.getName() != null) {
-                    // --- [核心修改] ---
-                    // 檢查是否是我們的目標裝置 "Cube Solver"，並且它還未配對
-                    if ("Cube Solver".equalsIgnoreCase(device.getName()) && device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                        // 如果是，彈出提示對話框，引導使用者去 USB 配對
-                        showUsbPairingSuggestionDialog();
-                    }
-
-                    // 只有當裝置未配對且不重複時，才將其添加到新裝置列表
-                    boolean isPaired = mPairedDevices != null && mPairedDevices.contains(device);
-                    boolean isAlreadyFound = mNewDevices.contains(device);
-
-                    if (!isPaired && !isAlreadyFound) {
-                        mNewDevices.add(device);
-                        mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                    }
+                if (device != null && device.getBondState() != BluetoothDevice.BOND_BONDED && device.getName() != null) {
+                    newDevices.add(device);
+                    mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
                 }
+                // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                // 當掃描結束時
                 setProgressBarIndeterminateVisibility(false);
-                setTitle("選擇要連接的裝置");
+                setTitle("select a device to connect");
                 if (mNewDevicesArrayAdapter.getCount() == 0) {
-                    String noDevices = "沒有發現新裝置";
+                    String noDevices = "No devices found";
                     mNewDevicesArrayAdapter.add(noDevices);
                 }
             }
         }
     };
-
-    /**
-     * [新增] 彈出一個對話框，建議使用者透過 USB 終端機進行配對。
-     */
-    private void showUsbPairingSuggestionDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("配對建議")
-                .setMessage("偵測到尚未配對的魔術方塊解算機 (Cube Solver)。\n\n為了獲得最穩定可靠的配對體驗，強烈建議您返回『設定』頁面，使用『USB 終端機』功能來完成首次配對。")
-                .setPositiveButton("我知道了", null) // 只提供一個確認按鈕
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .show();
-    }
-
-    /**
-     * [新增] 集中處理權限檢查和請求的輔助方法。
-     */
-    @RequiresApi(api = Build.VERSION_CODES.S)
-    private void checkAndRequestBluetoothPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // API 31 及以上
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN},
-                        0);
-            }
-        } else { // API 30 及以下
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                        0);
-            }
-        }
-    }
 }

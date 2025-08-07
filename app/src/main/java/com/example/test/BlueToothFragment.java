@@ -173,7 +173,7 @@ public class BlueToothFragment extends Fragment {
     public void pairDevice() {
         try {
             if(!adapter.isEnabled()) {
-                Toast.makeText(getContext(),"先開權限後再點擊按鈕",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),"請先開啟權限後再點擊按鈕",Toast.LENGTH_SHORT).show();
                 //打開藍芽窗(問你是否打開藍芽)
                 Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,300);
@@ -219,17 +219,17 @@ public class BlueToothFragment extends Fragment {
 
         }
 
-        Toast.makeText(getContext(),"已斷線",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(),"已斷開連線",Toast.LENGTH_SHORT).show();
     }
 
     public void connectDevice() {
         try {
             if(!isComplete){
-                Toast.makeText(getContext(), "藍牙正在連線中，請稍後再試", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "藍牙正在連線中，請稍候再試", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (device == null) {
-                Toast.makeText(getContext(), "請選擇配對裝置", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "請選擇欲配對的裝置", Toast.LENGTH_SHORT).show();
                 return;
             }
 
