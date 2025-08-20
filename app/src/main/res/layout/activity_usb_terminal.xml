@@ -30,6 +30,7 @@
             android:hint="輸入命令..."
             android:imeOptions="actionSend"
             android:padding="12dp"
+            android:textColor="@color/black"
             android:textSize="14sp" />
 
         <Button

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 勾選狀態：用預設綠色 -->
+    <item android:state_checked="true" android:color="#38D91A" />
+    <!-- 未勾選狀態：外框固定黑色 -->
+    <item android:color="#FF212121" />
+</selector>

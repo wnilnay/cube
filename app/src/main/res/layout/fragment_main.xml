@@ -51,6 +51,7 @@
                         android:layout_height="wrap_content"
                         android:text="展示動畫"
                         android:textColor="@color/primary_text"
+                        android:buttonTint="@color/checkbox_tint"
                         android:checked="false"/>
                 </LinearLayout>
             </LinearLayout>

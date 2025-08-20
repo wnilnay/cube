@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?attr/colorPrimary"
+    android:background="#EDE9E9"
     android:layout_marginTop="20dp"
     tools:context=".SetSingleColorFragment">
 
@@ -58,11 +58,11 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
+
         <Space
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
+            android:layout_height="69dp"
+            android:layout_weight="1" />
         <Button
             android:id="@+id/back_to_default_button"
             android:layout_width="wrap_content"

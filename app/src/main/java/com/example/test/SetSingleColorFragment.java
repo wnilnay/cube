@@ -2,9 +2,11 @@ package com.example.test;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -16,6 +18,7 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -48,8 +51,12 @@ public class SetSingleColorFragment extends Fragment {
     private ImageView imageView;
     private ResizableOverlayView overlayView;
     private Button fromAlbumsbButton, fromCamaraButton, backToDefaultButton, saveButton;
+
+    // 更新請求碼，為權限請求新增一個唯一的代碼
     private final int REQUEST_GALLERY = 1;
     private final int REQUEST_CAMERA = 2;
+    private final int REQUEST_CAMERA_PERMISSION = 3; // 【新】相機權限請求碼
+
     private File saveDir;
     private String color = "";
     private TextView upperHSVtextview, lowerHSVtextview;
@@ -73,7 +80,6 @@ public class SetSingleColorFragment extends Fragment {
             upperHSVtextview = view.findViewById(R.id.upper_hsv_textview);
             lowerHSVtextview = view.findViewById(R.id.lower_hsv_textview);
 
-            // 改為 App-specific External Storage，避免 Scoped Storage 寫入受限
             saveDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
             Bundle arg = getArguments();
@@ -81,7 +87,6 @@ public class SetSingleColorFragment extends Fragment {
             color = arg.getString("color");
             Bitmap myBitmap = StorageUtil.loadBitmap(getContext(), "bitmap_" + color);
             isWhite = color.equals("white");
-            //Log.d("wnilnay color", color.equals("white") + "");
 
             if(myBitmap == null){
                 setBackToDefaultBitmap();
@@ -90,127 +95,89 @@ public class SetSingleColorFragment extends Fragment {
             }
             else {
                 imageView.setImageBitmap(myBitmap);
-
-                overlayView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        String jsonString = StorageUtil.getString(getContext(), "rectF_" + color);
-                        try {
-                            JSONObject jsonObject = new JSONObject(jsonString);
-                            RectF rect = overlayView.getMaskRect();
-                            rect.left = (float) jsonObject.getDouble("left");
-                            rect.top = (float) jsonObject.getDouble("top");
-                            rect.right = (float) jsonObject.getDouble("right");
-                            rect.bottom = (float) jsonObject.getDouble("bottom");
-                            overlayView.invalidate();
-                        }
-                        catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
+                overlayView.post(() -> {
+                    String jsonString = StorageUtil.getString(getContext(), "rectF_" + color);
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonString);
+                        RectF rect = overlayView.getMaskRect();
+                        rect.left = (float) jsonObject.getDouble("left");
+                        rect.top = (float) jsonObject.getDouble("top");
+                        rect.right = (float) jsonObject.getDouble("right");
+                        rect.bottom = (float) jsonObject.getDouble("bottom");
+                        overlayView.invalidate();
+                    }
+                    catch (JSONException e) {
+                        Log.e("SetSingleColorFragment", "JSON Error", e);
                     }
                 });
-
-                upperHSVtextview.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            String jsonString = StorageUtil.getString(getContext(), "HSV_" + color + "_upper");
-                            JSONArray jsonArray = new JSONArray(jsonString);
-                            float[] hsv_upper = new float[jsonArray.length()];
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                hsv_upper[i] = (float) jsonArray.getDouble(i);
-                            }
-
-                            jsonString = StorageUtil.getString(getContext(), "HSV_" + color + "_lower");
-                            jsonArray = new JSONArray(jsonString);
-                            float[] hsv_lower = new float[jsonArray.length()];
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                hsv_lower[i] = (float) jsonArray.getDouble(i);
-                            }
-
-                            hsv_upper_255 = hsv_upper;
-                            hsv_lower_255 = hsv_lower;
-                            updateColorTextView(hsv_upper, hsv_lower);
-
-                            // 使用 newColors 陣列
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                upperHSVtextview.post(() -> {
+                    try {
+                        String jsonString = StorageUtil.getString(getContext(), "HSV_" + color + "_upper");
+                        JSONArray jsonArray = new JSONArray(jsonString);
+                        float[] hsv_upper = new float[jsonArray.length()];
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            hsv_upper[i] = (float) jsonArray.getDouble(i);
                         }
+                        jsonString = StorageUtil.getString(getContext(), "HSV_" + color + "_lower");
+                        jsonArray = new JSONArray(jsonString);
+                        float[] hsv_lower = new float[jsonArray.length()];
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            hsv_lower[i] = (float) jsonArray.getDouble(i);
+                        }
+                        hsv_upper_255 = hsv_upper;
+                        hsv_lower_255 = hsv_lower;
+                        updateColorTextView(hsv_upper, hsv_lower);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 });
-
             }
 
-            overlayView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    RectF rect = overlayView.getMaskRect();
-                    if(rect.bottom > imageView.getHeight()){
-                        rect.bottom = imageView.getHeight();
-                    }
-                    if(rect.top < 0){
-                        rect.top = 0;
-                    }
-                    overlayView.invalidate();
-                    //Log.d("wnilnay rect", "left:" + rect.left + ", top:" + rect.top + ", right:" + rect.right + ", bottom:" + rect.bottom);
-                    if(imageView.getDrawable() != null && motionEvent.getAction() == MotionEvent.ACTION_UP){
-                        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if(isWhite){
-                                    float[] s = analyzeBitmap(bitmap,ResizableOverlayView
-                                            .mapRectFromViewToBitmap(rect, imageView, bitmap), isWhite);
-                                    hsv_lower_255 = new float[]{0, Math.round(s[0] * 255), 100};
-                                    hsv_upper_255 = new float[]{360, Math.round(s[1] * 255), 255};
-                                    updateColorTextView(hsv_upper_255, hsv_lower_255);
-                                }
-                                else {
-                                    float[] h = analyzeBitmap(bitmap, ResizableOverlayView
-                                            .mapRectFromViewToBitmap(rect, imageView, bitmap), isWhite);
-                                    hsv_lower_255 = new float[]{h[0], 100, 100};
-                                    hsv_upper_255 = new float[]{h[1], 255, 255};
-                                    updateColorTextView(hsv_upper_255, hsv_lower_255);
-                                }
-
-                            }
-                        }).start();
-                        isRect = true;
-                    }
-
-                    return false;
+            overlayView.setOnTouchListener((v, motionEvent) -> {
+                RectF rect = overlayView.getMaskRect();
+                if(rect.bottom > imageView.getHeight()){
+                    rect.bottom = imageView.getHeight();
                 }
-            });
-            fromAlbumsbButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    fromAlbums();
+                if(rect.top < 0){
+                    rect.top = 0;
                 }
-            });
-            fromCamaraButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    fromCamara();
+                overlayView.invalidate();
+                if(imageView.getDrawable() != null && motionEvent.getAction() == MotionEvent.ACTION_UP){
+                    Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                    new Thread(() -> {
+                        if(isWhite){
+                            float[] s = analyzeBitmap(bitmap,ResizableOverlayView
+                                    .mapRectFromViewToBitmap(rect, imageView, bitmap), isWhite);
+                            hsv_lower_255 = new float[]{0, Math.round(s[0] * 255), 100};
+                            hsv_upper_255 = new float[]{360, Math.round(s[1] * 255), 255};
+                            updateColorTextView(hsv_upper_255, hsv_lower_255);
+                        }
+                        else {
+                            float[] h = analyzeBitmap(bitmap, ResizableOverlayView
+                                    .mapRectFromViewToBitmap(rect, imageView, bitmap), isWhite);
+                            hsv_lower_255 = new float[]{h[0], 100, 100};
+                            hsv_upper_255 = new float[]{h[1], 255, 255};
+                            updateColorTextView(hsv_upper_255, hsv_lower_255);
+                        }
+                    }).start();
+                    isRect = true;
                 }
-            });
-            backToDefaultButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    setBackToDefault();
-                }
-            });
-            saveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    saveAndQuit();
-                }
+                return false;
             });
 
+            fromAlbumsbButton.setOnClickListener(view -> fromAlbums());
+
+            // 【修改】為相機按鈕設置新的權限請求邏輯
+            fromCamaraButton.setOnClickListener(view -> checkCameraPermissionAndLaunch());
+
+            backToDefaultButton.setOnClickListener(view -> setBackToDefault());
+            saveButton.setOnClickListener(view -> saveAndQuit());
         }
         return view;
     }
 
     private float[] analyzeBitmap(Bitmap bitmap, RectF rect, boolean isWhite){
+        // ... (此處代碼不變)
         isAnalyzeDone = false;
         HsvAnalyzer.HsvStats stats = new HsvAnalyzer.HsvStats();
         if(rect == null){
@@ -240,8 +207,10 @@ public class SetSingleColorFragment extends Fragment {
                     averageS + sRange};
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        // ... (此處代碼不變)
         super.onActivityResult(requestCode, resultCode, data);
 
         overlayView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -261,20 +230,15 @@ public class SetSingleColorFragment extends Fragment {
         if (resultCode == RESULT_OK) {
 
             Log.d("wnilnay","onActivityResult_RESULT_OK");
-//            if (requestCode == REQUEST_CAMERA && data != null) {
-//                bitmap = (Bitmap) data.getExtras().get("data");  // 拍照回來的是縮圖
-//            }
             if(requestCode == REQUEST_CAMERA){
                 bitmap = BitmapFactory.decodeFile(
                         new File(saveDir, "cube.jpg").getAbsolutePath()
                 );
                 bitmap = BitmapUtil.resizeAndCompressBitmap(bitmap,1200,1200,50);
-                //Log.d("wnilnay", "have bitmap");
             }
             else if (requestCode == REQUEST_GALLERY && data != null) {
                 Uri imageUri = data.getData();
                 try {
-                    // 1. 先取得圖片尺寸（不載入記憶體）
                     InputStream input = getActivity().getContentResolver().openInputStream(imageUri);
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inJustDecodeBounds = true;
@@ -284,14 +248,12 @@ public class SetSingleColorFragment extends Fragment {
                     int originalWidth = options.outWidth;
                     int originalHeight = options.outHeight;
 
-                    // 2. 計算縮小比例（最大寬度或高度設定，例如 1000px）
                     int maxDim = 1000;
                     int scale = 1;
                     while (originalWidth / scale > maxDim || originalHeight / scale > maxDim) {
                         scale *= 2;
                     }
 
-                    // 3. 重新載入圖片並縮小
                     options.inSampleSize = scale;
                     options.inJustDecodeBounds = false;
 
@@ -299,21 +261,19 @@ public class SetSingleColorFragment extends Fragment {
                     Bitmap scaledBitmap = BitmapFactory.decodeStream(input, null, options);
                     input.close();
 
-                    // 4. 壓縮圖片
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 70, out); // 壓縮品質 70%
                     byte[] byteArray = out.toByteArray();
                     bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-
-                    // 5. 可用 bitmap 顯示或分析 HSV
-                    //imageView.setImageBitmap(bitmap); // 如果你有 imageView
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             else {
-                Log.e("wnilnay error", data.toString());
+                if (data != null) {
+                    Log.e("wnilnay error", data.toString());
+                }
             }
 
 
@@ -326,12 +286,40 @@ public class SetSingleColorFragment extends Fragment {
         }
     }
 
+    // 【新】檢查相機權限的方法
+    private void checkCameraPermissionAndLaunch() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+            // 權限已經被授予，直接啟動相機
+            launchCamera();
+        } else {
+            // 權限尚未被授予，向使用者發出請求
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        }
+    }
+
+    // 【新】處理權限請求結果的回呼
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 使用者授予了權限，啟動相機
+                launchCamera();
+            } else {
+                // 使用者拒絕了權限
+                Toast.makeText(getContext(), "需要相機權限才能拍照", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private void fromAlbums() {
         Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(pickPhoto, REQUEST_GALLERY);
     }
 
-    private void fromCamara() {
+    // 【修改】將原始的相機啟動邏輯封裝到一個新方法中
+    private void launchCamera() {
         File photoFile = new File(saveDir, "cube.jpg");
         Uri uri = FileProvider.getUriForFile(requireContext(),
                 requireActivity().getPackageName() + ".fileprovider",
@@ -339,15 +327,15 @@ public class SetSingleColorFragment extends Fragment {
         RectF overlayRect_forCamara = overlayView.getMaskRect();
         overlayRect_forCamara_coordinate = new float[]{overlayRect_forCamara.left, overlayRect_forCamara.top,
                 overlayRect_forCamara.right, overlayRect_forCamara.bottom};
-        //Log.d("wnilnay", "overlayRect_forCamara: " + overlayRect_forCamara.toString());
+
         Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePicture.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        // 授予相機寫入權限
         takePicture.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(takePicture, REQUEST_CAMERA);
     }
+
     private void setBackToDefault(){
-        //StorageUtil.deleteBitmap(getContext(), "color_" + color);
+        // ... (此處代碼不變)
         new AlertDialog.Builder(getContext())
                 .setTitle("返回預設值")
                 .setMessage("是否返回預設值")
@@ -361,6 +349,7 @@ public class SetSingleColorFragment extends Fragment {
     }
 
     private void setBackToDefaultBitmap(){
+        // ... (此處代碼不變)
         Bitmap myBitmap = null;
         switch (color){
             case "white":
@@ -387,7 +376,9 @@ public class SetSingleColorFragment extends Fragment {
         myBitmap = BitmapUtil.resizeAndCompressBitmap(myBitmap);
         imageView.setImageBitmap(myBitmap);
     }
+
     private void setBackToDefaultRectF(){
+        // ... (此處代碼不變)
         overlayView.post(new Runnable() {
             @Override
             public void run() {
@@ -419,6 +410,7 @@ public class SetSingleColorFragment extends Fragment {
         });
     }
     private void setBackToDefaultHSV(){
+        // ... (此處代碼不變)
         float hue_upper = 0, hue_lower = 0;     // 色相 H: 0 ~ 360
         float s255_upper = 0, s255_lower = 0;       // 飽和度 S: 0 ~ 255
         float v255_upper = 0, v255_lower = 0;       // 明度 V: 0 ~ 255
@@ -456,7 +448,10 @@ public class SetSingleColorFragment extends Fragment {
 
         updateColorTextView(hsv_upper_255, hsv_lower_255);
     }
+
     private void updateColorTextView(float[] hsv_upper_255, float[] hsv_lower_255){
+        // ... (此處代碼不變)
+        if (getActivity() == null) return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -483,7 +478,9 @@ public class SetSingleColorFragment extends Fragment {
             }
         });
     }
+
     private void saveAndQuit(){
+        // ... (此處代碼不變)
         if(!isRect){
             Toast.makeText(getContext(), "請選取遮罩範圍", Toast.LENGTH_SHORT).show();
             return;
@@ -507,7 +504,7 @@ public class SetSingleColorFragment extends Fragment {
                         jsonObject.put("right",rect.right);
                         jsonObject.put("bottom",rect.bottom);
                     } catch (JSONException e) {
-                        throw new RuntimeException(e);
+                        Log.e("SetSingleColorFragment", "JSON Error", e);
                     }
                     StorageUtil.saveString(getContext(), "rectF_" + color, jsonObject.toString());
 
@@ -517,7 +514,7 @@ public class SetSingleColorFragment extends Fragment {
                             jsonArray_Upper.put(hsv);
                         }
                         catch (JSONException e) {
-                            throw new RuntimeException(e);
+                            Log.e("SetSingleColorFragment", "JSON Error", e);
                         }
                     }
                     StorageUtil.saveString(getContext(), "HSV_" + color + "_upper", jsonArray_Upper.toString());
@@ -528,7 +525,7 @@ public class SetSingleColorFragment extends Fragment {
                             jsonArray_Lower.put(hsv);
                         }
                         catch (JSONException e) {
-                            throw new RuntimeException(e);
+                            Log.e("SetSingleColorFragment", "JSON Error", e);
                         }
                     }
                     StorageUtil.saveString(getContext(), "HSV_" + color + "_lower", jsonArray_Lower.toString());
@@ -542,7 +539,7 @@ public class SetSingleColorFragment extends Fragment {
                         BluetoothSocketManager.sendString("ColorSetting",jsonObject.toString());
                         Log.d("wnilnay",jsonObject.toString());
                     } catch (JSONException e) {
-                        throw new RuntimeException(e);
+                        Log.e("SetSingleColorFragment", "JSON Error", e);
                     }
                     FragmentManager fragmentManager = getParentFragmentManager();
                     fragmentManager.beginTransaction()

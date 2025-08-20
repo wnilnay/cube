@@ -223,7 +223,7 @@ public class SettingFragment extends Fragment implements BluetoothDisconnectList
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         textParams.setMargins(0, 32, 0, 0); // 上方間距
         progressDialogText.setLayoutParams(textParams);
-        progressDialogText.setTextColor(Color.BLACK);
+//        progressDialogText.setTextColor(Color.BLACK);
         progressDialogText.setTextSize(16f);
         progressDialogText.setText(initialText);
 

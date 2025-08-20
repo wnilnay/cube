@@ -176,6 +176,7 @@
                     android:layout_height="match_parent"
                     android:stackFromBottom="false"
                     android:divider="@null"
+                    android:cacheColorHint="@color/black"
                     android:padding="8dp"/>
 
             </androidx.cardview.widget.CardView>
